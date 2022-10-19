@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 Javier Carranza
 Alondra Gonzalez
 Brian Uribe
+=======
+Icess Nisce
+Javier Carranza
+>>>>>>> 624a08a0f9bedd148a568ee177bded40ee219bba
