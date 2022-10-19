@@ -1,2 +1,4 @@
 Javier Carranza
-Brian Uribe
+=======
+Alondra Gonzalez
+>>>>>>> 4e71bd794f32de82c2aabc75830a7791d8848b44
