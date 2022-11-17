@@ -1,4 +1,4 @@
-const Header = () => { 
+const Footer = () => { 
 return (
     <footer>
         <h4>Home</h4>
