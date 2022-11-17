@@ -8,4 +8,4 @@ return (
 )
 } 
 
-export default Header
+export default Footer
