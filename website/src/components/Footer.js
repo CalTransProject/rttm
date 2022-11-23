@@ -1,11 +1,11 @@
 const Footer = () => { 
-return (
-    <footer>
-        <h4>Home</h4>
-        <h4>Technologies</h4>
-        <h4>Sign in/ Sign Up</h4>
-    </footer>
-)
+    return (
+        <footer>
+            <h6><button>Home</button></h6>
+            <h6><button>Technologies</button></h6>
+            <h6><button>Sign in / Sign up</button></h6>
+        </footer>
+    )
 } 
 
 export default Footer
