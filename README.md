@@ -1,0 +1,3 @@
+# RTTM v0.2.1
+Github repo for Real-Time Traffic Monitoring project
+To run the website please make sure you have NODE installed and Bootstrap.
