@@ -1,10 +1,24 @@
+import { Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 const Header = () => {
   return (
     <header>
-        <h1>RTTM</h1>
-        <h2>Home</h2>
-        <h2>Technologies</h2>
-        <h2>Sign in/ Sign Up</h2>
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-sm-4">
+                <h1>RTTM</h1>
+              </div>
+              <div class="col-8">
+                <Button variant="secondary" disabled>Home</Button>
+                <Button>Technologies</Button>
+                <Button>Sign in/ Sign Up</Button>
+              </div>
+          </div>
+
+        </div>
+
+        
     </header>
   )
 }
