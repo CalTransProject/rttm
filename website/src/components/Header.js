@@ -15,9 +15,7 @@ const Header = () => {
                 <Button>Sign in/ Sign Up</Button>
               </div>
           </div>
-
         </div>
-        
     </header>
   )
 }

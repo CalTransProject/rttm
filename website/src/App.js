@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import MainPage from "./components/Mainpage";
+import MainPicture from "./components/MainPicture";
 
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <Header />
       <Footer />
       <MainPage />
+      <MainPicture />
     </div>
   );
 }
