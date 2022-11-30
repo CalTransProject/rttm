@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Footer = () => { 
     return (
+    <div>
         <footer class="text-center text-lg-start bg-white text-muted fixed-bottom">
             <Button variant="secondary" disabled>Home</Button>
             <Button class="navbar-toggler"
@@ -14,6 +15,7 @@ const Footer = () => {
                 aria-label="Toggle navigation">Technologies</Button>
             <Button>Login/Sign up</Button>
         </footer>
+    </div>
     )
 } 
 
