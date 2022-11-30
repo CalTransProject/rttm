@@ -3,10 +3,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Footer = () => { 
     return (
-        <footer>
-            <h6><Button variant="secondary" disabled>Home</Button></h6>
-            <h6><Button>Technologies</Button></h6>
-            <h6><Button>Sign in / Sign up</Button></h6>
+        <footer class="text-center text-lg-start bg-white text-muted fixed-bottom">
+            <Button variant="secondary" disabled>Home</Button>
+            <Button class="navbar-toggler"
+                type="button"
+                data-mdb-toggle="collapse"
+                data-mdb-target="#navbarExample01"
+                aria-controls="navbarExample01"
+                aria-expanded="false"
+                aria-label="Toggle navigation">Technologies</Button>
+            <Button>Login/Sign up</Button>
         </footer>
     )
 } 
