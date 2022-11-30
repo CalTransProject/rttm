@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = () => {
   return (
+    <div>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-black">
           <div class="col-sm-4">
@@ -15,6 +16,7 @@ const Header = () => {
           </div>
         </nav>  
     </header>
+    </div>
   )
 }
 

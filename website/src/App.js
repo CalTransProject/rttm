@@ -7,7 +7,9 @@ import MainPicture from "./components/MainPicture";
 function App() {
   return (
     <div className="container">
-      <Header />
+      <div headerName = "header">
+        <Header />
+      </div>
       <Footer />
       <MainPage />
       <MainPicture />
