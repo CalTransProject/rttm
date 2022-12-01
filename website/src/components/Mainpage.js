@@ -15,7 +15,7 @@ const Mainpage = () => {
             the real-time web application for detection and classifications of vehicles in real-time traffic flow. The real-time video with recognized vehicles 
             labeled in the video will be displayed in the web-based user interface. In addition, real-time traffic flow statistic data extracted from the 3D vehicle 
             detection results will be visualized on the web-based user interface.
-            </p>
+                        </p>
                         </div>
                     </div>
                 </div>
