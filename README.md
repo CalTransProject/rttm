@@ -1,5 +1,5 @@
 # RTTM v0.2.1
-Github repo for Real-Time Traffic Monitoring project!
+Github repo for Real-Time Traffic Monitoring project! This branch may not contain all of the expected features. A complete build of the website will be pushed onto the main branch. This branch will focus on the developmental and testing phases of the web application.
 
 ## Whats New in Version 0.2.1?
 Added and installed the Bootstrap + Bootstrap-React packages to the code which imported the bootstrap libraries.
