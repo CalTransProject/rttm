@@ -1,8 +1,7 @@
 # RTTM v0.2.1
-Github repo for Real-Time Traffic Monitoring project! To run the website please make sure you have NODE installed and Bootstrap!
+Github repo for Real-Time Traffic Monitoring project!
 
-**Whats New in Version 0.2.1?**
-<br>
+## Whats New in Version 0.2.1?
 Added and installed the Bootstrap + Bootstrap-React packages to the code which imported the bootstrap libraries.
 
 Changes were made to the Header
@@ -10,3 +9,5 @@ Changes were made to the Header
 
 Changes were made to the Footer
 > Swapped out the default CSS buttons to use the Bootstrap buttons. The home button is disabled to resemble if the user was already on the home page.
+## Build
+In order to run these files properly, [NODE](https://nodejs.org/en/) and [Bootstrap](https://react-bootstrap.github.io/getting-started/introduction) must be installed on the system.
