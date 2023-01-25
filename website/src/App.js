@@ -4,9 +4,14 @@ import MainPage from "./components/Mainpage";
 import MainPicture from "./components/MainPicture";
 
 
+
 function App() {
   return (
-    <div className="container-fluid">
+    //In this div we defined the background color
+    <div className="container-fluid"
+    style={{
+        backgroundColor: 'grey',
+      }}>
       <div headerName = "header">
         <Header />
       </div>

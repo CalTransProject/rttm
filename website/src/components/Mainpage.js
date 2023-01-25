@@ -1,3 +1,6 @@
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 const Mainpage = () => { 
     return (
         <section>    
@@ -5,8 +8,11 @@ const Mainpage = () => {
                 <script src="https://player.live-video.net/1.16.0/amazon-ivs-player.min.js"></script>
                 <video id="video-player" controls playsinline></video>
             </div>
-            <div>
-                <p className="RTTMDescription">
+            
+            
+            
+            <div class="container-fluid">
+                <p>
                 Vehicle detection plays an important role in analyzing the traffic flow data for intelligent transportation planning. 
                 This project monitors the real-time traffic flow of the highway using a LiDAR camera and stereo-based depth camera to 
                 collect real-time traffic data, process it for vehicle detection, and develop a web-based service with real-time vehicle 
