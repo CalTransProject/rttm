@@ -6,7 +6,7 @@ import MainPicture from "./components/MainPicture";
 
 function App() {
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div headerName = "header">
         <Header />
       </div>

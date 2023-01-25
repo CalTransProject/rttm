@@ -1,13 +1,17 @@
 nav{
-    height:  50px;
-    border: 1px solid #dfdfdf;
+    position:absolute;
+    width: 100%;
+    /*height:  50px; */
+    border: 1px solid #100000;
 }
+
 
 .div-header{
     width: 100%;
-    margin: 0 auto;
-    display: flex;
+    margin: 0;
+    padding: 0;
+    display:flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-betwee;
     align-items: center;
 }

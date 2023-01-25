@@ -4,8 +4,21 @@
   margin-top: auto;
 }
 
+video {
+  padding-top: 5pt;
+  /* height: 50%; */
+  width: 45%;
+  left: 0;
+  top: 0;
+  /* position: absolute; */
+}
+video::-webkit-media-controls-timeline,
+video::-webkit-media-controls-current-time-display {
+    display: none;
+}
+
 body{
-  
+  background-color: black;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -15,7 +28,7 @@ body{
 }
 
 footer{
-  width: max-content;
+  /* width: max-content; */
   position:absolute;
   left:0;
   bottom: 0;
@@ -33,8 +46,18 @@ h1{
 }
 
 .box{
-  background-color: lightblue;
-  border: 1px solid blue;
+  background-color: snow;
+  padding: 2%;
+  border: 2px solid black;
   min-height: 50px;
   font-size: 2rem;
+}
+
+/*this is for the description section of the web page*/
+.RTTMDescription{
+  font-size:13pt;
+  
+}
+.section{
+  background-color: black;
 }
