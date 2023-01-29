@@ -1,13 +1,8 @@
-
-.box{
-  position: relative;
-  margin-top: auto;
-}
-
 video {
   padding-top: 5pt;
   /* height: 50%; */
-  width: 45%;
+  width: 100%;
+  border: 1px;
   left: 0;
   top: 0;
   /* position: absolute; */
@@ -41,17 +36,31 @@ code {
     monospace;
 }
 
+.background{
+  height: 100%;
+  width: 100%;
+  background:linear-gradient(rgba(0, 0, 0, 0.5),transparent);
+  background-color:rgb(63, 63, 63) /*this your primary color*/
+}
+
 h1{
   color: azure;
   text-indent: 10pt;
 }
 
 .box{
-  background-color: snow;
+  position: relative;
+  width: 100%;
+  margin-top: 5pt;
+  margin-bottom: 5pt;
+  background-color: rgb(101, 101, 101);
   padding: 2%;
-  border: 2px solid black;
-  min-height: 50px;
-  font-size: 2rem;
+  border: px solid snow;
+  min-height: auto;
+  min-width: none;
+  font-size: 1rem;
+  /* text color */
+  color: rgb(216, 216, 216);
 }
 
 /*this is for the description section of the web page*/
