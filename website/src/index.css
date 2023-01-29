@@ -17,6 +17,7 @@ video::-webkit-media-controls-current-time-display {
     display: none;
 }
 
+/* Check if it works */
 body{
   background-color: black;
   margin: 0;

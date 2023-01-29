@@ -8,9 +8,7 @@ const Mainpage = () => {
                 <script src="https://player.live-video.net/1.16.0/amazon-ivs-player.min.js"></script>
                 <video id="video-player" controls playsinline></video>
             </div>
-            
-            
-            
+
             <div class="container-fluid">
                 <p>
                 Vehicle detection plays an important role in analyzing the traffic flow data for intelligent transportation planning. 
