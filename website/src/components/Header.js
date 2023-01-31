@@ -11,7 +11,7 @@ const Header = () => {
         </div>
         <div class="col-7"  style={{display:'flex', flexDirection:'row' ,alignItems: 'center'}}>
           <Button disabled>Home</Button>
-          <Button>Technologies</Button>
+          <Button >Technologies</Button>
           <Button>Login/Sign Up</Button>
         </div>
       </nav>
