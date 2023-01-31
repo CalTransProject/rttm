@@ -5,14 +5,20 @@ import './header.css';
 const Header = () => {
   return (
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-black">
-        <div class="col-sm-5" className = 'div-header'>
-          <h1>RTTM</h1>
-        </div>
-        <div class="col-7"  style={{display:'flex', flexDirection:'row' ,alignItems: 'center'}}>
-          <Button disabled>Home</Button>
-          <Button >Technologies</Button>
-          <Button>Login/Sign Up</Button>
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <div class="col-sm-5" className = 'div-header'>
+            <h1>RTTM</h1>
+          </div>
+          <div class="col-7"  style={{display:'flex', flexDirection:'row' ,alignItems: 'center'}}>
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Technologies</a>
+                <a href="#" class="nav-link">Login/SignUp</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </nav>
     </header>

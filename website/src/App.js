@@ -9,49 +9,21 @@ import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom
 
 
 function App() {
-  const [state,setState] = useState({
-    options: {
-      chart: {
-        id: "basic-bar"
-      },
-      xaxis: {
-        categories: ["sedan", "suv", "truck", "bus", "pickup", "van"]
-      }
-    },
-    series: [
-      {
-        name: "Amount of vehicles",
-        data: [4, 5, 10, 3, 6, 20]
-      }
-    ]
-  }
-)
   return (
-    <Router>
         <div className="App">
           <div className = "content">
             <Header />
           </div>
-          <div className="container-fluid">
-            <Routes>
-              <Route path="/" element={
-                <MainPage />} />
-            </Routes>
+          <div className="container-fluid">            
+            <MainPage />  
           </div>
           <div className = "chart">
-            <Chart
-              options = {state.options}
-              series = {state.series}
-              type = "bar"
-              width = "500"
-            />
+            
           </div>
           <div className="footer">
             <Footer />
           </div>
         </div>
-      
-    </Router>
   );
 }
 
