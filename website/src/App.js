@@ -15,13 +15,13 @@ function App() {
         id: "basic-bar"
       },
       xaxis: {
-        categories: ["Van", "Semi Truck", "SUV", "Bus"]
+        categories: ["sedan", "suv", "truck", "bus", "pickup", "van"]
       }
     },
     series: [
       {
-        name: "series-1",
-        data: [4, 5, 10, 3]
+        name: "Amount of vehicles",
+        data: [4, 5, 10, 3, 6, 20]
       }
     ]
   }
