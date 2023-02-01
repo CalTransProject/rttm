@@ -68,13 +68,26 @@ const Mainpage = () => {
                         </div>
                     </div>
                     <div class="col">
-                        <div class="test-box"></div>
+                        <div class="box">
+                        <Chart
+                                options = {state.options}
+                                series = {state.series}
+                                type = "line"
+                                width = "90%"
+                                align = "center"
+                            />
+                        </div>
                     </div>
                     <div class="col">
-                        <div class="test-box"></div>
-                    </div>
-                    <div class="col">
-                        <div class="test-box"></div>
+                        <div class="box">
+                        <Chart
+                                options = {state.options}
+                                series = {state.series}
+                                type = "area"
+                                width = "90%"
+                                align = "center"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

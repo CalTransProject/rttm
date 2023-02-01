@@ -44,7 +44,8 @@ code {
 }
 
 h2{
-  padding-top: 10pt;
+  
+  padding: 10pt;
   color: azure;
   text-align: left;
   /* text-indent: 10pt; */
@@ -83,6 +84,8 @@ h2{
 
 .text-box{
   position: relative;
+  height: 23.2em;
+  text-align: center;
   width: 100%;
   margin-top: 5pt;
   margin-bottom: 5pt;
