@@ -1,28 +1,13 @@
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Chart from "react-apexcharts";
+//import Chart from "react-apexcharts";
 import React, {useState} from "react";
+import StackedArea from "./StackedArea";
+import StackedBar from "./StackedBar";
+import PieChart from "./PieChart";
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
-    const [state,setState] = useState({
-        options: {
-          chart: {
-            id: "basic-bar"
-          },
-          xaxis: {
-            categories: ["sedan", "suv", "truck", "bus", "pickup", "van"]
-          }
-        },
-        series: [
-          {
-            name: "Amount of vehicles",
-            data: [4, 5, 10, 3, 6, 20]
-          }
-        ]
-      }
-    )
-    
     //Page Layout
     return (
         <section>    
@@ -58,35 +43,20 @@ const Mainpage = () => {
                     </div>
                     <div class="col">
                         <div class="box">
-                            <Chart
-                                options = {state.options}
-                                series = {state.series}
-                                type = "bar"
-                                width = "90%"
-                                align = "center"
-                            />
+                            {
+                            <StackedArea/>
+                            }
                         </div>
                     </div>
                     <div class="col">
                         <div class="box">
-                        <Chart
-                                options = {state.options}
-                                series = {state.series}
-                                type = "line"
-                                width = "90%"
-                                align = "center"
-                            />
+                        { <StackedBar/>}
                         </div>
                     </div>
                     <div class="col">
                         <div class="box">
-                        <Chart
-                                options = {state.options}
-                                series = {state.series}
-                                type = "area"
-                                width = "90%"
-                                align = "center"
-                            />
+                        {
+                        <PieChart/>}
                         </div>
                     </div>
                 </div>
