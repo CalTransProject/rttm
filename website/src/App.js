@@ -3,7 +3,7 @@ import Footer from "./components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
 import LoginMain from "./components/LoginMain";
-import MainPicture from "./components/MainPicture";
+import MainPicture from "./components/subcomponents/MainPicture";
 import React, {useState} from "react";
 import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom';
 

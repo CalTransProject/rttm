@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Chart from "react-apexcharts";
 import React, {useState} from "react";
-import MainPicture from './MainPicture';
+import MainPicture from './subcomponents/MainPicture';
 
 const LoginMain = () => { 
     return(

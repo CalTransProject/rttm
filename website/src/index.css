@@ -51,22 +51,7 @@ h2{
   /* text-indent: 10pt; */
 }
 
-.test-box{
-  position: relative;
-  height: 23.2em;
-  width: 100%;
-  margin-top: 5pt;
-  margin-bottom: 5pt;
-  background-color: rgb(101, 101, 101);
-  padding: 3%;
-  border: px solid snow;
-  min-height: auto;
-  min-width: none;
-  font-size: 1rem;
-  /* text color */
-  color: rgb(216, 216, 216);
-}
-
+/* This box below has width that reaches the entire div but its height is based on the content */
 .box{
   position: relative;
   width: 100%;
@@ -82,6 +67,7 @@ h2{
   color: rgb(216, 216, 216);
 }
 
+/* This below has a defined dimension which is why the text is fully covered with space */
 .text-box{
   position: relative;
   height: 23.2em;

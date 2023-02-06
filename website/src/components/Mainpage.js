@@ -3,9 +3,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 //import Chart from "react-apexcharts";
 import React, {useState} from "react";
-import StackedArea from "./StackedArea";
-import StackedBar from "./StackedBar";
-import PieChart from "./PieChart";
+import StackedArea from './subcomponents/StackedArea';
+import StackedBar from './subcomponents/StackedBar';
+import PieChart from './subcomponents/PieChart';
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
     //Page Layout

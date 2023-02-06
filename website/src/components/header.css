@@ -12,6 +12,10 @@ nav{
     font-weight:500;
 }
 
+a:hover {
+    color: hotpink;
+  }
+
 h1{
     color: rgb(255, 15, 15);
     font-weight: bold;
