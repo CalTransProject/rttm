@@ -1,86 +1,67 @@
 // Technology Page
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Chart from "react-apexcharts";
-import React, {useState} from "react";
-
-const Technologies = () => { 
-    return(
-        <section>
-            <div class="container-fluid">
-                <div class="row row-cols-2">
-                    <div class="col">
-                        <div class="text-box">
-                            <p>
-                            Vehicle detection plays an important role in analyzing the traffic flow data for intelligent transportation planning. 
-                            This project monitors the real-time traffic flow of the highway using a LiDAR camera and stereo-based depth camera to 
-                            collect real-time traffic data, process it for vehicle detection, and develop a web-based service with real-time vehicle 
-                            detection stream and statistical data visualization.This project is composed of 4 modules: Data acquisition, 2D vehicle detection,
-                            3D vehicle detection, and web application. The data acquisition module collects traffic flow data from the 2D camera and 3D LiDAR camera, 
-                            after which the data is annotated and labeled. After training and testing, the 2D and 3D machine learning models will be integrated into 
-                            the real-time web application for detection and classifications of vehicles in real-time traffic flow. The real-time video with recognized vehicles 
-                            labeled in the video will be displayed in the web-based user interface. In addition, real-time traffic flow statistic data extracted from the 3D vehicle 
-                            detection results will be visualized on the web-based user interface.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row row-cols-3">
-                <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="text-box">
-                        <p>
-                        anbcsjkdahg ksyundajdnsjkadsalidbevka ybsddabhdbsakhsdhas bdasahhjdbsak dbjasbhjsabjsashjdbashkbdlhasbsdabkh
-                        </p>
-                        </div>
-                    </div>
-
-                </div>
+import React, { useState } from "react";
+import TechnologyTrafficPicture from "./subcomponents/TechnologyTrafficPicture";
+import TechnologyLidarPicture from "./subcomponents/TechnologyLidarPicture";
+const Technologies = () => {
+  return (
+    <section>
+      <div class="container-fluid">
+        <div class="row row-cols-2">
+          <div class="col">
+            <div class="text-box">
+              <h3>Real Time Traffic Monitoring</h3>
+              <p>
+                Contribute to intelligent transportation systems (ITS)
+                applications to achieve smarter and safer transportation
+                infrastructure. This is done through LiDAR data that can provide
+                valuable info that traditional radar or video s ensors can't.
+              </p>
             </div>
-        </section>
-    )
-}
+          </div>
+          <div class="col">
+            <TechnologyTrafficPicture />
+          </div>
+          <div class="col">
+            <TechnologyLidarPicture />
+          </div>
+          <div class="col">
+            <div class="text-box">
+              <h4>What is LiDAR?</h4>
+              <p>
+                Contribute to intelligent transportation systems (ITS)
+                applications to achieve smarter and safer transportation
+                infrastructure. This is done through LiDAR data that can provide
+                valuable info that traditional radar or video s ensors can't.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="hex1"></div>
+        </div>
 
-export default Technologies
+        <div class="col">
+          <div class="text-box">
+            <u>
+              <h3>Web Development</h3>
+            </u>
+            <p>
+              Bootstrap + React
+              <br /> The web development was made possible with the use of
+              React-Bootstrap. React is used in order to build components and
+              make the UI workload easier to build. We used bootstrap in order
+              to style the website's content. In our case it would be the
+              buttons we have on the header and footer of our website currently.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Technologies;

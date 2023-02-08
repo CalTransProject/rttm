@@ -9,42 +9,41 @@ video {
 }
 video::-webkit-media-controls-timeline,
 video::-webkit-media-controls-current-time-display {
-    display: none;
+  display: none;
 }
 
 /* Check if it works */
-body{
+body {
   background-color: black;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-footer{
+footer {
   /* width: max-content; */
-  position:absolute;
-  left:0;
+  position: absolute;
+  left: 0;
   bottom: 0;
-  right:0;
+  right: 0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-.background{
+.background {
   height: 100%;
   width: 100%;
-  background:linear-gradient(rgba(0, 0, 0, 0.8),transparent);
-  background-color:rgb(77, 77, 77) /*this your primary color*/
+  background: linear-gradient(rgba(0, 0, 0, 0.8), transparent);
+  background-color: rgb(77, 77, 77); /*this your primary color*/
 }
 
-h2{
-  
+h2 {
   padding: 10pt;
   color: azure;
   text-align: left;
@@ -52,7 +51,7 @@ h2{
 }
 
 /* This box below has width that reaches the entire div but its height is based on the content */
-.box{
+.box {
   position: relative;
   width: 100%;
   margin-top: 5pt;
@@ -68,29 +67,45 @@ h2{
 }
 
 /* This below has a defined dimension which is why the text is fully covered with space */
-.text-box{
+.text-box {
   position: relative;
   height: 23.2em;
   text-align: center;
   width: 100%;
-  margin-top: 5pt;
-  margin-bottom: 5pt;
-  background-color: rgb(101, 101, 101);
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+  margin-left: 10px;
+  margin-right: 10px;
   padding: 4%;
-  border: px solid snow;
+  border: 1 px solid snow;
   min-height: auto;
   min-width: none;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-family: Arial, Helvetica, sans-serif;
   /* text color */
   color: rgb(216, 216, 216);
 }
 
 /*this is for the description section of the web page*/
-.RTTMDescription{
-  font-size:13pt;
-  
+.RTTMDescription {
+  font-size: 13pt;
 }
-.section{
+.section {
   background-color: black;
+}
+
+/*this is for the images in the technologies page */
+.img-thumbnail {
+  margin-top: 10pt;
+  width: 100%;
+  height: 0;
+  object-fit: cover;
+  padding: 50%;
+}
+
+/*This code is used to create the HexagonShape in the technologies page*/
+.hex1::before {
+  content: "\2B22";
+  color: rgb(255, 255, 255);
+  font-size: 135px;
 }
