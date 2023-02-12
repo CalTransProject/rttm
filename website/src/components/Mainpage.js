@@ -6,6 +6,7 @@ import React, {useState} from "react";
 import StackedArea from './subcomponents/StackedArea';
 import StackedBar from './subcomponents/StackedBar';
 import PieChart from './subcomponents/PieChart';
+import './subcomponents/charts.css'
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
     //Page Layout
@@ -43,20 +44,26 @@ const Mainpage = () => {
                     </div>
                     <div class="col">
                         <div class="box">
+                            <div class = "chart">
                             {
                             <StackedArea/>
                             }
+                            </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="box">
+                        <div class = "chart">
                         { <StackedBar/>}
                         </div>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="box">
+                        <div class = "chart">
                         {
                         <PieChart/>}
+                        </div>
                         </div>
                     </div>
                 </div>
