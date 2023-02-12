@@ -102,10 +102,3 @@ h2 {
   object-fit: cover;
   padding: 50%;
 }
-
-/*This code is used to create the HexagonShape in the technologies page*/
-.hex1::before {
-  content: "\2B22";
-  color: rgb(255, 255, 255);
-  font-size: 135px;
-}

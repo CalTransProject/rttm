@@ -41,7 +41,46 @@ const Technologies = () => {
           </div>
         </div>
         <div class="col">
-          <div class="hex1"></div>
+          <a
+            href="#"
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            Data Acquisition
+          </a>
+          <a
+            href="#"
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            Web Development
+          </a>
+          <a
+            href="#"
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            3D Model
+          </a>
+          <a
+            href="#"
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            2D Model
+          </a>
+          <a
+            href="#"
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            Object Detection
+          </a>
         </div>
 
         <div class="col">
