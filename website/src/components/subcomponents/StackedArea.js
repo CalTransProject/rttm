@@ -5,93 +5,47 @@ const StackedArea = () =>{
     title: {
       text: ''
     },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross',
-      }
-    },
+    tooltip: {},
     legend: {
-      data: ['Van', 'SUV', 'Pickup', 'Bike', 'Person']
+      data: ['']
     },
-    toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
+    xAxis: {
+      name:'Time',
+      nameLocation:'middle',
+      nameGap:30,
+      nameTextStyle:{
+          fontSize:18,
+          fontWeight:'bold'
+      },
+      data: ['1', '2', '3', '4', '5', '6', '7', '8','9', '10', 
+      '11', '12', '13', '14', '15', '16','17', '18', '19', '20',
+       '21', '22', '23', '24','25', '26', '27', '28', '29', '30',
+       '31', '32', '33', '34', '35', '36', '37', '38','39', '40', 
+       '41', '42', '43', '44', '45', '46','47', '48', '49', '50',
+        '51', '52', '53', '54','55', '56', '57', '58', '59', '60',]
     },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        boundaryGap: false,
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value'
-      }
-    ],
+    yAxis: {
+      name:'Number of Vehicles',
+      nameLocation:'middle',
+      nameGap:30,
+      nameTextStyle:{
+          fontSize:18,
+          fontWeight:'bold'
+      },
+      nameRotate:90,
+      data: []
+  },
     series: [
       {
-        name: 'Van',
+        name: '',
         type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [120, 132, 101, 134, 90, 230, 210]
+        data: []
       },
       {
-        name: 'SUV',
+        name: '',
         type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [220, 182, 191, 234, 290, 330, 310]
+        data: []
       },
-      {
-        name: 'Pickup',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 232, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Bike',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [320, 332, 301, 334, 390, 330, 320]
-      },
-      {
-        name: 'Person',
-        type: 'line',
-        stack: 'Total',
-        label: {
-          show: true,
-          position: 'top'
-        },
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 932, 901, 934, 1290, 1330, 1320]
-      }
     ]
   };
 return( <ReactEcharts option={option} />);
