@@ -16,10 +16,21 @@ const Mainpage = () => {
                 <div class="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
                     <div class="col">
                         <h2>Home</h2>
-                        <div class="video">
-                            <script src="https://player.live-video.net/1.16.0/amazon-ivs-player.min.js"></script>
-                            <video id="video-player" controls playsinline></video>
-                        </div>
+                            <div class="box">
+                                <video
+                                    id="my-video"
+                                    class="video-js"
+                                    controls
+                                    preload="auto"
+                                    width="640"
+                                    height="264"
+                                    poster="MY_VIDEO_POSTER.jpg"
+                                    data-setup="{}"
+                                >
+                                    <source src="MY_VIDEO.mp4" type="video/mp4" />
+                                    <source src="MY_VIDEO.webm" type="video/webm" />
+                                </video>
+                            </div>
                     </div>
                     <div class="col">
                         <div class="text-box">
