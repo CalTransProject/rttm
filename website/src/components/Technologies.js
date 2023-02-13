@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import TechnologyTrafficPicture from "./subcomponents/TechnologyTrafficPicture";
 import TechnologyLidarPicture from "./subcomponents/TechnologyLidarPicture";
 import TechnologyWebDevPicture from "./subcomponents/TechnologyWebDevPicture";
+import Technology3DModelPicture from "./subcomponents/Technology3DModelPicture";
 const Technologies = () => {
   return (
     <section>
@@ -95,7 +96,9 @@ const Technologies = () => {
           <div class="col">
             <TechnologyWebDevPicture />
           </div>
-          <div class="col"></div>
+          <div class="col">
+            <Technology3DModelPicture />
+          </div>
           <div class="col">
             <div class="text-box">
               <h4>3D Model</h4>
