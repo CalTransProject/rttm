@@ -1,11 +1,9 @@
 // Technology Page
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Chart from "react-apexcharts";
+
 import React, { useState } from "react";
 import TechnologyTrafficPicture from "./subcomponents/TechnologyTrafficPicture";
 import TechnologyLidarPicture from "./subcomponents/TechnologyLidarPicture";
+import TechnologyWebDevPicture from "./subcomponents/TechnologyWebDevPicture";
 const Technologies = () => {
   return (
     <section>
@@ -83,20 +81,81 @@ const Technologies = () => {
           </a>
         </div>
 
-        <div class="col">
-          <div class="text-box">
-            <u>
+        <div class="row row-cols-2">
+          <div class="col">
+            <div class="text-box">
               <h3>Web Development</h3>
-            </u>
-            <p>
-              Bootstrap + React
-              <br /> The web development was made possible with the use of
-              React-Bootstrap. React is used in order to build components and
-              make the UI workload easier to build. We used bootstrap in order
-              to style the website's content. In our case it would be the
-              buttons we have on the header and footer of our website currently.
-            </p>
+              <p>
+                - React-Bootstrap - <br /> - ECharts - A javascript library that
+                provides a wide range of charts that one can use and also have
+                them update in real-time.
+              </p>
+            </div>
           </div>
+          <div class="col">
+            <TechnologyWebDevPicture />
+          </div>
+          <div class="col"></div>
+          <div class="col">
+            <div class="text-box">
+              <h4>3D Model</h4>
+              <p>
+                - MATLAB (labeling) - The Lidar Labeler toolbox enables you to
+                interactively label ground truth data in a point cloud or a
+                point cloud sequence and generate corresponding ground truth
+                data. <br />- PyTorch -
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row row-cols-2">
+          <div class="col">
+            <div class="text-box">
+              <h3>Data Acquisition</h3>
+              <p>
+                - LiDAR (light detection and ranging): Captures a 3D scan of the
+                environment in the form of point clouds.
+                <br /> - Velodyne Ultra Puck - Real-time 3D LiDAR data is
+                collected using Velodyne’s Ultra Puck cameras, combining long
+                range performance with outstanding resolution and point density
+                in a compact form factor. (I copied and pasted this) <br />-
+                Intel RealSense Depth Camera D435i - 2D data is collected using
+                the Intel RealSense Depth Camera, which is able to display video
+                and depth metrics on the Intel RealSense Viewer platform. In our
+                use case, we use it primarily only for 2D stream of traffic
+                without the use of depth metrics since it doesn’t really apply.
+              </p>
+            </div>
+          </div>
+          <div class="col"></div>
+          <div class="col"></div>
+          <div class="col">
+            <div class="text-box">
+              <h4>Object Detection</h4>
+              <p>
+                - Complex-YOLO
+                <br />- YOLOv7
+                <br /> - SORT
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row row-cols-2">
+          <div class="col">
+            <div class="text-box">
+              <h3>2D Model</h3>
+              <p>
+                YOLOv7: Most up-to-date and accurate 2D object detection model
+                that is perfect for vehicle detection. <br />- labelImg:
+                Software used to take relevant images and manually apply
+                bounding boxes for the sake of training the model. <br />-
+                Google Colab: Cloud hosted version of Jupyter Notebook that is
+                being used to train the custom dataset and run the model with
+                the aforementioned dataset.
+              </p>
+            </div>
+          </div>
+          <div class="col"></div>
         </div>
       </div>
     </section>
