@@ -4,14 +4,20 @@ const PieChart = () =>{
    const option = {
     title: {
       text: 'Percentage of vehicles',
-      left: 'center'
+      left: 'center',
+      textStyle:{
+         color: 'white'
+      }
     },
     tooltip: {
       trigger: 'item'
     },
     legend: {
       orient: 'vertical',
-      left: 'left'
+      left: 'left',
+      textStyle:{
+        color: 'White'
+      }
     },
     series: [
       {
