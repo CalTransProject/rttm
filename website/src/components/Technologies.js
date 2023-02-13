@@ -1,11 +1,32 @@
 // Technology Page
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TechnologyTrafficPicture from "./subcomponents/TechnologyTrafficPicture";
 import TechnologyLidarPicture from "./subcomponents/TechnologyLidarPicture";
 import TechnologyWebDevPicture from "./subcomponents/TechnologyWebDevPicture";
 import Technology3DModelPicture from "./subcomponents/Technology3DModelPicture";
+import TechnologyDataPicture from "./subcomponents/TechnologyDataPicture";
+import TechnologyObjectDetectionPicture from "./subcomponents/TechnologyObjectDetectionPicture";
+import Technology2DModelPicture from "./subcomponents/Technology2DModelPicture";
 const Technologies = () => {
+  const [activeSection, setActiveSection] = useState("");
+
+  //Function pupose to handle button Click and scroll to specific info section
+  const handleClick = (section) => {
+    setActiveSection(section);
+  };
+
+  useEffect(() => {
+    //Hellper Function to find element by id and scroll to specific info section
+    const sectionElement = document.getElementById(activeSection);
+    if (sectionElement) {
+      sectionElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [activeSection]);
+
   return (
     <section>
       <div class="container-fluid">
@@ -40,51 +61,55 @@ const Technologies = () => {
           </div>
         </div>
         <div class="col">
-          <a
-            href="#"
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            Data Acquisition
-          </a>
-          <a
-            href="#"
+          <button
+            onClick={() => handleClick("WebDevelopment")}
             class="btn btn-outline-light"
             role="button"
             aria-pressed="true"
           >
             Web Development
-          </a>
-          <a
-            href="#"
+          </button>
+
+          <button
+            onClick={() => handleClick("3DModel")}
             class="btn btn-outline-light"
             role="button"
             aria-pressed="true"
           >
             3D Model
-          </a>
-          <a
-            href="#"
+          </button>
+
+          <button
+            onClick={() => handleClick("DataAcquisition")}
             class="btn btn-outline-light"
             role="button"
             aria-pressed="true"
           >
-            2D Model
-          </a>
-          <a
-            href="#"
+            Data Acquisition
+          </button>
+
+          <button
+            onClick={() => handleClick("ObjectDetection")}
             class="btn btn-outline-light"
             role="button"
             aria-pressed="true"
           >
             Object Detection
-          </a>
+          </button>
+
+          <button
+            onClick={() => handleClick("2DModel")}
+            class="btn btn-outline-light"
+            role="button"
+            aria-pressed="true"
+          >
+            2D Model
+          </button>
         </div>
 
         <div class="row row-cols-2">
           <div class="col">
-            <div class="text-box">
+            <div id="WebDevelopment" class="text-box">
               <h3>Web Development</h3>
               <p>
                 - React-Bootstrap - <br /> - ECharts - A javascript library that
@@ -100,7 +125,7 @@ const Technologies = () => {
             <Technology3DModelPicture />
           </div>
           <div class="col">
-            <div class="text-box">
+            <div id="3DModel" class="text-box">
               <h4>3D Model</h4>
               <p>
                 - MATLAB (labeling) - The Lidar Labeler toolbox enables you to
@@ -113,7 +138,7 @@ const Technologies = () => {
         </div>
         <div class="row row-cols-2">
           <div class="col">
-            <div class="text-box">
+            <div id="DataAcquisition" class="text-box">
               <h3>Data Acquisition</h3>
               <p>
                 - LiDAR (light detection and ranging): Captures a 3D scan of the
@@ -130,10 +155,15 @@ const Technologies = () => {
               </p>
             </div>
           </div>
-          <div class="col"></div>
-          <div class="col"></div>
           <div class="col">
-            <div class="text-box">
+            {" "}
+            <TechnologyDataPicture />
+          </div>
+          <div class="col">
+            <TechnologyObjectDetectionPicture />
+          </div>
+          <div class="col">
+            <div id="ObjectDetection" class="text-box">
               <h4>Object Detection</h4>
               <p>
                 - Complex-YOLO
@@ -145,7 +175,7 @@ const Technologies = () => {
         </div>
         <div class="row row-cols-2">
           <div class="col">
-            <div class="text-box">
+            <div id="2DModel" class="text-box">
               <h3>2D Model</h3>
               <p>
                 YOLOv7: Most up-to-date and accurate 2D object detection model
@@ -158,7 +188,9 @@ const Technologies = () => {
               </p>
             </div>
           </div>
-          <div class="col"></div>
+          <div class="col">
+            <Technology2DModelPicture />
+          </div>
         </div>
       </div>
     </section>
