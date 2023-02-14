@@ -2,11 +2,13 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
-import LoginMain from "./components/LoginMain";
+import HistoricalData from "./components/HistoricalData";
 import TestPage from "./components/TestPage";
 import MainPicture from "./components/subcomponents/MainPicture";
 import React, {useState} from "react";
+import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom';
+import Body from "./components/Body";
 
 
 
@@ -20,8 +22,8 @@ function App() {
             <Routes>
               <Route path="/" element={<MainPage />} />
               <Route path="/technologies" element={<Technologies />} />
-              <Route path="/login" element={<LoginMain />} />
-              <Route path="/test" element={<TestPage />} />
+              <Route path="/historical-data" element={<HistoricalData />} />
+              <Route path="/body" element={<Body />} />
             </Routes>
           </div>
           <div className = "chart">

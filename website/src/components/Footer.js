@@ -1,5 +1,6 @@
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
+import './footer.css';
 import { Navbar } from "react-bootstrap";
 
 const Footer = () => { 
@@ -17,12 +18,14 @@ const Footer = () => {
     //     </Navbar>
     // </div>
     <nav class="navbar navbar-light bg-light">
-        <div class="p-3">
-            <a class="text-dark text-center">
-                <button type="button" class="btn btn-link" disabled>Home</button>
-                <button type="button" class="btn btn-link">Technologies</button>
-                <button type="button" class="btn btn-link">Login/SignUp</button>
-            </a>
+        <div className="links">
+            <div class="p-3">
+                <a class="text-dark text-center">
+                    <button type="button" class="btn btn-link" disabled>Home</button>
+                    <button type="button" class="btn btn-link">Technologies</button>
+                    <button type="button" class="btn btn-link">Login/SignUp</button>
+                </a>
+            </div>
         </div>
     </nav>
     
