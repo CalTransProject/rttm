@@ -1,6 +1,3 @@
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 //import Chart from "react-apexcharts";
 import React, {useState} from "react";
 import StackedArea from './subcomponents/StackedArea';
@@ -29,8 +26,6 @@ const Mainpage = () => {
                         <source src="MY_VIDEO.mp4" type="video/mp4" />
                         </video>
                         <script src="https://vjs.zencdn.net/8.0.4/video.min.js"></script>
-
-
                         </div>
                     </div>
                     <div class="col">
