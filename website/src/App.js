@@ -2,8 +2,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
-import LoginMain from "./components/LoginMain";
+import CameraManagement from "./components/CameraManagement";
 import MainPicture from "./components/subcomponents/MainPicture";
+import HistoricalData from "./components/HistoricalData";
 import React, {useState} from "react";
 import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom';
 
@@ -19,7 +20,9 @@ function App() {
             <Routes>
               <Route path="/" element={<MainPage />} />
               <Route path="/technologies" element={<Technologies />} />
-              <Route path="/login" element={<LoginMain />} />
+              <Route path="/camera-management" element={<CameraManagement />} />
+              <Route path="/historical-data" element={<HistoricalData />} />
+
             </Routes>
           </div>
           <div className = "chart">
