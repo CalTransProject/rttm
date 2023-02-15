@@ -81,7 +81,7 @@ result["pred"].append({
 #                         }
 #                     }
 #                 )
-for x in range(1, 10):
+for x in range(1, 1200):
     result.update({"result"+str(x): {
         "fid": random.randint(0, 2000),
         "timetampe": time.time(),
