@@ -1,5 +1,5 @@
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/page-components/Header";
+import Footer from "./components/page-components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
 import CameraManagement from "./components/CameraManagement";

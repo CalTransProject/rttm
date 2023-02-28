@@ -1,5 +1,4 @@
 // Technology Page
-
 import React, { useState, useEffect } from "react";
 import TechnologyTrafficPicture from "./subcomponents/sub-technologies/TechnologyTrafficPicture";
 import TechnologyLidarPicture from "./subcomponents/sub-technologies/TechnologyLidarPicture";
@@ -43,7 +42,9 @@ const Technologies = () => {
             </div>
           </div>
           <div class="col">
-            <TechnologyTrafficPicture />
+            <div>
+              <TechnologyTrafficPicture />
+            </div>
           </div>
           <div class="col">
             <TechnologyLidarPicture />

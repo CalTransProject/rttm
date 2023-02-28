@@ -7,7 +7,7 @@ const Header = () => {
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <div class="col-1" className = 'div-header'>
-              <h1>RTTM</h1>
+              <h1 class="logo">RTTM</h1>
             </div>
             <div class="col justify-content-center">
               <ul class="navbar-nav">
