@@ -20,13 +20,15 @@ const Mainpage = () => {
                 </div>
                 <div class="row row-cols-2">
                     <div class="col">
+                        <h4 class="camText">Camera 1</h4>
                         <Body />
                     </div>
                     <div class="col">
-                        <div class="video-box">
-                            <h5>Video Player Placeholder</h5>
-                            {/* <Video /> */}
-                        </div>
+                        <h4 class="camText">Camera 2</h4>
+                            <div class="video-box">
+                                <h5>Video Player Placeholder</h5>
+                                {/* <Video /> */}
+                            </div>
                     </div>
                 </div>
                 <div class="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
