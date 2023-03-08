@@ -46,7 +46,7 @@ const StackedBar = () =>{
         }
       },
       nameRotate:90,
-      data:['20', '40', '60', '80','100']
+      data: ['20', '40', '60', '80','100'],
     },
     series: [
       {
@@ -61,7 +61,6 @@ const StackedBar = () =>{
       }
     ]
   };
-
 
 return( <ReactEcharts option={option} />);
 } 

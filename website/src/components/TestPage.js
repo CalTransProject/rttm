@@ -6,7 +6,7 @@ import React, {useState} from "react";
 import StackedArea from './subcomponents/StackedArea';
 import StackedBar from './subcomponents/Bar';
 import PieChart from './subcomponents/PieChart';
-import './subcomponents/charts.css'
+
 
 const TestPage = () => { 
     return(
