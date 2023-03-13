@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ReactEcharts from "echarts-for-react";
-import axios from 'axios';
+import data from "./data.js"
 
-var Bar1 = () => {
-  var [data, setData] = useState([]);
-
-  useEffect(() => {
-    var fetchData = async () => {
-      var response = await axios.get('./data.json');
-      var jsonData = response.data;
-      setData(jsonData);
-    };
-    fetchData();
-  }, []);
+const Bar1 = () => {
+  // const [data, setData] = useState([
+  //   {"StreamId":"123","Time":"1675739000","Category":"car,car,car,truck"},
+  //   {"StreamId":"123","Time":"1675739001","Category":"car,car"},
+  //   {"StreamId":"123","Time":"1675739002","Category":"car,car,truck"},
+  //   {"StreamId":"123","Time":"1675739003","Category":"car,car,car,truck"}
+  // ]);
+  const [chartData, setChartData] = useState(data);
   
   var option = {
     title: {
@@ -42,23 +39,17 @@ var Bar1 = () => {
       //dataTextStyle: {
         //color: "White",
       //},
-      data: data.speed,
+      data: data.map(item => item.hour),
     },
     yAxis: {
       type: "value",
-      data: data.speed,
     },
     series: [
       {
         name: ' ',
-        data: data.speed,
+        data: data.map(item => item.speed),
         type: "bar",
       },
-      {
-      name: ' ',
-      data: data.speed,
-      type: "bar",
-      }
     ],
   };
 

@@ -5,8 +5,8 @@ import Col from 'react-bootstrap/Col';
 import React, {useState} from "react";
 import StackedArea from './subcomponents/StackedArea';
 //import Bar from './subcomponents/Bar';
-import Bar1 from './subcomponents/Bar1';
-//import Bar2 from './subcomponents/bar2';
+//import Bar1 from './subcomponents/Bar1';
+import Bar2 from './subcomponents/Bar2';
 //import Bar3 from './subcomponents/Bar3';
 import PieChart from './subcomponents/PieChart';
 import './subcomponents/charts.css'
@@ -60,7 +60,7 @@ const Mainpage = () => {
                         <div class="box">
                             <div class = "chart">
                             {
-                            <StackedArea/>
+                            // <StackedArea/>
                             }
                             </div>
                         </div>
@@ -68,15 +68,15 @@ const Mainpage = () => {
                     <div class="col">
                         <div class="box">
                         <div class = "chart">
-                        { <Bar1/>}
+                          <Bar2/> 
                         </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="box">
                         <div class = "chart">
-                        {
-                        <PieChart/>}
+                        {/* {
+                        <PieChart/>} */}
                         </div>
                         </div>
                     </div>
