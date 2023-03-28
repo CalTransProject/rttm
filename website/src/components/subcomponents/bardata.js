@@ -1,4 +1,4 @@
-const data = [
+const bardata = [
   { hour: "00:00", speed: 56 },
   { hour: "01:00", speed: 62 },
   { hour: "02:00", speed: 70 },
@@ -25,4 +25,4 @@ const data = [
   { hour: "23:00", speed: 45 },
 ];
 
-export default data;
+export default bardata;

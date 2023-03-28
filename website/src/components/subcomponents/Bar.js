@@ -1,67 +1,56 @@
-import ReactEcharts from "echarts-for-react"; 
+import React, { useState, useEffect } from "react";
+import ReactEcharts from "echarts-for-react";
+import data from "./bardata.js"
 
-const StackedBar = () =>{
-   const option = {
-    title:{
-      text:'Speed',
+const Bar2 = () => {
+  const [chartData, setChartData] = useState(data);
+  const [xAxisData, setXAxisData] = useState([]);
+  const [seriesData, setSeriesData] = useState([]);
+
+  useEffect(() => {
+    // Update the xAxis and series data when chartData changes
+    setXAxisData(chartData.map(item => item.hour));
+    setSeriesData(chartData.map(item => item.speed));
+  }, [chartData]);
+  
+  var option = {
+    title: {
+      text: "Average Speed Per Hour",
       textStyle: {
-        color: 'white'
+        color: "white",
       },
     },
     tooltip: {},
-    legend:{
-      data: ['']
+    legend: {
+      data: [''],
     },
     xAxis: {
-      name: 'Hour',
-      nameTextStyle:{
-        color: '#fff',
-        fontSize:12,
-        fontWeight:'bold'
-    },
-    axisLine:{
-      lineStyle: {
-        color: 'white'
-      }
-    },
-      data: ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00', '7:00', 
-      '8:00', '9:00', '10:00', '11:00', '12:00','13:00','14:00', '15:00', '16:00', 
-      '17:00','18:00', '19:00', '20:00', '21:00' , '22:00', '23:00'],
-      dataTextStyle:{
-        color: 'white'
+      name: "Hour",
+      nameTextStyle: {
+        color: "#fff",
+        fontSize: 12,
+        fontWeight: "bold",
       },
+      axisLine: {
+        lineStyle: {
+          color: "white",
+        },
+      },
+      data: xAxisData,
     },
     yAxis: {
-      name: 'Average Speed of Vehicles',
-      nameLocation:'middle',
-      nameGap:30,
-      nameTextStyle:{
-          color: 'white',
-          fontSize:18,
-          fontWeight:'bold'
-      },
-      axisLine:{
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      nameRotate:90,
-      data: ['20', '40', '60', '80','100'],
+      type: "value",
     },
     series: [
       {
         name: ' ',
-        type: 'bar',
-        data: []
+        data: seriesData,
+        type: "bar",
       },
-      {
-        name: ' ',
-        type: 'bar',
-        data: []
-      }
-    ]
+    ],
   };
 
-return( <ReactEcharts option={option} />);
-} 
-export default StackedBar;
+  return <ReactEcharts option={option} />;
+};
+
+export default Bar2;
