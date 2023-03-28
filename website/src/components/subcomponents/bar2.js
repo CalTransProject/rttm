@@ -15,7 +15,7 @@ const Bar2 = () => {
   
   var option = {
     title: {
-      text: "Speed",
+      text: "Average Speed Per Hour",
       textStyle: {
         color: "white",
       },
