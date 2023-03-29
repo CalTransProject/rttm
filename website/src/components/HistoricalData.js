@@ -6,7 +6,7 @@ const HistoricalData = () => {
         <section>
             {/* The below atm is for testing purposes and is not formatted */}
             <div class="box">
-                <Body />
+                <h1>Historical Data Page</h1>
             </div>
         </section>
     )

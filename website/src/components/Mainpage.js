@@ -26,8 +26,18 @@ const Mainpage = () => {
                     <div class="col">
                         <h4 class="camText">Camera 2</h4>
                             <div class="video-box">
-                                <h5>Video Player Placeholder</h5>
-                                {/* <Video /> */}
+                                <video
+                                    id="my-video"
+                                    class="video-js"
+                                    controls
+                                    preload="auto"
+                                    width="100%"
+                                    height="100%"
+                                    poster="MY_VIDEO_POSTER.jpg"
+                                    data-setup="{}"
+                                >
+                                    <source src="../videos/*insert video file name here*" type="video/mp4" />
+                                </video>
                             </div>
                     </div>
                 </div>
