@@ -1,0 +1,41 @@
+.sidebar-container {
+  display: flex;
+  height: 100vh;
+  overflow: scroll initial;
+  margin-left: -15px;
+  margin-bottom: -14px;
+}
+.text-decoration-none {
+  color: rgb(255, 0, 0);
+  padding-right: 10px;
+}
+
+.text-decoration-none:hover {
+  color: white;
+}
+
+.activeClicked:hover {
+  color: rgb(255, 95, 95);
+}
+
+.menu-item:hover {
+  color: red;
+}
+
+.sidebar-footer {
+  padding: "20px 5px";
+}
+.fa-fa-bars-fa-large {
+  color: red;
+}
+
+.my-sidebar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #ff0000;
+  color: white;
+  overflow: auto;
+}

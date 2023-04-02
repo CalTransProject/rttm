@@ -1,15 +1,11 @@
-import MainPicture from './subcomponents/MainPicture';
+import SidebarMenu from "./subcomponents/sub-camera-management/SideBarMenu";
 
-const CameraManagement = () => { 
-    return(
-        <section>
-            {/* The below atm is for testing purposes and is not formatted */}
-            <div class="text-box">
-                <MainPicture />
-                <p>Hi</p>
-            </div>
-        </section>
-    )
-}
+const CameraManagement = () => {
+  return (
+    <div>
+      <SidebarMenu />
+    </div>
+  );
+};
 
-export default CameraManagement
+export default CameraManagement;
