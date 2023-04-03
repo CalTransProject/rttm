@@ -29,38 +29,6 @@ const Technologies = () => {
   return (
     <section>
       <div class="container-fluid">
-        <div class="row row-cols-2">
-          <div class="col">
-            <div class="text-box">
-              <h3>Real Time Traffic Monitoring</h3>
-              <p>
-                Contribute to intelligent transportation systems (ITS)
-                applications to achieve smarter and safer transportation
-                infrastructure. This is done through LiDAR data that can provide
-                valuable info that traditional radar or video s ensors can't.
-              </p>
-            </div>
-          </div>
-          <div class="col">
-            <div>
-              <TechnologyTrafficPicture />
-            </div>
-          </div>
-          <div class="col">
-            <TechnologyLidarPicture />
-          </div>
-          <div class="col">
-            <div class="text-box">
-              <h4>What is LiDAR?</h4>
-              <p>
-                Contribute to intelligent transportation systems (ITS)
-                applications to achieve smarter and safer transportation
-                infrastructure. This is done through LiDAR data that can provide
-                valuable info that traditional radar or video s ensors can't.
-              </p>
-            </div>
-          </div>
-        </div>
         <div class="col">
           <button
             onClick={() => handleClick("WebDevelopment")}
@@ -106,6 +74,39 @@ const Technologies = () => {
           >
             2D Model
           </button>
+        </div>
+
+        <div class="row row-cols-2">
+          <div class="col">
+            <div class="text-box">
+              <h3>Real Time Traffic Monitoring</h3>
+              <p>
+                Contribute to intelligent transportation systems (ITS)
+                applications to achieve smarter and safer transportation
+                infrastructure. This is done through LiDAR data that can provide
+                valuable info that traditional radar or video s ensors can't.
+              </p>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <TechnologyTrafficPicture />
+            </div>
+          </div>
+          <div class="col">
+            <TechnologyLidarPicture />
+          </div>
+          <div class="col">
+            <div class="text-box">
+              <h4>What is LiDAR?</h4>
+              <p>
+                Contribute to intelligent transportation systems (ITS)
+                applications to achieve smarter and safer transportation
+                infrastructure. This is done through LiDAR data that can provide
+                valuable info that traditional radar or video s ensors can't.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div class="row row-cols-2">
