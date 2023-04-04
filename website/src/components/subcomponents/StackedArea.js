@@ -1,13 +1,52 @@
 import ReactEcharts from "echarts-for-react"; 
+import initialVehicleData from "./vehicleData";
+import React, { useState, useEffect } from "react";
+
+const mockData = (initialData) => {
+  const num = Math.floor(Math.random() * 10)
+  const catagories = ["suv", "car", "bus", "pickup", "truck" , "sedan"]
+  const lastItem = initialData.at(-1)
+  const newTime = lastItem.time +1 
+  const item =  { time: newTime, suv: lastItem.suv, car: lastItem.car, bus: lastItem.bus, pickup: lastItem.pickup, truck: lastItem.truck, sedan: lastItem.sedan }
+  if (num < 6) {
+    const catagory = catagories[num]
+    const num1 = Math.floor(Math.random() * 10)
+    if (num1 % 2 === 0) {
+      item[catagory] += 1
+    }else if (item[catagory] > 0){
+      item[catagory] -= 1
+    }
+  }
+
+  const newData = [...initialData, item]
+  console.log(newData)
+  return newData
+}
 
 const StackedArea = () =>{
+  const [vehicleData, setVehicleData] = useState(initialVehicleData);
+
+  const updateVehicleData = () => {
+    const newData = mockData(vehicleData)
+    setVehicleData([...newData])
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("Working");
+      return updateVehicleData()
+    },1000);
+    return () => clearInterval(interval);
+  }, [vehicleData]);
+
+
   const option = {
     title: {
       text: ''
     },
     tooltip: {},
     legend: {
-      data: ['']
+      data:["Car", "SUV", "Bus", "Pickup", "Truck", "Sedan"]
     },
     xAxis: {
       name:'Time',
@@ -22,12 +61,7 @@ const StackedArea = () =>{
           color: 'white'
         }
       },
-      data: ['1', '2', '3', '4', '5', '6', '7', '8','9', '10', 
-      '11', '12', '13', '14', '15', '16','17', '18', '19', '20',
-       '21', '22', '23', '24','25', '26', '27', '28', '29', '30',
-       '31', '32', '33', '34', '35', '36', '37', '38','39', '40', 
-       '41', '42', '43', '44', '45', '46','47', '48', '49', '50',
-        '51', '52', '53', '54','55', '56', '57', '58', '59', '60',]
+      data: vehicleData.map(item => item.time.toString()),
     },
     yAxis: {
       name:'Number of Vehicles',
@@ -43,18 +77,33 @@ const StackedArea = () =>{
         }
       },
       nameRotate:90,
-      data: []
+      type: "value"
   },
     series: [
       {
-        name: '',
+        name: 'Car',
         type: 'line',
-        data: []
+        data: vehicleData.map(item => item.car),
       },
       {
-        name: '',
+        name: 'SUV',
         type: 'line',
-        data: []
+        data: vehicleData.map(item => item.suv),
+      },
+      {
+        name: 'Pickup',
+        type: 'line',
+        data: vehicleData.map(item => item.pickup),
+      },
+      {
+        name: 'Truck',
+        type: 'line',
+        data: vehicleData.map(item => item.truck),
+      },
+      {
+        name: 'Sedan',
+        type: 'line',
+        data: vehicleData.map(item => item.sedan),
       },
     ]
   };

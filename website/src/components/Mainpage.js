@@ -57,7 +57,7 @@ const Mainpage = () => {
                         <div class="box">
                             <div class = "chart">
                             {
-                            // <StackedArea/>
+                            <StackedArea/>
                             }
                             </div>
                         </div>
@@ -72,8 +72,8 @@ const Mainpage = () => {
                     <div class="col">
                         <div class="box">
                         <div class = "chart">
-                        {/* {
-                        <PieChart/>} */}
+                        {
+                        <PieChart/>}
                         </div>
                         </div>
                     </div>

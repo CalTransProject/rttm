@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import ReactEcharts from "echarts-for-react";
 import data from "./bardata.js"
 
-const Bar2 = () => {
+const Bar = () => {
   const [chartData, setChartData] = useState(data);
   const [xAxisData, setXAxisData] = useState([]);
   const [seriesData, setSeriesData] = useState([]);
 
   useEffect(() => {
-    // Update the xAxis and series data when chartData changes
-    setXAxisData(chartData.map(item => item.hour));
-    setSeriesData(chartData.map(item => item.speed));
+    const interval = setInterval(() => {
+      setXAxisData(chartData.map(item => item.hour));
+      setSeriesData(chartData.map(item => item.speed));
+    },1000);
+    return () => clearInterval(interval);
   }, [chartData]);
   
   var option = {
@@ -53,4 +55,4 @@ const Bar2 = () => {
   return <ReactEcharts option={option} />;
 };
 
-export default Bar2;
+export default Bar;

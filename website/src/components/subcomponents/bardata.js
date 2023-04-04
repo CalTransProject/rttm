@@ -1,5 +1,5 @@
 const bardata = [
-  { hour: "00:00", speed: 56 },
+  { hour: "00:00", speed: 55 },
   { hour: "01:00", speed: 62 },
   { hour: "02:00", speed: 70 },
   { hour: "03:00", speed: 58 },
