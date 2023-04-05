@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import ReactEcharts from "echarts-for-react";
-import data from "./bardata.js"
+import initialSpeedData from "./bardata.js"
+import mockData from "./barDataDy.js";
 
 const Bar = () => {
-  const [chartData, setChartData] = useState(data);
-  const [xAxisData, setXAxisData] = useState([]);
-  const [seriesData, setSeriesData] = useState([]);
+  const [speedData, setSpeedData] = useState(initialSpeedData);
 
+  const updateSpeedData = () => {
+    const newData = mockData(speedData)
+    setSpeedData([...newData])
+  }
   useEffect(() => {
     const interval = setInterval(() => {
-      setXAxisData(chartData.map(item => item.hour));
-      setSeriesData(chartData.map(item => item.speed));
+      return updateSpeedData()
     },1000);
     return () => clearInterval(interval);
-  }, [chartData]);
+  }, [speedData]);
   
   var option = {
     title: {
-      text: "Average Speed Per Hour",
+      text: "Average Speed Per Minute",
       textStyle: {
         color: "white",
       },
@@ -38,7 +40,7 @@ const Bar = () => {
           color: "white",
         },
       },
-      data: xAxisData,
+      data: speedData.map(item => item.time.toString()),
     },
     yAxis: {
       type: "value",
@@ -46,7 +48,7 @@ const Bar = () => {
     series: [
       {
         name: ' ',
-        data: seriesData,
+        data: speedData.map(item => item.speed),
         type: "bar",
       },
     ],
