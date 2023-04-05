@@ -25,7 +25,10 @@ const StackedArea = () =>{
     },
     tooltip: {},
     legend: {
-      data:["Car", "SUV", "Bus", "Pickup", "Truck", "Sedan"]
+      data:["Car", "SUV", "Bus", "Pickup", "Truck", "Sedan"],
+      textStyle: {
+        color: "#fff"
+      }
     },
     xAxis: {
       name:'Time',

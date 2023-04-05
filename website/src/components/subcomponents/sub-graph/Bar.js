@@ -52,6 +52,9 @@ const Bar = () => {
         type: "bar",
       },
     ],
+    textStyle: {
+      color: "#fff"
+    },
   };
 
   return <ReactEcharts option={option} />;
