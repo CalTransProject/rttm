@@ -6,6 +6,7 @@ import CameraManagement from "./components/CameraManagement";
 import HistoricalData from "./components/HistoricalData";
 import React, {useState} from "react";
 import { BrowserRouter as Router, Route, Routes, Switch } from 'react-router-dom';
+import AboutUs from "./components/AboutUs";
 
 
 
@@ -21,7 +22,7 @@ function App() {
               <Route path="/technologies" element={<Technologies />} />
               <Route path="/camera-management" element={<CameraManagement />} />
               <Route path="/historical-data" element={<HistoricalData />} />
-
+              <Route path="/about-us" element={<AboutUs />} />
             </Routes>
           </div>
           <div className = "chart">

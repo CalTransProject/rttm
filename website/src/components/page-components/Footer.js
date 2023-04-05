@@ -9,12 +9,19 @@ const Footer = () => {
                     <a className="footer-links" href="/">
                         <button type="button" class="btn btn-link">Home</button>
                     </a>
+                    <a className="footer-links" href="/camera-management">
+                        <button type="button" class="btn btn-link">Camera Management</button>
+                    </a>
+                    <a className="footer-links" href="/historical-data">
+                        <button type="button" class="btn btn-link">Historical Data</button>
+                    </a>
                     <a className="footer-links" href="/technologies">
                         <button type="button" class="btn btn-link">Technologies</button>
                     </a>
-                    {/* <a className="footer-links" href="/">
-                        <button type="button" class="btn btn-link">Login/SignUp</button>
-                    </a> */}
+                    <a className="footer-links" href="/about-us">
+                        <button type="button" class="btn btn-link">About Us</button>
+                    </a>
+                    
                 </small>
             </div>
         </footer>

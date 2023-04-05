@@ -1,9 +1,9 @@
 //import Chart from "react-apexcharts";
 import React, {useState} from "react";
-import StackedArea from './subcomponents/StackedArea';
-import Bar from './subcomponents/Bar';
-import PieChart from './subcomponents/PieChart';
-import './subcomponents/charts.css'
+import StackedArea from './subcomponents/sub-graph/StackedArea';
+import Bar from './subcomponents/sub-graph/Bar';
+import PieChart from './subcomponents/sub-graph/PieChart';
+import './subcomponents/sub-graph/charts.css'
 import Video from "./subcomponents/sub-s3-components/Video";
 import Body from "./subcomponents/sub-s3-components/Body";
 import './subcomponents/sub-s3-components/videoPlayer.css';
