@@ -19,7 +19,7 @@ const Bar = () => {
   
   var option = {
     title: {
-      text: "Average Speed Per Minute",
+      text: "Average Speed Per Second",
       textStyle: {
         color: "white",
       },
@@ -29,10 +29,10 @@ const Bar = () => {
       data: [''],
     },
     xAxis: {
-      name: "Hour",
+      name: "Seconds",
       nameTextStyle: {
         color: "#fff",
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "bold",
       },
       axisLine: {
