@@ -31,7 +31,7 @@ const StackedArea = () =>{
       }
     },
     xAxis: {
-      name:'Time',
+      name:'Time (Seconds)',
       nameLocation:'middle',
       nameGap:30,
       nameTextStyle:{

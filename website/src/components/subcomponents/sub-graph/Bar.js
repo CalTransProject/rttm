@@ -29,10 +29,12 @@ const Bar = () => {
       data: [''],
     },
     xAxis: {
-      name: "Seconds",
+      name: "Time (Seconds)",
+      nameLocation: "middle",
+      nameGap:30,
       nameTextStyle: {
         color: "#fff",
-        fontSize: 11,
+        fontSize: 18,
         fontWeight: "bold",
       },
       axisLine: {
@@ -44,10 +46,17 @@ const Bar = () => {
     },
     yAxis: {
       type: "value",
+      name: "Speed",
+      nameLocation: "middle",
+      nameGap:30,
+      nameTextStyle:{
+        fontSize:18,
+        fontWeight: "bold"
+      }
     },
     series: [
       {
-        name: ' ',
+        name: '',
         data: speedData.map(item => item.speed),
         type: "bar",
       },
