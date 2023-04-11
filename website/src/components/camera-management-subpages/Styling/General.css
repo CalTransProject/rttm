@@ -1,34 +1,49 @@
+/*Changin Header Color to red */
 .General h1 {
   color: rgb(255, 15, 15);
 }
+
+/* center the table horizontally */
 table {
-  border-collapse: collapse; /* remove borders between table cells */
-  width: 100%; /* make the table fill its container */
-  max-width: 800px; /* limit the width of the table to 800px */
-  margin: 0 auto;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 800px;
   color: #888;
+  text-align: center;
 }
 
+table.table-bordered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* make the header text bold and larger */
 th {
-  font-weight: bold; /* make the header text bold */
-  background-color: #f2f2f2; /* set a light grey background color for the header */
-  text-align: left; /* align the header text to the left */
+  font-weight: bold;
+  font-size: 2em;
+  background-color: #f2f2f2;
+  text-align: left;
   padding: 12px;
 }
 
+/* make the cell text larger */
 td {
   padding: 12px;
-  color: #f2f2f2;
+  color: #979797;
+  font-size: 1.5em;
 }
 
+/* add hover effect */
 tbody tr:hover {
-  background-color: #ff00005b; /* set the hover color to a transperent red */
+  background-color: #ff00005b;
 }
 
+/* remove left border on first header cell */
 table th:first-child {
   border-left: none;
 }
 
+/* remove right border on last header cell */
 table th:last-child {
   border-right: none;
 }
