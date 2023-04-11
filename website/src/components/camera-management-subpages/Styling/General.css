@@ -1,0 +1,34 @@
+.General h1 {
+  color: rgb(255, 15, 15);
+}
+table {
+  border-collapse: collapse; /* remove borders between table cells */
+  width: 100%; /* make the table fill its container */
+  max-width: 800px; /* limit the width of the table to 800px */
+  margin: 0 auto;
+  color: #888;
+}
+
+th {
+  font-weight: bold; /* make the header text bold */
+  background-color: #f2f2f2; /* set a light grey background color for the header */
+  text-align: left; /* align the header text to the left */
+  padding: 12px;
+}
+
+td {
+  padding: 12px;
+  color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #ff00005b; /* set the hover color to a transperent red */
+}
+
+table th:first-child {
+  border-left: none;
+}
+
+table th:last-child {
+  border-right: none;
+}

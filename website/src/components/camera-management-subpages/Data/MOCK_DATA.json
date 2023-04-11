@@ -1,0 +1,37 @@
+[
+  {
+    "Index": 1,
+    "Name": "Camera Name 1",
+    "Type": "2D",
+    "Address": "632 Texas Park",
+    "Default": "Yes"
+  },
+  {
+    "Index": 2,
+    "Name": "Camera Name 2",
+    "Type": "3D",
+    "Address": "02 Starling Place",
+    "Default": "Yes"
+  },
+  {
+    "Index": 3,
+    "Name": "Camera Name 3",
+    "Type": "2D",
+    "Address": "558 Menomonie Park",
+    "Default": "No"
+  },
+  {
+    "Index": 4,
+    "Name": "Camera Name 4",
+    "Type": "3D",
+    "Address": "904 Heffernan Lane",
+    "Default": "No"
+  },
+  {
+    "Index": 5,
+    "Name": "Camera Name 5",
+    "Type": "2D",
+    "Address": "79255 Kenwood Court",
+    "Default": "No"
+  }
+]
