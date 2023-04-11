@@ -1,5 +1,6 @@
 import React from "react";
 import "./styling/SideBarMenu.css";
+import { Outlet } from "react-router-dom";
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -23,7 +24,7 @@ function SidebarMenu() {
           <CDBSidebarMenu>
             <NavLink
               exact
-              to="/camera-management"
+              to="/camera-management/general"
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem className="menu-item" icon="video">
@@ -32,7 +33,7 @@ function SidebarMenu() {
             </NavLink>
             <NavLink
               exact
-              to="/camera-management"
+              to="/camera-management/new-camera"
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem className="menu-item" icon="plus">
@@ -41,7 +42,7 @@ function SidebarMenu() {
             </NavLink>
             <NavLink
               exact
-              to="/camera-management"
+              to="/camera-management/remove-cameras"
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem
@@ -53,7 +54,7 @@ function SidebarMenu() {
             </NavLink>
             <NavLink
               exact
-              to="/camera-management"
+              to="/camera-management/configuration"
               activeClassName="activeClicked"
             >
               <CDBSidebarMenuItem className="menu-item" icon="wrench">
@@ -66,6 +67,7 @@ function SidebarMenu() {
           <div className="sidebar-footer">Sidebar Footer</div>
         </CDBSidebarFooter>
       </CDBSidebar>
+      <Outlet />
     </div>
   );
 }
