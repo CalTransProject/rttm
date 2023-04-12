@@ -77,6 +77,22 @@ const Mainpage = () => {
                         </div>
                         </div>
                     </div>
+                    <div class="col">
+                        <div class="box">
+                        <div class = "chart">
+                        {
+                        <PieChart/>}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="box">
+                        <div class = "chart">
+                        {
+                        <PieChart/>}
+                        </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
