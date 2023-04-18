@@ -7,6 +7,8 @@ import './subcomponents/sub-graph/charts.css'
 import Video from "./subcomponents/sub-s3-components/Video";
 import Body from "./subcomponents/sub-s3-components/Body";
 import './subcomponents/sub-s3-components/videoPlayer.css';
+import StackedBar from "./subcomponents/sub-graph/StackedBar";
+import Density from "./subcomponents/sub-graph/Density";
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
     //Page Layout
@@ -81,7 +83,7 @@ const Mainpage = () => {
                         <div class="box">
                         <div class = "chart">
                         {
-                        <PieChart/>}
+                        <StackedBar/>}
                         </div>
                         </div>
                     </div>
@@ -89,7 +91,7 @@ const Mainpage = () => {
                         <div class="box">
                         <div class = "chart">
                         {
-                        <PieChart/>}
+                        <Density/>}
                         </div>
                         </div>
                     </div>
