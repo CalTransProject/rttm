@@ -1,49 +1,86 @@
-/*Changin Header Color to red */
-.General h1 {
-  color: rgb(255, 15, 15);
+.Table-Wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* center the table horizontally */
 table {
+  margin: 0 auto;
   border-collapse: collapse;
   width: 100%;
-  max-width: 800px;
-  color: #888;
+  max-width: 1000px;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #c6c6c6;
   text-align: center;
+  background-color: #222;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
 }
 
-table.table-bordered {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* make the header text bold and larger */
 th {
-  font-weight: bold;
-  font-size: 2em;
-  background-color: #f2f2f2;
-  text-align: left;
-  padding: 12px;
+  padding: 2rem;
+  color: #fff;
+  background-color: #333;
+  border-bottom: 2px solid #ffffff;
+  text-transform: uppercase;
+  font-size: 1.8rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  font-family: "Montserrat", sans-serif;
 }
 
-/* make the cell text larger */
-td {
-  padding: 12px;
-  color: #979797;
-  font-size: 1.5em;
-}
-
-/* add hover effect */
 tbody tr:hover {
   background-color: #ff00005b;
 }
 
-/* remove left border on first header cell */
-table th:first-child {
-  border-left: none;
+td {
+  padding: 1.5rem 2rem;
+  color: #fafafa;
+  font-size: 1.8rem;
+  font-weight: 300;
+  font-family: "Open Sans", sans-serif;
 }
 
-/* remove right border on last header cell */
-table th:last-child {
-  border-right: none;
+.modal-content {
+  background-color: #333;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-title {
+  font-size: 2.5rem;
+  font-weight: 500;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+}
+
+.modal-body p {
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
+}
+
+.modal-footer button {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #555;
+  border: none;
+  border-radius: 200px;
+  padding: 1.2rem 2.5rem;
+  letter-spacing: 1px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.modal-footer button:hover {
+  background-color: #ff00005b;
 }
