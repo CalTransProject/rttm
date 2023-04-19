@@ -17,7 +17,7 @@ const Mainpage = () => {
             <div class="container-fluid">
                 <div class="row row-cols-1">
                 <div class="col text-center">
-                        <h1 className="welcome">Welcome to Home Dashboard</h1>
+                        <h1 className="welcome">Home Dashboard</h1>
                     </div>
                 </div>
                 <div class="row row-cols-2">
