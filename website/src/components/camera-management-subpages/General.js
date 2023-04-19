@@ -1,7 +1,6 @@
 import MOCK_DATA from "./Data/MOCK_DATA.json";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, Button } from "react-bootstrap";
 import "./Styling/General.css";
 import ModalComponent from "../subcomponents/sub-camera-management/Modal.js";
 
