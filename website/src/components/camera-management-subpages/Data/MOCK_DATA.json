@@ -4,34 +4,44 @@
     "Name": "Camera Name 1",
     "Type": "2D",
     "Address": "632 Texas Park",
-    "Default": "Yes"
+    "Default": "Yes",
+    "Camera_Model": "Veloyne Lidar",
+    "Camera_Description": "Velodyne’s Puck lidar sensor (previously VLP-16) is the highest-value sensor on the market. The Puck™’s reliability, power efficiency, and surround view make it the ideal solution for affordable low-speed autonomy and driver assistance applications."
   },
   {
     "Index": 2,
     "Name": "Camera Name 2",
     "Type": "3D",
     "Address": "02 Starling Place",
-    "Default": "Yes"
+    "Default": "Yes",
+    "Camera_Model": "Hokuyo UST-10LX ",
+    "Camera_Description": "The Hokuyo UST-10LX LIDAR sensor is the optimal laser scanning solution for obstacle detection and localization. It's an advanced tool that detects and locates objects along the path of several types of automated machines and vehicles."
   },
   {
     "Index": 3,
     "Name": "Camera Name 3",
     "Type": "2D",
     "Address": "558 Menomonie Park",
-    "Default": "No"
+    "Default": "No",
+    "Camera_Model": "Veloyne Lidar",
+    "Camera_Description": "Velodyne’s Puck lidar sensor (previously VLP-16) is the highest-value sensor on the market. The Puck™’s reliability, power efficiency, and surround view make it the ideal solution for affordable low-speed autonomy and driver assistance applications."
   },
   {
     "Index": 4,
     "Name": "Camera Name 4",
     "Type": "3D",
     "Address": "904 Heffernan Lane",
-    "Default": "No"
+    "Default": "No",
+    "Camera_Model": "Hokuyo UST-10LX ",
+    "Camera_Description": "The Hokuyo UST-10LX LIDAR sensor is the optimal laser scanning solution for obstacle detection and localization. It's an advanced tool that detects and locates objects along the path of several types of automated machines and vehicles."
   },
   {
     "Index": 5,
     "Name": "Camera Name 5",
     "Type": "2D",
     "Address": "79255 Kenwood Court",
-    "Default": "No"
+    "Default": "No",
+    "Camera_Model": "Veloyne Lidar",
+    "Camera_Description": "Velodyne’s Puck lidar sensor (previously VLP-16) is the highest-value sensor on the market. The Puck™’s reliability, power efficiency, and surround view make it the ideal solution for affordable low-speed autonomy and driver assistance applications."
   }
 ]
