@@ -3,9 +3,11 @@ import Footer from "./components/page-components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
 import HistoricalData from "./components/HistoricalData";
-
 import CameraManagement from "./components/CameraManagement";
 import General from "./components/camera-management-subpages/General";
+import HistoricalGeneral from "./components/historical-data-subpages/HistoricalGeneral";
+import HistoricalUpload from "./components/historical-data-subpages/HistoricalUpload";
+import HistoricalDownload from "./components/historical-data-subpages/HistoricalDownload";
 import Configuration from "./components/camera-management-subpages/Configuration";
 import NewCamera from "./components/camera-management-subpages/NewCamera";
 import RemoveCameras from "./components/camera-management-subpages/RemoveCameras";
@@ -37,7 +39,11 @@ function App() {
             <Route path="configuration" element={<Configuration />} />
           </Route>
 
-          <Route path="/historical-data" element={<HistoricalData />} />
+          <Route path="/historical-data" element={<HistoricalData />}>
+            <Route path="general" element={<HistoricalGeneral />} />
+            <Route path="upload" element={<HistoricalUpload />} />
+            <Route path="download" element={<HistoricalDownload />} />
+          </Route>
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
       </div>

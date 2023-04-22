@@ -4,3 +4,9 @@
     clear:both;
     padding-top:20px;
 }
+
+button{
+    color: black;
+    text-decoration: none;
+    cursor: auto;
+}

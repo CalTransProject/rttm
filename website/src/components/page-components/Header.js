@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./header.css";
+import { NavLink } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -12,29 +13,29 @@ const Header = () => {
           <div class="col justify-content-center">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a href="/" class="nav-link">
+                <NavLink exact to="/" className="nav-link" activeClassName="active">
                   Home
-                </a>
+                </NavLink>
               </li>
               <li class="nav-item">
-                <a href="/camera-management/general" class="nav-link">
+                <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
                   Camera Management
-                </a>
+                </NavLink>
               </li>
               <li class="nav-item">
-                <a href="/historical-data" class="nav-link">
-                  Historical Data
-                </a>
+                <NavLink exact to="/historical-data/general" className="nav-link" activeClassName="active">
+                Historical Data
+                </NavLink>
               </li>
               <li class="nav-item">
-                <a href="/technologies" class="nav-link">
-                  Technologies
-                </a>
+                <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
+                Technologies
+                </NavLink>
               </li>
               <li class="nav-item">
-                <a href="/about-us" class="nav-link">
-                  About Us
-                </a>
+                <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
+                About Us
+                </NavLink>
               </li>
             </ul>
           </div>

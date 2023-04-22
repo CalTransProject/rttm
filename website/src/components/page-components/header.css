@@ -6,8 +6,19 @@ nav {
   /* border: 1px solid #100000; */
 }
 
+.nav-item{
+  padding: 1pt;
+}
+
+.nav-link.active{
+  background-color: rgb(232, 232, 232);
+  border-radius: 9px;
+  color: green;
+}
+
 .nav-link {
   color: rgb(255, 255, 255);
+  border-radius: 9px;
   font-size: 15pt;
   font-weight: 500;
   white-space: nowrap;

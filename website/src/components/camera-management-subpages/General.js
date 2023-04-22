@@ -18,6 +18,8 @@ const General = () => {
     setShowModal(false);
   };
 
+  
+
   return (
     <div className="Table-Wrapper">
       <div style={{ textAlign: "center" }}>
