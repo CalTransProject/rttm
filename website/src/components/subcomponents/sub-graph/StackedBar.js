@@ -2,6 +2,33 @@ import ReactEcharts from "echarts-for-react";
 import React, { useState, useEffect } from "react";
 
 const StackedBar = () => {
+    const [data, setData] = useState({
+        car: [],
+        suv:[],
+        pickup: [],
+        truck: [],
+        sedan: [],
+    });
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setData({
+            car: generateRandomValues(),
+            suv: generateRandomValues(),
+            pickup: generateRandomValues(),
+            truck: generateRandomValues(),
+            sedan: generateRandomValues(),
+        });
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }, []);
+    const generateRandomValues = () => {
+        return [      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5)    ];
+      };
+
+
+
     const option = {
         tooltip: {
         trigger: 'axis',
@@ -10,7 +37,11 @@ const StackedBar = () => {
             type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
         },
         },
-        legend: {},
+        legend: {      
+            textStyle: {
+                color: "#fff"
+          }
+        },
         grid: {
         left: '3%',
         right: '4%',
@@ -18,72 +49,94 @@ const StackedBar = () => {
         containLabel: true
         },
         xAxis: {
-        type: 'value'
+        type: 'value',
+        axisLabel: {
+            color: 'white' // add this line to set the color of the y-axis labels to white
+          }
         },
         yAxis: {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        data: ['Lane 1', 'Lane 2', 'Lane 3', 'Lane 4', 'Lane 5', 'Lane 6'],
+        axisLabel: {
+            color: 'white' // add this line to set the color of the y-axis labels to white
+          }
         },
         series: [
         {
-            name: 'Direct',
+            name: 'Car',
             type: 'bar',
             stack: 'total',
             label: {
-            show: true
+            show: true,  
+            color: '#fff',
+            },
+            textStyle: {
+                color: 'white',
             },
             emphasis: {
             focus: 'series'
             },
-            data: [320, 302, 301, 334, 390, 330, 320]
+            data: data.car
         },
         {
-            name: 'Mail Ad',
+            name: 'SUV',
             type: 'bar',
             stack: 'total',
             label: {
             show: true
             },
+            textStyle: {
+                color: 'white'
+            },
             emphasis: {
             focus: 'series'
             },
-            data: [120, 132, 101, 134, 90, 230, 210]
+            data: data.suv
         },
         {
-            name: 'Affiliate Ad',
+            name: 'Pickup',
             type: 'bar',
             stack: 'total',
             label: {
             show: true
             },
+            textStyle: {
+                color: 'white',
+            },
             emphasis: {
             focus: 'series'
             },
-            data: [220, 182, 191, 234, 290, 330, 310]
+            data: data.pickup
         },
         {
-            name: 'Video Ad',
+            name: 'Truck',
             type: 'bar',
             stack: 'total',
             label: {
             show: true
             },
+            textStyle: {
+                color: 'white',
+            },
             emphasis: {
             focus: 'series'
             },
-            data: [150, 212, 201, 154, 190, 330, 410]
+            data: data.truck
         },
         {
-            name: 'Search Engine',
+            name: 'Sedan',
             type: 'bar',
             stack: 'total',
             label: {
             show: true
             },
+            textStyle: {
+                color: 'white',
+            },
             emphasis: {
             focus: 'series'
             },
-            data: [820, 832, 901, 934, 1290, 1330, 1320]
+            data: data.sedan
         }
         ]
     };
