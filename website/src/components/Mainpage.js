@@ -38,7 +38,7 @@ const Mainpage = () => {
                                     poster="MY_VIDEO_POSTER.jpg"
                                     data-setup="{}"
                                 >
-                                    <source src="../videos/*insert video file name here*" type="video/mp4" />
+                                    <source src="../videos/Tampa and Plummer street corner 2023-03-20 13-30-43_Trim.mp4" type="video/mp4" />
                                 </video>
                             </div>
                     </div>

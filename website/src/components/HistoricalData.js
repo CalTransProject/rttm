@@ -5,9 +5,7 @@ import HistoricalSidebarMenu from './subcomponents/sub-historical-data/SideBarMe
 const HistoricalData = () => { 
     return(
         <section>
-            <div className="CameraManagement">
-                <HistoricalSidebarMenu />
-            </div>
+            <HistoricalSidebarMenu />            
         </section>
     )
 }

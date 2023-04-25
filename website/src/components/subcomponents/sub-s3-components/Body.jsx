@@ -5,7 +5,6 @@ import {Container, Skeleton} from "@mui/material";
 import Video from "./Video";
 import "./videoPlayer.css";
 
-
 const getEntries = (dataset) => {
   return (
     Object.entries(dataset?.Items?.reduce((acc, item) => {

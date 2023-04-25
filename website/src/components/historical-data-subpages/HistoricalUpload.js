@@ -1,12 +1,12 @@
+import './styling/general.css';
+import React, { useState } from 'react';
 
-const HistoricalUpload = () => { 
-    return(
-        <section>
-            <div className="CameraManagement">
-                <h1>Yo</h1>
-            </div>
-        </section>
-    )
-}
+const HistoricalUpload = () => {
+  return (
+    <div className='GeneralSection'>
+      <h1>Upload</h1>
+    </div>
+  );
+};
 
-export default HistoricalUpload
+export default HistoricalUpload;

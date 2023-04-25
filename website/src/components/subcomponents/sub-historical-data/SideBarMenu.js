@@ -36,7 +36,7 @@ function HistoricalSidebarMenu() {
               to="/historical-data/upload"
               activeClassName="activeClicked"
             >
-              <CDBSidebarMenuItem className="menu-item" icon="plus">
+              <CDBSidebarMenuItem className="menu-item" icon="upload">
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
@@ -54,9 +54,9 @@ function HistoricalSidebarMenu() {
             </NavLink>
           </CDBSidebarMenu>
         </CDBSidebarContent>
-        <CDBSidebarFooter style={{ textAlign: "center" }}>
+        {/* <CDBSidebarFooter style={{ textAlign: "center" }}>
           <div className="sidebar-footer">Sidebar Footer</div>
-        </CDBSidebarFooter>
+        </CDBSidebarFooter> */}
       </CDBSidebar>
       <Outlet />
     </div>
