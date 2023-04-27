@@ -2,6 +2,19 @@ import ReactEcharts from "echarts-for-react";
 import React, { useState, useEffect } from "react";
 
 const Density = () => {
+    const[data , setData] = useState([]);
+    const[time, setTime] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const newData = Math.floor(Math.random() * 10) + 1; // random data between 100 and 300
+            setData(data => [...data, newData]); // add new data to the state
+            setTime(time => time + 1); // increment time by 1 second
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+
     const option = {
         title: {
             text: 'Density Chart',
@@ -11,8 +24,9 @@ const Density = () => {
 
         },
         xAxis: {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            type: 'value',
+            min: 0,
+            max: time,
             axisLine: {
                 lineStyle: {
                     color: 'white'
@@ -49,7 +63,7 @@ const Density = () => {
         },
         series: [
             {
-                data: [150, 230, 224, 218, 135, 147, 260],
+                data: data.map((d , i) => [i,d]),
                 type: 'line'
             }
         ]

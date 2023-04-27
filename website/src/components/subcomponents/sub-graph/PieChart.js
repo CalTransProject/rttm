@@ -6,18 +6,13 @@ import mockPercentageData from "./PieChartDataDy";
 const PieChart = () =>{
   const [percentageData, setPercentageData] = useState(initialPercentageData);
 
-  const updatePercentageData = () => {
-    const newData = mockPercentageData(percentageData);
-    setPercentageData([...newData])
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
-      return updatePercentageData()
+      const newData = mockPercentageData(percentageData);
+      setPercentageData([...newData]);
     },1000);
     return () => clearInterval(interval);
   }, [percentageData]);
-
 
    const option = {
     title: {
@@ -35,7 +30,7 @@ const PieChart = () =>{
       orient: 'vertical',
       left: 'left',
       textStyle:{
-        color: 'White'
+        color: 'white'
       }
     },
     series: [
@@ -43,10 +38,8 @@ const PieChart = () =>{
         name: 'Vehicle Type',
         type: 'pie',
         radius: '50%',
-        data: percentageData.map((value,index) => ({
-          value
-          //name: percentageData.labels[index]
-        })),
+        data: percentageData,
+          //name: percentageData.labels[index]),
         label: {
           formatter: '{b}: {d}%'
         }
