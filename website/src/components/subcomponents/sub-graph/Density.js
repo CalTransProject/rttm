@@ -11,7 +11,14 @@ const Density = () => {
             setData(data => [...data, newData]); // add new data to the state
             setTime(time => time + 1); // increment time by 1 second
         }, 1000);
-        return () => clearInterval(interval);
+        const resetInterval = setInterval(() => {
+            setData([]);
+            setTime(0);
+        }, 60000);
+        return () => {
+            clearInterval(interval);
+            clearInterval(resetInterval);
+        };
     }, []);
 
 
