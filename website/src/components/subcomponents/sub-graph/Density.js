@@ -7,14 +7,14 @@ const Density = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const newData = Math.floor(Math.random() * 10) + 1; // random data between 100 and 300
-            setData(data => [...data, newData]); // add new data to the state
-            setTime(time => time + 1); // increment time by 1 second
-        }, 1000);
+            const newData = Math.floor(Math.random() * 10) + 1; 
+            setData(data => [...data, newData]);
+            setTime(time => time + 1); 
+        }, 60000);
         const resetInterval = setInterval(() => {
             setData([]);
             setTime(0);
-        }, 60000);
+        }, 3600000);
         return () => {
             clearInterval(interval);
             clearInterval(resetInterval);
@@ -32,8 +32,15 @@ const Density = () => {
         },
         xAxis: {
             type: 'value',
-            min: 0,
-            max: time,
+            name: 'Time (Minutes)',
+            nameLocation:'middle',
+            nameGap:30,
+            nameTextStyle:{
+                fontSize:18,
+                fontWeight:'bold'
+            },
+            min: 1,
+            max: 60,
             axisLine: {
                 lineStyle: {
                     color: 'white'
@@ -45,13 +52,21 @@ const Density = () => {
                 }
             },
             axisLabel: {
+                interval: 1,
                 textStyle: {
                     color: 'white'
                 }
-            }
+            },
         },
         yAxis: {
+            name: 'Density',
             type: 'value',
+            nameLocation:'middle',
+            nameGap:30,
+            nameTextStyle:{
+                fontSize:18,
+                fontWeight:'bold'
+            },
             axisLine: {
                 lineStyle: {
                     color: 'white'
@@ -63,6 +78,8 @@ const Density = () => {
                 }
             },
             axisLabel: {
+                interval: 1,
+                minInterval: 0,
                 textStyle: {
                     color: 'white'
                 }
@@ -70,7 +87,7 @@ const Density = () => {
         },
         series: [
             {
-                data: data.map((d , i) => [i,d]),
+                data: data.map((d , i) => [i + 1,d]),
                 type: 'line'
             }
         ]
