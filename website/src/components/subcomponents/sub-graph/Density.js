@@ -40,7 +40,7 @@ const Density = () => {
                 fontWeight:'bold'
             },
             min: 1,
-            max: 60,
+            max: time,
             axisLine: {
                 lineStyle: {
                     color: 'white'
