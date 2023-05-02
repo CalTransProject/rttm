@@ -1,0 +1,33 @@
+.upload{ 
+    width: 100%;
+    padding: 20pt;
+    position: relative;
+    align-content: center;
+    text-align: center;
+
+}
+input{
+    /* Text color of input */
+    color: black;
+}
+button:hover{
+    background-color: red;
+}
+button{
+    background-color: lightslategrey;
+    height: 40%;
+}
+
+h2{
+    color: aliceblue;
+    font-size: 35pt;
+    font-weight: bold;
+    font-family: sans-serif, Geneva, Tahoma;
+}
+
+.fileUpload{
+    margin: auto;
+    background-color: snow;
+    height: 20%;
+    width: 60%;
+}
