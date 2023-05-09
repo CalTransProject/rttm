@@ -5,18 +5,25 @@ import mockData from "./StackedAreadata";
 
 const StackedArea = () =>{
   const [vehicleData, setVehicleData] = useState(initialVehicleData);
+  const [count, setCount] = useState(0);
 
   const updateVehicleData = () => {
     const newData = mockData(vehicleData)
     setVehicleData([...newData])
+    setCount(count => count + 1);
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      return updateVehicleData()
+      if (count >= 50){
+        setVehicleData([...initialVehicleData]);
+        setCount(0);
+      }else{
+      updateVehicleData();
+      }
     },1000);
     return () => clearInterval(interval);
-  }, [vehicleData]);
+  }, [vehicleData, count]);
 
 
   const option = {

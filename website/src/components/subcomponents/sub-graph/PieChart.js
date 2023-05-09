@@ -14,12 +14,12 @@ const PieChart = () =>{
     return () => clearInterval(interval);
   }, [percentageData]);
 
-   const option = {
+  const option = {
     title: {
       text: 'Percentage of vehicles',
       left: 'center',
       textStyle:{
-         color: 'white'
+        color: 'white'
       }
     },
     tooltip: {

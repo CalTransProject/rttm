@@ -10,11 +10,11 @@ const Density = () => {
             const newData = Math.floor(Math.random() * 10) + 1; 
             setData(data => [...data, newData]);
             setTime(time => time + 1); 
-        }, 60000);
+        }, 1000);
         const resetInterval = setInterval(() => {
             setData([]);
             setTime(0);
-        }, 3600000);
+        }, 60000);
         return () => {
             clearInterval(interval);
             clearInterval(resetInterval);
