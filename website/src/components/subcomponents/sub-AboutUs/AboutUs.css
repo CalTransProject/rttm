@@ -16,20 +16,28 @@
 		}		
 		
 		
-		h1{
+		.about-title{
 			color: white;
 			font-size: 60px;
 			font-weight: 700;
 			
 		}
 
-		h2{
+		/* h2{
+			font-size: 40px;
+			display: flex;
+			justify-content: center;
+			color: white;
+			margin-bottom: 2%;
+		} */
+		.box h2{
 			font-size: 40px;
 			display: flex;
 			justify-content: center;
 			color: white;
 			margin-bottom: 2%;
 		}
+
 		.box{
 			background: transparent;
 		}
