@@ -14,7 +14,6 @@ const mockData = (initialData) => {
         item[catagory] -= 1
       }
     }
-
     const newVehicleData = [...initialData, item]
     console.log(newVehicleData)
     return newVehicleData

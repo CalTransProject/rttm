@@ -1,14 +1,8 @@
 const percentageData = [
-    { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]  },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-     { data: [10,20,20,25,15, 10],labels: ["Car" , "SUV", "Pickup", "Truck", "Bus" , "Sedan"]    },
-
-];
+    { name: "Car", value: 30 },
+    { name: "SUV", value: 20 },
+    { name: "Pickup", value: 10 },
+    { name: "Truck", value: 15 },
+    { name: "Sedan", value: 25 },
+  ];
 export default percentageData;

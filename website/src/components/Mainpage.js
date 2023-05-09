@@ -31,14 +31,17 @@ const Mainpage = () => {
                                 <video
                                     id="my-video"
                                     class="video-js"
-                                    controls
+                                    // controls
+                                    autoPlay
+                                    muted
+                                    loop
                                     preload="auto"
                                     width="100%"
                                     height="100%"
                                     poster="MY_VIDEO_POSTER.jpg"
                                     data-setup="{}"
                                 >
-                                    <source src="../videos/Tampa and Plummer street corner 2023-03-20 13-30-43_Trim.mp4" type="video/mp4" />
+                                    <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
                                 </video>
                             </div>
                     </div>
