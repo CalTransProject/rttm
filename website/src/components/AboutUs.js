@@ -54,7 +54,9 @@ const AboutUs = () => {
     
     <div class="member">
       <div class="name">Matthew Davis</div>
-      <div class="description">Software Engineer</div>
+      <div class="description">The son of a colgate baron, he was given the sector of wash and rinse 
+      liquids. But one day he had enough and ran away from his country to study in the most prestigious of schools
+      and discovered the wonders of computer science. He worked on 2D detection and Yolo.</div>
       <a href="https://github.com/CalTransProject">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
       </a>
