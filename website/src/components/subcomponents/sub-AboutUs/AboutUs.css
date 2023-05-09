@@ -1,0 +1,222 @@
+		.AboutUs{
+			background-color: green;
+		}
+		
+
+		.about-title{
+		
+			background-image: url('/public/images/img-AboutUs/arcsbanner.png');
+  			background-size: cover; 
+  			background-position: center; 
+ 			
+  			padding: 85px; 
+			
+			
+
+		}		
+		
+		
+		h1{
+			color: white;
+			font-size: 60px;
+			font-weight: 700;
+			
+		}
+
+		h2{
+			font-size: 40px;
+			display: flex;
+			justify-content: center;
+			color: white;
+			margin-bottom: 2%;
+		}
+		.box{
+			background: transparent;
+		}
+		.main {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			margin: 100;
+			padding: 0;
+		}
+
+		body{
+			background: transparent;
+		}
+
+		
+		.about-title{
+			display: flex;
+			justify-content: center;
+		}
+		
+		.main-content {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 150px;
+			padding-top: 5%;
+			padding-bottom: 5%;
+			
+		}
+		
+		img {
+			max-width: 100%;
+			height: 200px;
+			display: block;
+			margin: auto;
+			display: flex;
+			justify-content: center;
+			
+		}
+
+		.member {
+			display: inline-block;
+			margin: 10px;
+			padding: 20px;
+			border: 1px solid red;
+			
+			text-align: center;
+			width: 200px;
+			background-color: white;
+			color: black;
+		  }
+		  .name {
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		  }
+		  .description {
+			font-size: 16px;
+		  }
+		  .member {
+			display: inline-block;
+			margin: 10px;
+			padding: 20px;
+			border: 1px solid black;
+			text-align: center;
+			width: 200px;
+			height: 300px;
+		  }
+		  .name {
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		  }
+		  .description {
+			font-size: 16px;
+			margin-bottom: 10px;
+		  }
+		  .member .github-photo {
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			object-fit: cover;
+			position: absolute;
+			bottom: 0;
+
+		  }
+		  .team-members {
+			display: flex;
+			flex-wrap: wrap;
+		  }
+		  .member {
+			flex: 1;
+			margin: 10px;
+			padding: 20px;
+			border: 1px solid black;
+			text-align: center;
+			max-width: 200px;
+			position: relative;
+		  }
+		  .team-members {
+			display: flex;
+			flex-wrap: wrap;
+		  }
+		  
+		  .member {
+			flex: 1;
+			margin: 10px;
+			padding: 20px;
+			border: 1px solid black;
+			text-align: center;
+			max-width: 200px;
+		  }
+		  
+		  .name {
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		  }
+		  
+		  .description {
+			font-size: 16px;
+			margin-bottom: 10px;
+		  }
+		  
+		  
+.team-members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.member {
+  flex: 1;
+  margin: 10px;
+  padding: 10px;
+  border: 3px solid red;
+  text-align: center;
+  max-width: 300px;
+  height: 300px;
+  margin-left: 10%;
+  margin-right: 5%;
+}
+
+.member-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+
+}
+
+.name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 16px;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.github-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+}
+
+.container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px;
+  }
+  
+  .member {
+	flex: 1 1 300px;
+	margin: 10px;
+	padding: 20px;
+	text-align: center;
+  }
+  
