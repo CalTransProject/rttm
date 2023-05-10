@@ -2,7 +2,7 @@ import ReactEcharts from "echarts-for-react";
 import initialVehicleData from "./vehicleData";
 import React, { useState, useEffect } from "react";
 
-const mockData = (initialData) => {
+const mockData = (initialData, count) => {
   const num = Math.floor(Math.random() * 10)
   const catagories = ["suv", "car", "bus", "pickup", "truck" , "sedan"]
   const lastItem = initialData.at(-1)
