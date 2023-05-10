@@ -18,6 +18,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Andres Mercado</div>
       <img src="/images/img-AboutUs/Andres.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">I am a graduating Senior, interested in Robotics and Machine Learning. On this project I helped the Machine Learning team integrate the tiny Yolo algorithm that was the best fit for our project. </div>
       <a href="https://github.com/andymerc">
       <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -27,6 +28,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Alondra Gonzalez</div>
       <img src="/images/img-AboutUs/alondra_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">Hello my name's Alondra Gonzalez, I worked on the data acquisition process and configuring the AWS Kinesis Video Streams module to add a stream to the project website.</div>
       <a href="https://github.com/AlondraGonzalez211">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -34,8 +36,9 @@ const AboutUs = () => {
     </div>
     <div class="member">
       <div class="name">Alexander Rose</div>
-      
-      <div class="description">Software Engineer</div>
+      <img src="/images/img-AboutUs/rose_alexander.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
+      <div class="description">Graduate student - M.S. Software Engineering at CSUN. I helped build the real-time system on AWS</div>
       <a href="https://github.com/rosealexander">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
       </a>
@@ -43,6 +46,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Brian Uribe</div>
       <img src="/images/img-AboutUs/brian_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">Hello! My name is Brian and I am a senior pursuing a bachelor's in computer science. I helped work on the backend of the RTTM website and was the one behind the video players that display the real-time video feed coming from the cameras connected to our system.</div>
       <a href="https://github.com/ItsBrianUribe">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -51,6 +55,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Icess Nisce</div>
       <img src="/images/img-AboutUs/icess_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">Hi, I'm Icess. I'm an undegraduate senior majoring in Computer Science, with interests in machine learning, AI, AR/VR, web development and design. My role in the Real-Time Traffic Monitoring Project involves the development of the 3D vehicle detection model and real-time streaming capabilities of the system.</div>
       <a href="https://github.com/sseci">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -60,6 +65,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Matthew Davis</div>
       <img src="/images/img-AboutUs/matthew_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">My name is Matthew Davis. I am a 22 year old CSUN student working towards a bachelor’s in Computer Science. My work within the Real-Time Traffic Monitoring group has solely revolved around designing the model for 2D object detection.</div>
       <a href="https://github.com/CalTransProject">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -68,6 +74,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Javier Carranza</div>
       <img src="/images/img-AboutUs/javier3_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">Hello, I'm Javier pursuing a bachelor's in computer science. My main role in the project is to help make progress on the RTTM website and was the one behind the charts that display the real-time data coming from the cameras connected to our system.</div>
       <a href="https://github.com/JavierACarranza">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -76,6 +83,7 @@ const AboutUs = () => {
     <div class="member">
       <div class="name">Robin Rosculete</div>
       <img src="/images/img-AboutUs/Robin.png" alt="Student pfp" class="pfp-photo"></img>
+      <br></br>
       <div class="description">Software Engineer</div>
       <a href="https://github.com/RobinRosculete">
       <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
@@ -83,6 +91,7 @@ const AboutUs = () => {
     </div>
     <div class="member">
       <div class="name">Jose Flores</div>
+      <br></br>
       <div class="description">Hello! Im a undergrad student majoring in computer science. In this project I focused on labeling LiDar data and Web Development  </div>
       <a href="https://github.com/Jose-Flor">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
