@@ -84,13 +84,14 @@ const AboutUs = () => {
       <div class="name">Robin Rosculete</div>
       <img src="/images/img-AboutUs/Robin.png" alt="Student pfp" class="pfp-photo"></img>
       <br></br>
-      <div class="description">Software Engineer</div>
+      <div class="description">Hello, My name is Robin. Im a CS undegrad student. NA di worked on Web development and Machine Learning</div>
       <a href="https://github.com/RobinRosculete">
       <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
       </a>
     </div>
     <div class="member">
       <div class="name">Jose Flores</div>
+      <img src="/images/img-AboutUs/Jose.jpg" alt="Student pfp" class="pfp-photo"></img>
       <br></br>
       <div class="description">Hello! Im a undergrad student majoring in computer science. In this project I focused on labeling LiDar data and Web Development  </div>
       <a href="https://github.com/Jose-Flor">

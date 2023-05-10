@@ -7,6 +7,10 @@ import Technology3DModelPicture from "./subcomponents/sub-technologies/Technolog
 import TechnologyDataPicture from "./subcomponents/sub-technologies/TechnologyDataPicture";
 import TechnologyObjectDetectionPicture from "./subcomponents/sub-technologies/TechnologyObjectDetectionPicture";
 import Technology2DModelPicture from "./subcomponents/sub-technologies/Technology2DModelPicture";
+import "./subcomponents/sub-technologies/technologies.css"
+
+
+
 const Technologies = () => {
   const [activeSection, setActiveSection] = useState("");
 
@@ -28,6 +32,9 @@ const Technologies = () => {
 
   return (
     <section>
+    
+
+
       <div class="container-fluid">
         <div class="col">
           <button
@@ -79,12 +86,12 @@ const Technologies = () => {
         <div class="row row-cols-2">
           <div class="col">
             <div class="text-box">
-              <h3>Real Time Traffic Monitoring</h3>
+              <h2>Real Time Traffic Monitoring</h2>
               <p>
                 Contribute to intelligent transportation systems (ITS)
                 applications to achieve smarter and safer transportation
                 infrastructure. This is done through LiDAR data that can provide
-                valuable info that traditional radar or video s ensors can't.
+                valuable info that traditional radar or video sensors can't.
               </p>
             </div>
           </div>
@@ -97,8 +104,8 @@ const Technologies = () => {
             <TechnologyLidarPicture />
           </div>
           <div class="col">
-            <div class="text-box">
-              <h4>What is LiDAR?</h4>
+            <div class="text-box-right">
+              <h2>What is LiDAR?</h2>
               <p>
                 Contribute to intelligent transportation systems (ITS)
                 applications to achieve smarter and safer transportation
@@ -108,27 +115,29 @@ const Technologies = () => {
             </div>
           </div>
         </div>
-
+     
+        <img src="/images/img-technologies/techused.jpg" alt="tech " class="tech-photo"></img>
+        <h3>Web Development</h3>
+        
         <div class="row row-cols-2">
+        
           <div class="col">
+          
             <div id="WebDevelopment" class="text-box">
-              <h3>Web Development</h3>
+              
               <p>
                 - React-Bootstrap - <br /> - ECharts - A javascript library that
                 provides a wide range of charts that one can use and also have
                 them update in real-time.
               </p>
+              
             </div>
           </div>
-          <div class="col">
-            <TechnologyWebDevPicture />
-          </div>
-          <div class="col">
-            <Technology3DModelPicture />
-          </div>
+          <TechnologyWebDevPicture />
+          <Technology3DModelPicture />
           <div class="col">
             <div id="3DModel" class="text-box">
-              <h4>3D Model</h4>
+            <h3>3D Model</h3>
               <p>
                 - MATLAB (labeling) - The Lidar Labeler toolbox enables you to
                 interactively label ground truth data in a point cloud or a
@@ -137,11 +146,14 @@ const Technologies = () => {
               </p>
             </div>
           </div>
+         
         </div>
+        
+        <h3>Data Acquisition</h3>
         <div class="row row-cols-2">
           <div class="col">
             <div id="DataAcquisition" class="text-box">
-              <h3>Data Acquisition</h3>
+              
               <p>
                 - LiDAR (light detection and ranging): Captures a 3D scan of the
                 environment in the form of point clouds.
@@ -161,12 +173,13 @@ const Technologies = () => {
             {" "}
             <TechnologyDataPicture />
           </div>
+          
           <div class="col">
             <TechnologyObjectDetectionPicture />
           </div>
           <div class="col">
             <div id="ObjectDetection" class="text-box">
-              <h4>Object Detection</h4>
+            <h3>Object Detection</h3>
               <p>
                 - Complex-YOLO
                 <br />- YOLOv7
@@ -175,10 +188,11 @@ const Technologies = () => {
             </div>
           </div>
         </div>
+        <h3>2D Model</h3>
         <div class="row row-cols-2">
           <div class="col">
             <div id="2DModel" class="text-box">
-              <h3>2D Model</h3>
+              
               <p>
                 YOLOv7: Most up-to-date and accurate 2D object detection model
                 that is perfect for vehicle detection. <br />- labelImg:
