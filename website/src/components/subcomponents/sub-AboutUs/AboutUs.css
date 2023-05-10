@@ -180,12 +180,11 @@
   border: 3px solid black;
   text-align: center;
   max-width: 400px;
-  height: 400px;
   margin-left: 10%;
   margin-right: 5%;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
   flex-basis: calc(33.33% - 20px);
-
+	
   
 }
 
@@ -216,6 +215,16 @@
   object-fit: cover;
   margin: 0 auto;
   display: block;
+  position: fixed;
+
+  width: 100%;
+  position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	z-index: 9999;
+  
+  
 }
 
 .pfp-photo {
@@ -239,18 +248,17 @@
 	  
 	  .member {
 		width: 100%;
-		height: 400px;
-		grid-row: span 2; /* adjust as needed */
+		min-height: 400px;
+		overflow: auto;
+		grid-row: span 2;
 		grid-column: span 1;
+		flex: 1 1 300px;
+		margin: 10px;
+		padding: 20px;
+		text-align: center;
+		position: relative;
 	  }
 	  
   
-  
-  .member {
-	flex: 1 1 300px;
-	margin: 10px;
-	padding: 20px;
-	text-align: center;
-  }
   
   

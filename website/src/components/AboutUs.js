@@ -59,7 +59,8 @@ const AboutUs = () => {
     
     <div class="member">
       <div class="name">Matthew Davis</div>
-      <div class="description">Software Engineer</div>
+      <img src="/images/img-AboutUs/matthew_resize.jpg" alt="Student pfp" class="pfp-photo"></img>
+      <div class="description">My name is Matthew Davis. I am a 22 year old CSUN student working towards a bachelor’s in Computer Science. My work within the Real-Time Traffic Monitoring group has solely revolved around designing the model for 2D object detection.</div>
       <a href="https://github.com/CalTransProject">
         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
       </a>
