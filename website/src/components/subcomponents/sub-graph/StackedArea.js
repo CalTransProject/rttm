@@ -1,50 +1,35 @@
 import ReactEcharts from "echarts-for-react"; 
-import initialVehicleData from "./vehicleData";
 import React, { useState, useEffect } from "react";
 
-const mockData = (initialData, count) => {
-  const num = Math.floor(Math.random() * 10)
-  const catagories = ["suv", "car", "bus", "pickup", "truck" , "sedan"]
-  const lastItem = initialData.at(-1)
-  const newTime = (lastItem.time + 1) % 60
-  const item =  { time: newTime, suv: lastItem.suv, car: lastItem.car, bus: lastItem.bus, pickup: lastItem.pickup, truck: lastItem.truck, sedan: lastItem.sedan }
+const mockData = (lastItem) => {
+  const catagories = ["suv", "car", "bus", "pickup", "truck" , "sedan"];
+  const newItem = { time: lastItem.time + 1, suv: lastItem.suv, car: lastItem.car, bus: lastItem.bus, pickup: lastItem.pickup, truck: lastItem.truck, sedan: lastItem.sedan };
+  const num = Math.floor(Math.random() * 10);
   if (num < 6) {
-    const catagory = catagories[num]
-    const num1 = Math.floor(Math.random() * 10)
+    const category = catagories[num];
+    const num1 = Math.floor(Math.random() * 10);
     if (num1 % 2 === 0) {
-      item[catagory] += 1
-    }else if (item[catagory] > 0){
-      item[catagory] -= 1
+      newItem[category] += 1;
+    } else if (newItem[category] > 0) {
+      newItem[category] -= 1;
     }
   }
+  return newItem;
+};
 
-  const newData = [...initialData, item]
-  console.log(newData)
-  return newData
-}
+const StackedArea = () => {
+  const [vehicleData, setVehicleData] = useState([{ time: 0, suv: Math.floor(Math.random() * 10), car: Math.floor(Math.random() * 10), bus: Math.floor(Math.random() * 10), pickup: Math.floor(Math.random() * 10), truck: Math.floor(Math.random() * 10), sedan: Math.floor(Math.random() * 10) }]);
 
-const StackedArea = () =>{
-  const [vehicleData, setVehicleData] = useState(initialVehicleData);
-  const [count, setCount] = useState(0);
-
-  const updateVehicleData = () => {
-    const newData = mockData(vehicleData)
-    setVehicleData([...newData.slice(-60)])
-    setCount(count + 1);
-  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log("Working");
-      if(count === 60){
-      updateVehicleData()
-      setCount(0);
-      }
-      return updateVehicleData()
-    },1000);
+      setVehicleData(prevData => {
+        const newData = [...prevData, mockData(prevData[prevData.length - 1])];
+        return newData.slice(-60);
+      });
+    }, 1000);
     return () => clearInterval(interval);
-  }, [vehicleData,count , updateVehicleData]);
-
+  }, []);
 
   const option = {
     title: {
@@ -57,14 +42,13 @@ const StackedArea = () =>{
         color: "#fff",
       },
     },
-
     xAxis: {
       name:'Time (Seconds)',
       nameLocation:'middle',
       nameGap:30,
       nameTextStyle:{
-          fontSize:18,
-          fontWeight:'bold'
+        fontSize:18,
+        fontWeight:'bold'
       },
       axisLine:{
         lineStyle: {
@@ -78,8 +62,8 @@ const StackedArea = () =>{
       nameLocation:'middle',
       nameGap:30,
       nameTextStyle:{
-          fontSize:18,
-          fontWeight:'bold'
+        fontSize:18,
+        fontWeight:'bold'
       },
       axisLine:{
         lineStyle: {
@@ -88,32 +72,32 @@ const StackedArea = () =>{
       },
       nameRotate:90,
       type: "value"
-  },
+    },
     series: [
       {
         name: 'Car',
         type: 'line',
-        data: vehicleData.slice(-60).map(item => item.car),
+        data: vehicleData.map(item => item.car),
       },
       {
         name: 'SUV',
         type: 'line',
-        data: vehicleData.slice(-60).map(item => item.suv),
+        data: vehicleData.map(item => item.suv),
       },
       {
         name: 'Pickup',
         type: 'line',
-        data: vehicleData.slice(-60).map(item => item.pickup),
+        data: vehicleData.map(item => item.pickup),
       },
       {
         name: 'Truck',
         type: 'line',
-        data: vehicleData.slice(-60).map(item => item.truck),
+        data: vehicleData.map(item => item.truck),
       },
       {
         name: 'Sedan',
         type: 'line',
-        data: vehicleData.slice(-60).map(item => item.sedan),
+        data: vehicleData.map(item => item.sedan),
       },
     ]
   };
