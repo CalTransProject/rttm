@@ -2,6 +2,7 @@ import ReactEcharts from "echarts-for-react";
 import initialPercentageData from "./PieChartData";
 import React, { useState, useEffect } from "react";
 import mockPercentageData from "./PieChartDataDy";
+import { color } from "echarts";
 
 const PieChart = () =>{
   const [percentageData, setPercentageData] = useState(initialPercentageData);
@@ -41,7 +42,9 @@ const PieChart = () =>{
         data: percentageData,
           //name: percentageData.labels[index]),
         label: {
-          formatter: '{b}: {d}%'
+          formatter: '{b}: {d}%',
+          color: "white",
+          borderWidth: 0,
         }
       }
     ]
