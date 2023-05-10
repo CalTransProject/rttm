@@ -6,7 +6,7 @@ const mockData = (initialData, count) => {
   const num = Math.floor(Math.random() * 10)
   const catagories = ["suv", "car", "bus", "pickup", "truck" , "sedan"]
   const lastItem = initialData.at(-1)
-  const newTime = lastItem.time + 1 
+  const newTime = (lastItem.time + 1) % 60
   const item =  { time: newTime, suv: lastItem.suv, car: lastItem.car, bus: lastItem.bus, pickup: lastItem.pickup, truck: lastItem.truck, sedan: lastItem.sedan }
   if (num < 6) {
     const catagory = catagories[num]
@@ -71,7 +71,7 @@ const StackedArea = () =>{
           color: 'white'
         }
       },
-      data: vehicleData.slice(-60).map(item => item.time.toString()),
+      data: Array.from({ length: 61 }, (_, i) => i.toString()),
     },
     yAxis: {
       name:'Number of Vehicles',
