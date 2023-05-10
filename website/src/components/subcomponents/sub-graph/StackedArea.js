@@ -43,7 +43,7 @@ const StackedArea = () =>{
       return updateVehicleData()
     },1000);
     return () => clearInterval(interval);
-  }, [vehicleData,count]);
+  }, [vehicleData,count , updateVehicleData]);
 
 
   const option = {
