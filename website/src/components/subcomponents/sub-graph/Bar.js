@@ -21,7 +21,6 @@ const generateData = (lastItem, speedData) => {
 
 const Bar = () => {
   const [speedData, setSpeedData] = useState([]);
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const initialData = {
