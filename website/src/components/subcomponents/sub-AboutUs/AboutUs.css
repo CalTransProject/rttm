@@ -5,7 +5,10 @@
 	
 	padding: 85px; 
 }		
-
+.aboutUsP{
+	text-align: center;
+	font-size: large;
+}
 
 .about-title{
 	color: white;

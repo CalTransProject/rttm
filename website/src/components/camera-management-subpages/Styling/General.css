@@ -27,10 +27,10 @@ th {
   background-color: #333;
   border-bottom: 2px solid #ffffff;
   text-transform: uppercase;
-  font-size: 2.8rem;
+  font-size: 2.3rem;
   font-weight: 500;
   letter-spacing: 1px;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 tbody tr:hover {
@@ -40,7 +40,7 @@ tbody tr:hover {
 td {
   padding: 1.5rem 2rem;
   color: #fafafa;
-  font-size: 2.3rem;
+  font-size: 2.2rem;
   font-weight: 300;
   font-family: "Open Sans", sans-serif;
 }
