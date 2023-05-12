@@ -92,7 +92,7 @@ const AboutUs = () => {
                       </div>
                       <div class="member">
                         <div class="name">Jose Flores</div>
-                        <img src="/images/img-AboutUs/Jose.jpg" alt="Student pfp" class="pfp-photo"></img>
+                        <img src="/images/img-AboutUs/Jose.jpeg" alt="Student pfp" class="pfp-photo"></img>
                         <br></br>
                         <div class="description">Hello! Im a undergrad student majoring in computer science. In this project I focused on labeling LiDar data and Web Development  </div>
                         <a href="https://github.com/Jose-Flor">
