@@ -85,7 +85,7 @@ const AboutUs = () => {
                         <div class="name">Robin Rosculete</div>
                         <img src="/images/img-AboutUs/Robin.png" alt="Student pfp" class="pfp-photo"></img>
                         <br></br>
-                        <div class="description">Hello, My name is Robin. Im a CS undegrad student. NA di worked on Web development and Machine Learning</div>
+                        <div class="description">Hello, My name is Robin. Im a CS undegrad student. And I worked on Web Development and Machine Learning</div>
                         <a href="https://github.com/RobinRosculete">
                         <img src="/images/img-AboutUs/githublogo.png" alt="Git hub logo" class="github-photo"></img>
                         </a>
