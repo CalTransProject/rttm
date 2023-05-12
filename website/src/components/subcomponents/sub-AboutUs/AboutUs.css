@@ -9,7 +9,10 @@
 	margin-left: 10%;
 	margin-right: 10%;
 }		
-
+.aboutUsP{
+	text-align: center;
+	font-size: large;
+}
 
 .about-title{
 	color: white;

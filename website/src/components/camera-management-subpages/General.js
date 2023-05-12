@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Styling/General.css";
 import ModalComponent from "../subcomponents/sub-camera-management/Modal.js";
+import { Fonts } from "react-bootstrap-icons";
 
 const General = () => {
   const [selectedRow, setSelectedRow] = useState(null);
