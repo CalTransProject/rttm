@@ -1,16 +1,27 @@
 .about-title{
-	background-image: url('/public/images/img-AboutUs/nasa.jpg');
+	background-image: url('/public/images/img-AboutUs/LIdarbanner.png');
 	background-size: cover; 
 	background-position: center; 
 	
-	padding: 85px; 
+	padding: 75px; 
+	padding-top: 5%;
+	padding-bottom: 5%;
+	margin-left: 10%;
+	margin-right: 10%;
 }		
 
 
 .about-title{
 	color: white;
-	font-size: 60px;
-	font-weight: 700;	
+	font-size: 70px;
+	font-weight: 800;	
+	
+		
+		color: white;
+		text-shadow: 10px 10px 8px #000000;
+	  
+	  
+	  
 }
 .box h2{
 	font-size: 40px;
@@ -198,12 +209,7 @@ img {
   display: block;
   position: fixed;
 
-  width: 100%;
-  position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	z-index: 9999;
+ 
   
   
 }
@@ -229,7 +235,7 @@ img {
 	  
 	  .member {
 		width: 100%;
-		min-height: 400px;
+		min-height: 425px;
 		overflow: auto;
 		grid-row: span 2;
 		grid-column: span 1;
