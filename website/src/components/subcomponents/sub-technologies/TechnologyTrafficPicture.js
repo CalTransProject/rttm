@@ -4,7 +4,7 @@ const TechnologyTrafficPicture = () => {
       <img
         src="./images/img-technologies/TechnologyTrafficPicture.png"
         alt=""
-        class="img-thumbnail"
+        class="img-webthumbnail"
       />
     </div>
   );

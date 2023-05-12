@@ -4,7 +4,30 @@
     text-align: left;
 
   }
-  
+  /* These below are for headers and paragraphs on the left side */
+  .techH{
+    text-align: left;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techP{
+    text-align: left;
+    color: aliceblue;
+    font-size: large;
+  }
+  /* These below are for Headers and Paragraphs on the right side */
+  .techHR{
+    text-align: right;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techPR{
+    text-align: right;
+    color: aliceblue;
+    font-size: large;
+  }
+
+
   h3{
     font-size: 55px;
     color: white;
@@ -13,10 +36,10 @@
     text-align: center;
   }
   .img-webthumbnail{
-height: 400px;
-width: 700px;
-border: 6px solid white;
-border-radius: 5px;
+    height: 95%;
+    width: 95%;
+    border: 2px solid white;
+    border-radius: 5px;
   }
 
   .text-box-right{
