@@ -15,7 +15,7 @@ const AboutUs = () => {
                   
                                   
                   <div class="container">
-                    <div class="membersDisplay">
+                    <div class="membersDisplay">  
                       <div class="member">
                         <div class="name">Andres Mercado</div>
                         <img src="/images/img-AboutUs/Andres.jpg" alt="Student pfp" class="pfp-photo"></img>

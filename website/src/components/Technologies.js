@@ -9,89 +9,24 @@ import TechnologyObjectDetectionPicture from "./subcomponents/sub-technologies/T
 import Technology2DModelPicture from "./subcomponents/sub-technologies/Technology2DModelPicture";
 import "./subcomponents/sub-technologies/technologies.css"
 
-
-
 const Technologies = () => {
-  const [activeSection, setActiveSection] = useState("");
-
-  //Function pupose to handle button Click and scroll to specific info section
-  const handleClick = (section) => {
-    setActiveSection(section);
-  };
-
-  useEffect(() => {
-    //Hellper Function to find element by id and scroll to specific info section
-    const sectionElement = document.getElementById(activeSection);
-    if (sectionElement) {
-      sectionElement.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [activeSection]);
-
   return (
     <section>
-    
-
-
-      <div class="container-fluid">
-        <div class="col">
-          <button
-            onClick={() => handleClick("WebDevelopment")}
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            Web Development
-          </button>
-
-          <button
-            onClick={() => handleClick("3DModel")}
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            3D Model
-          </button>
-
-          <button
-            onClick={() => handleClick("DataAcquisition")}
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            Data Acquisition
-          </button>
-
-          <button
-            onClick={() => handleClick("ObjectDetection")}
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            Object Detection
-          </button>
-
-          <button
-            onClick={() => handleClick("2DModel")}
-            class="btn btn-outline-light"
-            role="button"
-            aria-pressed="true"
-          >
-            2D Model
-          </button>
-        </div>
-
+      <div class="container-fluid">  
         <div class="row row-cols-2">
+          {/* Spacing Breaks */}
+        <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
+
           <div class="col">
-            <div class="text-box">
-              <h2>Real Time Traffic Monitoring</h2>
-              <p>
-                Contribute to intelligent transportation systems (ITS)
-                applications to achieve smarter and safer transportation
-                infrastructure. This is done through LiDAR data that can provide
-                valuable info that traditional radar or video sensors can't.
+            <div>
+              <h2 className="techH">Real Time Traffic Monitoring</h2>
+              <p className="techP">
+              The Real-Time Traffic Monitoring project monitors traffic flow in Southern California, 
+              providing a system that collects and streams traffic data, detects and classifies vehicles, 
+              and generates data statistics which describe traffic flow, all in real time. With technologies
+               like LiDAR sensing and machine learning, this system is intended to be an application of 
+               intelligent transportation systems (ITS) in California’s major metropolitan areas.
               </p>
             </div>
           </div>
@@ -100,114 +35,118 @@ const Technologies = () => {
               <TechnologyTrafficPicture />
             </div>
           </div>
+          {/* Spacing Breaks */}
+          <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
+
           <div class="col">
             <TechnologyLidarPicture />
           </div>
           <div class="col">
-            <div class="text-box-right">
-              <h2>What is LiDAR?</h2>
-              <p>
-                Contribute to intelligent transportation systems (ITS)
-                applications to achieve smarter and safer transportation
-                infrastructure. This is done through LiDAR data that can provide
+            <div>
+              <h2 className="techHR">What is LiDAR?</h2>
+              <p className="techPR">
+              Intelligent transportation systems (ITS) have become increasingly 
+              important to the development of smarter and safer transportation infrastructure, 
+              especially in Southern California, where traffic continues to be a severe 
+              and chronic problem. Vehicle detection technologies greatly support the 
+              applications of ITS, providing information such as the number of vehicles
+               in traffic, number of vehicle types, or density of vehicles in each lane. 
+               This is done through LiDAR data that can provide
                 valuable info that traditional radar or video s ensors can't.
               </p>
             </div>
           </div>
-        </div>
-     
-        <img src="/images/img-technologies/techused.jpg" alt="tech " class="tech-photo"></img>
-        <h3>Web Development</h3>
         
-        <div class="row row-cols-2">
+        {/* Spacing Breaks */}
+        <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
+
+        
+        <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
         
           <div class="col">
-          
-            <div id="WebDevelopment" class="text-box">
-              
-              <p>
-                - React-Bootstrap - <br /> - ECharts - A javascript library that
-                provides a wide range of charts that one can use and also have
-                them update in real-time.
+            <div>
+              <h2 className="techH">Web Development</h2>
+              <p className="techP">
+              The creation of our website was done with the help of React libraries! Some that were used were
+               Bootstrap to customize and organize the pages on the website as well as the components on the site. 
+               AWS sdk was used to be able to create a connection between the website and the AWS system. ECharts 
+               was used to display real time data statistics on the website. ReactHLSPlayer was used to be able 
+               to display the real time 2D Video on the website.
               </p>
-              
             </div>
           </div>
-          <TechnologyWebDevPicture />
-          <Technology3DModelPicture />
           <div class="col">
-            <div id="3DModel" class="text-box">
-            <h3>3D Model</h3>
-              <p>
-                - MATLAB (labeling) - The Lidar Labeler toolbox enables you to
-                interactively label ground truth data in a point cloud or a
-                point cloud sequence and generate corresponding ground truth
-                data. <br />- PyTorch -
+            <div>
+              <TechnologyWebDevPicture />
+            </div>
+          </div>
+          {/* Spacing Breaks */}
+          <div class="col"></div>
+          <div class="col"><br></br><br></br></div>
+          <div class="col">
+          <TechnologyDataPicture />
+          </div>
+          <div class="col">
+            <div>
+              <h2 className="techHR">Data Acquisition</h2>
+              <p className="techPR">
+              When it came to data acquisition it all happened thanks to the help of two devices. The 
+              Velodyne Ultra Puck helped capture a 3D scan of the environment in the form of 
+              point clouds in real time. The Intel RealSense Depth Camera D435i helped with 2D data collection, 
+              displaying video and depth metrics, thought we mainly used the camera soley for streaming 
+              without the metrics.
               </p>
             </div>
           </div>
-         
-        </div>
+          {/* Spacing Breaks */}
+        <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
+
         
-        <h3>Data Acquisition</h3>
-        <div class="row row-cols-2">
+        <div class="col"></div>
+          <div class="col"><br></br><br></br></div> 
+
           <div class="col">
-            <div id="DataAcquisition" class="text-box">
-              
-              <p>
-                - LiDAR (light detection and ranging): Captures a 3D scan of the
-                environment in the form of point clouds.
-                <br /> - Velodyne Ultra Puck - Real-time 3D LiDAR data is
-                collected using Velodyne’s Ultra Puck cameras, combining long
-                range performance with outstanding resolution and point density
-                in a compact form factor. (I copied and pasted this) <br />-
-                Intel RealSense Depth Camera D435i - 2D data is collected using
-                the Intel RealSense Depth Camera, which is able to display video
-                and depth metrics on the Intel RealSense Viewer platform. In our
-                use case, we use it primarily only for 2D stream of traffic
-                without the use of depth metrics since it doesn’t really apply.
+            <div>
+              <h2 className="techH">2D Model</h2>
+              <p className="techP">
+              When it came to the 2D Model, YOLOv7 tiny was one of the big pieces of technologies. 
+              The most up-to-date and accurate 2D object detection models that makes it perfect for 
+              vehicle detection. LabelImg was used to take relevant images and manually apply bounding 
+              boxes for the sake of training the model to accommodate the project. Google Colab was 
+              used as a cloud hosted version of Jupyter Notebook used to train the custom dataset and 
+              run the model with the aforementioned dataset.
               </p>
             </div>
           </div>
           <div class="col">
-            {" "}
-            <TechnologyDataPicture />
-          </div>
-          
-          <div class="col">
-            <TechnologyObjectDetectionPicture />
-          </div>
-          <div class="col">
-            <div id="ObjectDetection" class="text-box">
-            <h3>Object Detection</h3>
-              <p>
-                - Complex-YOLO
-                <br />- YOLOv7
-                <br /> - SORT
-              </p>
-            </div>
-          </div>
-        </div>
-        <h3>2D Model</h3>
-        <div class="row row-cols-2">
-          <div class="col">
-            <div id="2DModel" class="text-box">
-              
-              <p>
-                YOLOv7: Most up-to-date and accurate 2D object detection model
-                that is perfect for vehicle detection. <br />- labelImg:
-                Software used to take relevant images and manually apply
-                bounding boxes for the sake of training the model. <br />-
-                Google Colab: Cloud hosted version of Jupyter Notebook that is
-                being used to train the custom dataset and run the model with
-                the aforementioned dataset.
-              </p>
-            </div>
-          </div>
-          <div class="col">
+            <div>
             <Technology2DModelPicture />
+            </div>
           </div>
+          <div class="col"></div>
+          <div class="col"><br></br><br></br></div>
+          <div class="col">
+          <Technology3DModelPicture />
+          </div>
+          <div class="col">
+            <div>
+              <h2 className="techHR">3D Model</h2>
+              <p className="techPR">
+              With the 3D model MATLAB (labeling) was used as the lidar labeler toolbox enabling 
+              us to interactively label ground truth data in a point cloud or point cloud sequence and 
+              generate corresponding ground truth data. 
+              
+              </p>
+            </div>
+          </div>
+          <div class="col"></div>
+          <div class="col"><br></br><br></br></div>
         </div>
+        
       </div>
     </section>
   );
