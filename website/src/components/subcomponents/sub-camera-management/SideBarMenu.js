@@ -40,27 +40,7 @@ function SidebarMenu() {
                 Add New Camera
               </CDBSidebarMenuItem>
             </NavLink>
-            <NavLink
-              exact
-              to="/camera-management/remove-cameras"
-              activeClassName="activeClicked"
-            >
-              <CDBSidebarMenuItem
-                className="menu-item"
-                icon="fa-regular fa-video-slash"
-              >
-                Remove Cameras
-              </CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink
-              exact
-              to="/camera-management/configuration"
-              activeClassName="activeClicked"
-            >
-              <CDBSidebarMenuItem className="menu-item" icon="wrench">
-                Configuration
-              </CDBSidebarMenuItem>
-            </NavLink>
+            
           </CDBSidebarMenu>
         </CDBSidebarContent>
         {/* <CDBSidebarFooter style={{ textAlign: "center" }}>

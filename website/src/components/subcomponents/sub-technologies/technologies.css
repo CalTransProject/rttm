@@ -5,6 +5,11 @@
 
   }
   /* These below are for headers and paragraphs on the left side */
+  .techRTTM{
+    text-align: left;
+    margin-top: 100pt;
+    color: aliceblue;
+  }
   .techH{
     text-align: left;
     margin-top: 100pt;
