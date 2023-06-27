@@ -1,0 +1,63 @@
+ .text-box{
+    background-color: transparent;
+    font-size: 25px;
+    text-align: left;
+
+  }
+  /* These below are for headers and paragraphs on the left side */
+  .techRTTM{
+    text-align: left;
+    margin-top: 100pt;
+    color: aliceblue;
+  }
+  .techH{
+    text-align: left;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techP{
+    text-align: left;
+    color: aliceblue;
+    font-size: large;
+  }
+  /* These below are for Headers and Paragraphs on the right side */
+  .techHR{
+    text-align: right;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techPR{
+    text-align: right;
+    color: aliceblue;
+    font-size: large;
+  }
+
+
+  h3{
+    font-size: 55px;
+    color: white;
+    font-weight: 800;
+    text-decoration: underline;
+    text-align: center;
+  }
+  .img-webthumbnail{
+    height: 95%;
+    width: 95%;
+    border: 2px solid white;
+    border-radius: 5px;
+  }
+
+  .text-box-right{
+    background-color: transparent;
+    font-size: 25px;
+    text-align: right;
+    color: white;
+
+  }
+  
+  .tech-photo{
+   height: 450px;
+   width: 700px;
+   margin-top: 10%;
+   margin-bottom: 10%;
+  }

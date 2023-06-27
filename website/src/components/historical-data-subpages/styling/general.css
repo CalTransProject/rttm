@@ -1,0 +1,39 @@
+h1{
+    color: aliceblue;
+}
+.tableWrapper {
+    width: 100%;
+    height: 500px; /* or any other fixed height */
+    overflow: auto;
+  }
+.tableHead{
+    font-size: medium;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.tableCell{
+    font-size: medium;
+    
+}
+.file-select {
+    width: 400px; /* Set the desired width */
+  }
+  
+label{
+    color: aliceblue;
+}
+.GeneralSection{
+    padding: 20pt;
+}
+.averageSpeedTable{
+    width: 800pt;
+    max-height: 100pt;
+    overflow-x: scroll;
+}
+.fileInput{
+    background-color: snow;
+}
+.output {
+    overflow: scroll;
+    margin: 1rem 0;
+    height: 200px;
+  }

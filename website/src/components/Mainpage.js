@@ -1,12 +1,14 @@
 //import Chart from "react-apexcharts";
 import React, {useState} from "react";
-import StackedArea from './subcomponents/StackedArea';
-import StackedBar from './subcomponents/Bar';
-import PieChart from './subcomponents/PieChart';
-import './subcomponents/charts.css'
+import StackedArea from './subcomponents/sub-graph/StackedArea';
+import Bar from './subcomponents/sub-graph/Bar';
+import PieChart from './subcomponents/sub-graph/PieChart';
+import './subcomponents/sub-graph/charts.css'
 import Video from "./subcomponents/sub-s3-components/Video";
 import Body from "./subcomponents/sub-s3-components/Body";
 import './subcomponents/sub-s3-components/videoPlayer.css';
+import StackedBar from "./subcomponents/sub-graph/StackedBar";
+import Density from "./subcomponents/sub-graph/Density";
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
     //Page Layout
@@ -15,7 +17,7 @@ const Mainpage = () => {
             <div class="container-fluid">
                 <div class="row row-cols-1">
                 <div class="col text-center">
-                        <h1 className="welcome">Welcome to Home Dashboard</h1>
+                        <h1 className="welcome">Home Dashboard</h1>
                     </div>
                 </div>
                 <div class="row row-cols-2">
@@ -26,8 +28,21 @@ const Mainpage = () => {
                     <div class="col">
                         <h4 class="camText">Camera 2</h4>
                             <div class="video-box">
-                                <h5>Video Player Placeholder</h5>
-                                {/* <Video /> */}
+                                <video
+                                    id="my-video"
+                                    class="video-js"
+                                    // controls
+                                    autoPlay
+                                    muted
+                                    loop
+                                    preload="auto"
+                                    width="100%"
+                                    height="100%"
+                                    poster="MY_VIDEO_POSTER.jpg"
+                                    data-setup="{}"
+                                >
+                                    <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
+                                </video>
                             </div>
                     </div>
                 </div>
@@ -55,7 +70,7 @@ const Mainpage = () => {
                     <div class="col">
                         <div class="box">
                         <div class = "chart">
-                        { <StackedBar/>}
+                          <Bar/> 
                         </div>
                         </div>
                     </div>
@@ -64,6 +79,22 @@ const Mainpage = () => {
                         <div class = "chart">
                         {
                         <PieChart/>}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="box">
+                        <div class = "chart">
+                        {
+                        <StackedBar/>}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="box">
+                        <div class = "chart">
+                        {
+                        <Density/>}
                         </div>
                         </div>
                     </div>
