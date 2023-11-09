@@ -5,41 +5,31 @@ import { NavLink } from 'react-router-dom';
 const Header = () => {
   return (
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-          <div class="col-1" className="div-header">
-            <h1 class="logo">RTTM</h1>
+      <nav className="navbar navbar-expand-lg">
+        <div className="container-fluid">
+          <h1 className="logo col-2">RTTM</h1>
+          <div className="navbar-nav col-8 justify-content-center">
+            <NavLink exact to="/" className="nav-link" activeClassName="active">
+              Home
+            </NavLink>
+            <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
+              Camera Management
+            </NavLink>
+            <NavLink exact to="/historical-data/general" className="nav-link" activeClassName="active">
+              Historical Data
+            </NavLink>
+            <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
+              Technologies
+            </NavLink>
+            <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
+              About Us
+            </NavLink>
           </div>
-          <div class="col justify-content-center">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <NavLink exact to="/" className="nav-link" activeClassName="active">
-                  Home
-                </NavLink>
-              </li>
-              <li class="nav-item">
-                <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
-                  Camera Management
-                </NavLink>
-              </li>
-              <li class="nav-item">
-                <NavLink exact to="/historical-data/general" className="nav-link" activeClassName="active">
-                Historical Data
-                </NavLink>
-              </li>
-              <li class="nav-item">
-                <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
-                Technologies
-                </NavLink>
-              </li>
-              <li class="nav-item">
-                <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
-                About Us
-                </NavLink>
-              </li>
-            </ul>
+          <div className="col-2 text-right">
+            <NavLink exact to="/my-account" className="btn btn-primary">
+              My Account
+            </NavLink>
           </div>
-          <div class="col-1" className="div-header"></div>
         </div>
       </nav>
     </header>

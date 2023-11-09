@@ -1,17 +1,17 @@
 nav {
   position: absolute;
-  height: 70pt;
+  height: 34pt; /* Adjusted height */
   width: 100%;
-  /*height:  50px; */
-  background-color: rgb(36, 36, 36);
-  /* border: 1px solid #100000; */
+  background-color: rgb(36, 36, 36); /* Dark background */
 }
 
-.nav-item{
+/* Rest of the styles can remain unchanged. */
+
+.nav-item {
   padding: 1pt;
 }
 
-.nav-link.active{
+.nav-link.active {
   background-color: rgb(232, 232, 232);
   border-radius: 9px;
   color: green;
@@ -41,6 +41,12 @@ nav {
   padding: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-betwee;
+  justify-content: space-between; /* Corrected typo */
   align-items: center;
+  background-color: rgb(36, 36, 36); /* Ensure this matches nav's background */
+}
+
+/* Ensure no element inside .div-header has a different background */
+.div-header * {
+  background-color: inherit;
 }

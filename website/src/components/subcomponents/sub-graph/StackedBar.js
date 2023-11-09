@@ -140,6 +140,10 @@ const StackedBar = () => {
         }
         ]
     };
-  return <ReactEcharts option={option} />;
+    const chartStyle = {
+        height: '225px', // Set the desired height
+        width: '100%',   // Set the desired width
+      };
+      return <ReactEcharts option={option} style={chartStyle} />;
 }
 export default StackedBar;

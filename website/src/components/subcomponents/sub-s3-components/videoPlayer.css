@@ -1,14 +1,13 @@
-.video-box{
-    position: relative;
-    height: 26.2em;
-    text-align: center;
-    width: 100%;
-    margin-top: 5pt;
-    margin-bottom: 5pt;
-    background-color: rgb(128, 128, 128);
-    min-height: auto;
-    min-width: none;
-    padding: 2pt;
-    /* text color */
-    color: rgb(216, 216, 216);
-  }
+.video-box {
+  position: relative;
+  height: 20em; /* Reduced from 26.2em to make the box smaller in height */
+  text-align: center;
+  width: 100%;
+  margin-top: 3pt; /* Adjusted from 5pt for tighter spacing */
+  margin-bottom: 3pt; /* Adjusted from 5pt for tighter spacing */
+  background-color: rgb(128, 128, 128);
+  min-height: auto;
+  min-width: none;
+  padding: 1pt; /* Reduced padding */
+  color: rgb(216, 216, 216);
+}

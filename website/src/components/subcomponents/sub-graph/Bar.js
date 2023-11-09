@@ -84,9 +84,14 @@ const Bar = () => {
     textStyle: {
       color: "#fff",
     },
+    
+  };
+  const chartStyle = {
+    height: '225px', // Set the desired height
+    width: '100%',   // Set the desired width
   };
 
-  return <ReactEcharts option={option} />;
+  return <ReactEcharts option={option} style={chartStyle} />;
 };
 
 export default Bar;

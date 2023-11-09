@@ -1,14 +1,15 @@
 //import Chart from "react-apexcharts";
-import React, {useState} from "react";
+import React from "react";
 import StackedArea from './subcomponents/sub-graph/StackedArea';
 import Bar from './subcomponents/sub-graph/Bar';
 import PieChart from './subcomponents/sub-graph/PieChart';
 import './subcomponents/sub-graph/charts.css'
-import Video from "./subcomponents/sub-s3-components/Video";
+// Removed Video as it is not used
 import Body from "./subcomponents/sub-s3-components/Body";
 import './subcomponents/sub-s3-components/videoPlayer.css';
 import StackedBar from "./subcomponents/sub-graph/StackedBar";
 import Density from "./subcomponents/sub-graph/Density";
+import '../index.css';
 // Mainpage refers to the content of the home page for the website
 const Mainpage = () => { 
     //Page Layout
@@ -22,11 +23,11 @@ const Mainpage = () => {
                 </div>
                 <div class="row row-cols-2">
                     <div class="col">
-                        <h4 class="camText">Camera 1</h4>
+                    <h4 class="camText gradient-label">Camera 1</h4>
                         <Body />
                     </div>
                     <div class="col">
-                        <h4 class="camText">Camera 2</h4>
+                         <h4 class="camText gradient-label">Camera 2</h4>
                             <div class="video-box">
                                 <video
                                     id="my-video"

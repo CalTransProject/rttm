@@ -2,7 +2,7 @@ import ReactEcharts from "echarts-for-react";
 import initialPercentageData from "./PieChartData";
 import React, { useState, useEffect } from "react";
 import mockPercentageData from "./PieChartDataDy";
-import { color } from "echarts";
+// import { color } from "echarts";
 
 const PieChart = () =>{
   const [percentageData, setPercentageData] = useState(initialPercentageData);
@@ -49,6 +49,11 @@ const PieChart = () =>{
       }
     ]
   };
-return( <ReactEcharts option={option} />);
+  const chartStyle = {
+    height: '225px', // Set the desired height
+    width: '100%',   // Set the desired width
+  };
+
+  return <ReactEcharts option={option} style={chartStyle} />;
 } 
 export default PieChart;
