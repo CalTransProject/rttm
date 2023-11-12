@@ -20,6 +20,9 @@ import {
   Switch,
 } from "react-router-dom";
 import AboutUs from "./components/AboutUs";
+import Mainpage from "./components/Mainpage";
+import UserProfile from "./components/UserProfile";
+import UserAuthentication from "./components/UserAuthentication";
 
 function App() {
   return (
@@ -29,7 +32,7 @@ function App() {
       </div>
       <div className="container-fluid">
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<Mainpage />} />
           <Route path="/technologies" element={<Technologies />} />
 
           <Route path="/camera-management" element={<CameraManagement />}>
@@ -45,11 +48,13 @@ function App() {
             <Route path="download" element={<HistoricalDownload />} />
           </Route>
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/user-profile" element={<UserAuthentication />} />
         </Routes>
+        
       </div>
       <div className="chart"></div>
       <div className="footer">
-        <Footer />
+     
       </div>
     </div>
   );
