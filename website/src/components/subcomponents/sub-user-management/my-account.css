@@ -1,0 +1,116 @@
+* {box-sizing: border-box;}
+
+.right-spacer {
+  padding-right: 1.2%;
+}
+
+.user_button {
+  background: rgba(0,0,0,0.1); /* Transparent Background */
+  color: rgb(231, 231, 231);
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px 0px 0px 0px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: 2px solid #c5c5c5;
+}
+
+.user_button:active{
+  background-color: rgb(232, 232, 232);
+  border-radius: 9px;
+  color: green;
+}
+
+.user_button:hover {
+  background-color: #e7e7e7;
+  color: black;
+}
+
+.font-title{
+	color: white;
+	font-size: 60px;
+	font-weight: 700;	
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-attributes{
+  display: grid;
+	color: white;
+	font-size: 25px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.box h1{
+	font-size: 40px;
+  display: grid;
+	justify-content: center;
+	color: white;
+	margin-top: 2%;
+  margin-bottom: 2%;
+  align-items: center;
+  position: relative;
+}
+
+.box{
+	background: transparent; 
+}
+
+.log-out-button {
+  font-weight: 500;
+  left: calc(50% - 110px);
+  margin-top: 0;
+  margin-bottom: 10px;
+  width: 220px;
+  height: 45px;
+  background: linear-gradient(0deg, rgba(195,34,34,0.48792016806722693) 0%, rgba(252,5,5,1) 100%);
+  border: none;
+  color: rgb(219, 219, 219);
+  padding: 12px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15px;
+  margin: 10px 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.log-out-button:hover {
+
+  background: linear-gradient(0deg, rgba(250, 0, 0, 0.488) 0%, rgba(252,5,5,1) 100%);
+
+}
+
+.change-password-button {
+  font-weight: 500;
+  left: calc(50% - 110px);
+  margin-top: 0;
+  margin-bottom: 10px;
+  width: 220px;
+  height: 45px;
+  border: none;
+  background: linear-gradient(0deg, rgba(160, 159, 159, 0.409) 0%, rgb(145, 145, 145) 100%);
+  color: rgb(230, 230, 230);
+  padding: 12px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15px;
+  margin: 10px 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.change-password-button:hover {
+
+  background: linear-gradient(0deg, rgba(216, 216, 216, 0.409) 0%, rgb(247, 247, 247) 100%);
+  color: rgb(23, 23, 23);
+}
