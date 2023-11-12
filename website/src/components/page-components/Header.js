@@ -26,9 +26,7 @@ const Header = () => {
             </NavLink>
           </div>
           <div className="col-2 text-right">
-            <NavLink exact to="/my-account" className="btn btn-primary">
-              My Account
-            </NavLink>
+           <NavLink exact to="/user-profile"><input id="MyAccountButton" class="user_button" activeClassName="user_button" type="button" value="My Account" onclick=""/></NavLink>
           </div>
         </div>
       </nav>
