@@ -3,106 +3,98 @@ import React from "react";
 import StackedArea from './subcomponents/sub-graph/StackedArea';
 import Bar from './subcomponents/sub-graph/Bar';
 import PieChart from './subcomponents/sub-graph/PieChart';
-import './subcomponents/sub-graph/charts.css'
-// Removed Video as it is not used
-import Body from "./subcomponents/sub-s3-components/Body";
+import './subcomponents/sub-graph/charts.css';
 import './subcomponents/sub-s3-components/videoPlayer.css';
 import StackedBar from "./subcomponents/sub-graph/StackedBar";
 import Density from "./subcomponents/sub-graph/Density";
 import '../index.css';
-// Mainpage refers to the content of the home page for the website
-const Mainpage = () => { 
-    //Page Layout
-    return (
-        <section>    
-            <div class="container-fluid">
-                <div class="row row-cols-1">
-                <div class="col text-center">
-                        <h1 className="welcome">Home Dashboard</h1>
-                    </div>
-                </div>
-                <div class="row row-cols-2">
-                    <div class="col">
-                    <h4 class="camText gradient-label">Camera 1</h4>
-                        <Body />
-                    </div>
-                    <div class="col">
-                         <h4 class="camText gradient-label">Camera 2</h4>
-                            <div class="video-box">
-                                <video
-                                    id="my-video"
-                                    class="video-js"
-                                    // controls
-                                    autoPlay
-                                    muted
-                                    loop
-                                    preload="auto"
-                                    width="100%"
-                                    height="100%"
-                                    poster="MY_VIDEO_POSTER.jpg"
-                                    data-setup="{}"
-                                >
-                                    <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
-                                </video>
-                            </div>
-                    </div>
-                </div>
-                <div class="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
-                    {/* <div class="col">
-                        <div class="text-box">
-                            <h2>The Home Dashboard</h2>
-                            <p>
-                            This is where users will be able to view all of the
-                            live feed from the camera view whether it's through the
-                            2D or LiDAR camera, or through the data visualizations
-                            provided by the data from the camera.
-                            </p>
-                        </div>
-                    </div> */}
-                    <div class="col">
-                        <div class="box">
-                            <div class = "chart">
-                            {
-                            <StackedArea/>
-                            }
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="box">
-                        <div class = "chart">
-                          <Bar/> 
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="box">
-                        <div class = "chart">
-                        {
-                        <PieChart/>}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="box">
-                        <div class = "chart">
-                        {
-                        <StackedBar/>}
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="box">
-                        <div class = "chart">
-                        {
-                        <Density/>}
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    )
-} 
 
-export default Mainpage
+const Mainpage = () => {
+  // Page Layout
+  return (
+    <section>
+      <div className="container-fluid">
+        <div className="row row-cols-2">
+          <div className="col">
+            <h4 className="camText gradient-label">Camera 1</h4>
+            <div className="video-box">
+              <video
+                id="camera1-video"
+                className="video-js"
+                autoPlay
+                muted
+                loop
+                preload="auto"
+                width="100%"
+                height="100%"
+                poster="YOUR_CAMERA1_POSTER.jpg" // Change to your Camera 1 poster image path
+                data-setup="{}"
+              >
+                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" /> {/* Change to your Camera 1 video path */}
+              </video>
+            </div>
+          </div>
+          <div className="col">
+            <h4 className="camText gradient-label">Camera 2</h4>
+            <div className="video-box">
+              <video
+                id="camera2-video"
+                className="video-js"
+                autoPlay
+                muted
+                loop
+                preload="auto"
+                width="100%"
+                height="100%"
+                poster="MY_VIDEO_POSTER.jpg"
+                data-setup="{}"
+              >
+                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+        </div>
+        <div className="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
+          {/* Other content */}
+          <div className="col">
+            <div className="box">
+              <div className="chart">
+                <StackedArea />
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <div className="box">
+              <div className="chart">
+                <Bar />
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <div className="box">
+              <div className="chart">
+                <PieChart />
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <div className="box">
+              <div className="chart">
+                <StackedBar />
+              </div>
+            </div>
+          </div>
+          <div className="col">
+            <div className="box">
+              <div className="chart">
+                <Density />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Mainpage;

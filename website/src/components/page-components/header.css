@@ -2,7 +2,7 @@ nav {
   position: absolute;
   height: 34pt; /* Adjusted height */
   width: 100%;
-  background-color: rgb(36, 36, 36); /* Dark background */
+  background-color: #43404F; /* Dark background */
 }
 
 /* Rest of the styles can remain unchanged. */
@@ -23,14 +23,16 @@ nav {
   font-size: 15pt;
   font-weight: 500;
   white-space: nowrap;
+  margin-left: 30px; /* This will add space to the left of each nav item */
+  margin-right: 30px; /* This will add space to the right of each nav item */
 }
 
 .nav-link:hover {
-  color: rgb(255, 15, 15);
+  color: #D22030;
 }
 
 .logo {
-  color: rgb(255, 15, 15);
+  color: #D22030;
   font-weight: bold;
   font-family: Geneva, Tahoma, sans-serif;
 }
@@ -43,7 +45,7 @@ nav {
   flex-direction: row;
   justify-content: space-between; /* Corrected typo */
   align-items: center;
-  background-color: rgb(36, 36, 36); /* Ensure this matches nav's background */
+  background-color: #091e05; /* Ensure this matches nav's background */
 }
 
 /* Ensure no element inside .div-header has a different background */

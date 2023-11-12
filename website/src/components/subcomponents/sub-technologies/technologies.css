@@ -41,8 +41,8 @@
     text-align: center;
   }
   .img-webthumbnail{
-    height: 95%;
-    width: 95%;
+    height: 75%; /* Reduced from 95% to 75% */
+    width: 75%; /* Reduced from 95% to 75% */
     border: 2px solid white;
     border-radius: 5px;
   }
@@ -56,8 +56,8 @@
   }
   
   .tech-photo{
-   height: 450px;
-   width: 700px;
-   margin-top: 10%;
-   margin-bottom: 10%;
+    height: 350px; /* Reduced from 450px */
+    width: 550px; /* Reduced from 700px */
+    margin-top: 10%;
+    margin-bottom: 10%;
   }

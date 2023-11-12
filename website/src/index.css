@@ -12,7 +12,7 @@ body {
 
 /* Header style */
 header {
-  background-color: rgb(37, 37, 37);  /* Dark gray color */
+  background-color: #43404F;  /* Dark gray color */
   padding: 10px 0;
   text-align: center;
   color: white;
@@ -38,8 +38,8 @@ code {
 .background{
   height: 100%;
   width: 100%;
-  background:linear-gradient(rgba(0, 0, 0, 0.8),transparent);
-  background-color:rgb(77, 77, 77) /*this your primary color*/
+  background:linear-gradient(rgba(0, 0, 0, 0.d),transparent);
+  background-color:#565264 /*this your primary color*/
 }
 
 /* This box below has width that reaches the entire div but its height is based on the content */
@@ -99,11 +99,12 @@ code {
 /* This will get moved somewhere else. For now this is only for testing purposes */
 .camText {
   color: snow;
-  text-align: center; /* Centers text horizontally */
-  display: block; /* Ensures the element behaves like a block */
-  margin: 0 auto; /* Centers the block element if it has a specific width */
-  width: 100%; /* Sets width to full container */
+  text-align: center;
+  display: block;
+  margin: 20px auto; /* Added 20px top margin to push down from the nav bar */
+  width: 100%;
 }
+
 
 
 .camera-container {
@@ -132,11 +133,14 @@ code {
 
 
 .gradient-label {
-  background: linear-gradient(to right, #002f4b, #005f6b); /* Gradient goes from dark blue to lighter blue */
-  color: white; /* Keeps the text color white */
-  padding: 5px; /* Maintains the padding */
-  border-radius: 5px; /* Keeps the corners rounded */
+  background: linear-gradient(to right, #d22030, #565264); /* Gradient background */
+  color: white; /* Text color */
+  padding: 1px 10px; /* Vertical padding is 1px, horizontal padding is 10px */
+  border-radius: 5px; /* Rounded corners */
   display: inline-block; /* Ensures padding and border-radius are applied */
+  width: auto; /* Adjust width as needed, auto means it will wrap the content */
+  /* If you want a fixed width, you can set a specific value like width: 50%; */
+  text-align: center; /* Center the text within the gradient bar */
 }
 
 /* index.css or any other global stylesheet */
