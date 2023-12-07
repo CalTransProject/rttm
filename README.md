@@ -5,4 +5,4 @@ Github repo for Real-Time Traffic Monitoring project! This branch may not contai
 [Will be updated very soon!]
 
 ## Build
-In order to run these files properly, [NODE](https://nodejs.org/en/) and [Bootstrap](https://react-bootstrap.github.io/getting-started/introduction) must be installed on the system.
+In order to run these files properly, [NODE](https://nodejs.org/en/) and [Bootstrap](https://react-bootstrap.github.io/getting-started/introduction) must be installed on the system. In addition, [Amazon Cognito package](https://www.npmjs.com/package/amazon-cognito-identity-js) must be installed for user authentication.
