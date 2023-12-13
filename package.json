@@ -1,0 +1,22 @@
+{
+  "name": "rttm-app",
+  "version": "1.0.0",
+  "description": "rttm project ",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CalTransProject/rttm.git"
+  },
+  "keywords": [
+    "rttm"
+  ],
+  "author": "arcs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CalTransProject/rttm/issues"
+  },
+  "homepage": "https://github.com/CalTransProject/rttm#readme"
+}
