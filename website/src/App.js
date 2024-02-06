@@ -11,17 +11,28 @@ import HistoricalDownload from "./components/historical-data-subpages/Historical
 import Configuration from "./components/camera-management-subpages/Configuration";
 import NewCamera from "./components/camera-management-subpages/NewCamera";
 import RemoveCameras from "./components/camera-management-subpages/RemoveCameras";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { AuthContextProvider } from "./context/AuthContext";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, navigate } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Switch,
+  Navigate
 } from "react-router-dom";
 import AboutUs from "./components/AboutUs";
+import Mainpage from "./components/Mainpage";
+import UserAuthentication from "./components/UserAuthentication";
+import MyAccount from "./components/UserProfile";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectLogin from "./components/ProtectLogin";
+
+import { UserAuth } from './context/AuthContext';
 
 function App() {
+
+
   return (
     <div className="App">
       <div className="content">
@@ -29,7 +40,7 @@ function App() {
       </div>
       <div className="container-fluid">
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<Mainpage />} />
           <Route path="/technologies" element={<Technologies />} />
 
           <Route path="/camera-management" element={<CameraManagement />}>
@@ -46,10 +57,20 @@ function App() {
           </Route>
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
+          
+        <AuthContextProvider>
+        <Routes>
+            <Route path="/my-account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>}/>
+        </Routes>
+        <Routes>
+            <Route path="/user-authentication" element={<ProtectLogin><UserAuthentication/></ProtectLogin>} />
+        </Routes>
+        </AuthContextProvider>
+
       </div>
       <div className="chart"></div>
       <div className="footer">
-        <Footer />
+     
       </div>
     </div>
   );
