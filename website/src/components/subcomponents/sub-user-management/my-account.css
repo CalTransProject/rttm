@@ -1,0 +1,115 @@
+* {box-sizing: border-box;}
+
+.right-spacer {
+  padding-right: 1.2%;
+}
+
+.user_button {
+  background: rgba(10,0,0,0.25); /* Transparent Background */
+  color: rgb(231, 231, 231);
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 2px 0px 0px 0px;
+  transition-duration: 0.2s;
+  cursor: pointer;
+}
+
+.user_button:active{
+  background-color: rgb(232, 232, 232);
+  border-radius: 5px;
+  color: green;
+}
+
+.user_button:hover {
+  background-color: #e7e7e7;
+  color: black;
+}
+
+.font-title{
+	color: white;
+	font-size: 28px;
+	font-weight: 700;	
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-attributes{
+  display: grid;
+	color: white;
+	font-size: 23px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.box h1{
+	font-size: 30px;
+  display: grid;
+	justify-content: center;
+	color: white;
+	margin-top: 2%;
+  margin-bottom: 2%;
+  align-items: center;
+  position: relative;
+}
+
+.box{
+	background: transparent; 
+}
+
+.log-out-button {
+  font-weight: 500;
+  left: calc(50% - 120px);
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 240px;
+  height: 46px;
+  background: linear-gradient(0deg, rgba(147, 18, 18, 0.977) 0%, rgba(252, 5, 5, 0.807) 100%);
+  border: 1px solid #454242;
+  color: rgb(219, 219, 219);
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15.5px;
+  margin: 11px 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+.log-out-button:hover {
+  background: linear-gradient(0deg, rgba(184, 15, 15, 0.764) 0%, rgba(252,5,5,1) 100%);
+}
+
+.change_Btn {
+  font-weight: 500;
+  left: calc(50% - 120px);
+  margin-bottom: 10px;
+  width: 240px;
+  height: 46px;
+  border: 1px solid #454242;
+  background: linear-gradient(0deg, rgba(85, 65, 85, 0.571) 0%, rgba(130, 119, 138, 0.914) 100%);
+  color: rgb(230, 230, 230);
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15.5px;
+  margin: 11px 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+.change_Btn:hover {
+  background: linear-gradient(0deg, rgba(234, 234, 234, 0.719) 0%, rgb(247, 247, 247) 100%);
+  color: rgb(23, 23, 23);
+}
+
