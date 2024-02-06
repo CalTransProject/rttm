@@ -1,17 +1,18 @@
 nav {
   position: absolute;
-  height: 34pt; /* Adjusted height */
-  width: 100%;
-  background-color: #43404F; /* Dark background */
+  align-items: center;
+  height: 60pt;
+  max-width: 100%;
+  /*height:  50px; */
+   background-color: #43404F; /* Dark background */
+  /* border: 1px solid #100000; */
 }
 
-/* Rest of the styles can remain unchanged. */
-
-.nav-item {
-  padding: 1pt;
+.nav-item{
+  padding: 3pt;
 }
 
-.nav-link.active {
+.nav-link.active{
   background-color: rgb(232, 232, 232);
   border-radius: 9px;
   color: green;
@@ -23,16 +24,15 @@ nav {
   font-size: 15pt;
   font-weight: 500;
   white-space: nowrap;
-  margin-left: 30px; /* This will add space to the left of each nav item */
-  margin-right: 30px; /* This will add space to the right of each nav item */
 }
 
 .nav-link:hover {
-  color: #D22030;
+  color: rgb(255, 15, 15);
 }
 
 .logo {
-  color: #D22030;
+  padding-top: 4px;
+  color: rgb(255, 15, 15);
   font-weight: bold;
   font-family: Geneva, Tahoma, sans-serif;
 }
@@ -43,12 +43,7 @@ nav {
   padding: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between; /* Corrected typo */
+  justify-content: space-between;
   align-items: center;
-  background-color: #091e05; /* Ensure this matches nav's background */
-}
-
-/* Ensure no element inside .div-header has a different background */
-.div-header * {
-  background-color: inherit;
+  align-content: center;
 }
