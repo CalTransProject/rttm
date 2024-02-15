@@ -27,18 +27,14 @@ function HistoricalSidebarMenu() {
               to="/historical-data/general"
               activeClassName="activeClicked"
             >
-              <CDBSidebarMenuItem className="menu-item" icon="book">
-                General
-              </CDBSidebarMenuItem>
+            
             </NavLink>
             <NavLink
               exact
               to="/historical-data/upload"
               activeClassName="activeClicked"
             >
-              <CDBSidebarMenuItem className="menu-item" icon="upload">
-                Upload Data
-              </CDBSidebarMenuItem>
+              
             </NavLink>
             
           </CDBSidebarMenu>
