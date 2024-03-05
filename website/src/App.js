@@ -32,7 +32,6 @@ import { UserAuth } from './context/AuthContext';
 
 function App() {
 
-
   return (
     <div className="App">
       <div className="content">
@@ -41,23 +40,27 @@ function App() {
       <div className="container-fluid">
         <Routes>
           <Route path="/" element={<Mainpage />} />
-          <Route path="/technologies" element={<Technologies />} />
-
-          <Route path="/camera-management" element={<CameraManagement />}>
-            <Route path="general" element={<General />} />
-            <Route path="new-camera" element={<NewCamera />} />
-            <Route path="remove-cameras" element={<RemoveCameras />} />
-            <Route path="configuration" element={<Configuration />} />
-          </Route>
-
-          <Route path="/historical-data" element={<HistoricalData />}>
-            <Route path="general" element={<HistoricalGeneral />} />
-            <Route path="upload" element={<HistoricalUpload />} />
-            <Route path="download" element={<HistoricalDownload />} />
-          </Route>
-          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/technologies" element={<Technologies />} /> 
         </Routes>
           
+        <Routes>
+            <Route path="/camera-management" element={<CameraManagement />}>
+              <Route path="general" element={<General />} />
+              <Route path="new-camera" element={<NewCamera />} />
+              <Route path="remove-cameras" element={<RemoveCameras />} />
+              <Route path="configuration" element={<Configuration />} />
+            </Route>
+        </Routes>
+
+        <Routes>
+           <Route path="/historical-data" element={<HistoricalData />}>
+              <Route path="general" element={<HistoricalGeneral />} />
+              <Route path="upload" element={<HistoricalUpload />} />
+              <Route path="download" element={<HistoricalDownload />} />
+            </Route>
+            <Route path="/about-us" element={<AboutUs />} />
+        </Routes>
+  
         <AuthContextProvider>
         <Routes>
             <Route path="/my-account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>}/>
