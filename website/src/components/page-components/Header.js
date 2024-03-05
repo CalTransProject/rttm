@@ -20,7 +20,7 @@ const Header = () => {
                 </NavLink>
               </li>
               <li class="nav-item">
-                <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
+                <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active" end>
                   Camera Management
                 </NavLink>
               </li>
@@ -42,11 +42,13 @@ const Header = () => {
             </ul>
           </div>
           <div class="col-1" className="div-header"></div>
-          <div>  
-            <NavLink exact to='/my-account'>      
-            <input id="MyAccountButton" class="user_button" activeClassName="user_button" type="button" value="My Account"/>
-            </NavLink>
-          </div>     
+          <ul class="navbar-nav">
+            <li class="nav-item"> 
+              <NavLink exact to='/my-account' className="user_button" activeClassName="user_button" >      
+              My Account
+              </NavLink>
+            </li>
+          </ul>     
         </div>
       </nav>
     </header>
