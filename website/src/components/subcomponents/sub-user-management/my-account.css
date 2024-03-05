@@ -4,34 +4,11 @@
   padding-right: 1.2%;
 }
 
-.user_button {
-  background: rgba(10,0,0,0.25); /* Transparent Background */
-  color: rgb(231, 231, 231);
-  padding: 12px 24px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 2px 0px 0px 0px;
-  transition-duration: 0.2s;
-  cursor: pointer;
-}
-
-.user_button:active{
-  background-color: rgb(232, 232, 232);
-  border-radius: 5px;
-  color: green;
-}
-
-.user_button:hover {
-  background-color: #e7e7e7;
-  color: black;
-}
-
 .font-title{
-	color: white;
-	font-size: 28px;
-	font-weight: 700;	
+  color: white;
+  font-size: 26px;
+  font-weight: 700;	
+  margin-top: 15px;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -39,48 +16,49 @@
 
 .font-attributes{
   display: grid;
-	color: white;
-	font-size: 23px;
+  color: white;
+  font-size: 20px;
   text-align: center;
   align-items: center;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 0px;
 }
 
 .box h1{
-	font-size: 30px;
+  font-size: 20px;
   display: grid;
-	justify-content: center;
-	color: white;
-	margin-top: 2%;
-  margin-bottom: 2%;
+  justify-content: center;
+  color: white;
+  margin-top: 0%;
+  margin-bottom: 0%;
   align-items: center;
   position: relative;
 }
 
 .box{
-	background: transparent; 
+  background: transparent; 
 }
 
 .log-out-button {
+  justify-content: center;
   font-weight: 500;
   left: calc(50% - 120px);
   margin-top: 0;
-  margin-bottom: 10px;
   border-radius: 5px;
   width: 240px;
   height: 46px;
   background: linear-gradient(0deg, rgba(147, 18, 18, 0.977) 0%, rgba(252, 5, 5, 0.807) 100%);
   border: 1px solid #454242;
   color: rgb(219, 219, 219);
-  padding: 10px 25px;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
-  display: grid;
+  display: flex;
   font-size: 15.5px;
-  margin: 11px 2px;
+  align-items: center;
+  margin: 0px 2px;
   cursor: pointer;
   position: relative;
+  align-self: flex-start;
   z-index: 0;
 }
 
@@ -90,6 +68,7 @@
 
 .change_Btn {
   font-weight: 500;
+  border-radius: 5px;
   left: calc(50% - 120px);
   margin-bottom: 10px;
   width: 240px;
@@ -102,13 +81,39 @@
   text-decoration: none;
   display: grid;
   font-size: 15.5px;
-  margin: 11px 2px;
+  margin: 10px 2px;
   cursor: pointer;
   position: relative;
   z-index: 0;
 }
 
 .change_Btn:hover {
+  background: linear-gradient(0deg, rgba(234, 234, 234, 0.719) 0%, rgb(247, 247, 247) 100%);
+  color: rgb(23, 23, 23);
+}
+
+.Btn {
+  font-weight: 500;
+  border-radius: 5px;
+  left: calc(50% - 120px);
+  margin-bottom: 10px;
+  width: 240px;
+  height: 46px;
+  border: 1px solid #454242;
+  background: linear-gradient(0deg, rgba(60, 81, 105, 0.571) 0%, rgba(87, 87, 149, 0.914) 100%);
+  color: rgb(230, 230, 230);
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15.5px;
+  margin: 10px 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+.Btn:hover {
   background: linear-gradient(0deg, rgba(234, 234, 234, 0.719) 0%, rgb(247, 247, 247) 100%);
   color: rgb(23, 23, 23);
 }
