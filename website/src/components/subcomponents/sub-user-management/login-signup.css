@@ -17,7 +17,7 @@ body {
 }
 
 .section-title {
-  margin: 35px;
+    margin: 35px;
 	font-size: 23px;
 	letter-spacing: 1px;
 	color: #fff;
@@ -132,7 +132,7 @@ body {
 	min-width: 280px;
 	margin-top: 50px;
 	padding: 30px 25px;
-    border-radius: 5px;
+    	border-radius: 5px;
 	transform-origin: top;
 }
 
@@ -240,7 +240,7 @@ body {
 }
 
 .input-block {
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 }
 
 input::-ms-reveal {
@@ -250,31 +250,32 @@ input::-ms-reveal {
 
 .input-block label {
 	font-size: 14px;
-  color: #e8e8e8;
+	margin-top: 0px;
+    	color: #e8e8e8;
 }
 
 .input-block input {
 	display: block;
 	width: 100%;
-	margin-top: 5px;
+	margin-top: 0px;
 	padding-right: 15px;
 	padding-left: 15px;
 	font-size: 15px;
 	line-height: 19px;
-	color: #dfdfdf;
+	color: #e6e6e6;
 	background: #43404e;
-  border: 1px solid #8f8f8f;
-  border-radius: 3px;
+    	border: 1px solid #9f9898;
+    	border-radius: 4px;
 }
 
 .form [type='submit'] {
 	opacity: 0;
 	display: block;
 	min-width: 120px;
-  width:  160px;
-	margin: 30px auto 10px;
+   	width:  160px;
+	margin: 14px auto 0px;
 	font-size: 17px;
-	line-height: 25px;
+	line-height: 24px;
 	border-radius: 5px;
 	border: none;
 	transition: all .3s ease-out;
@@ -288,7 +289,7 @@ input::-ms-reveal {
 
 .btn-login {
 	color: #fbfdff;
-  background: linear-gradient(0deg, rgba(90, 105, 137, 0.778) 0%, rgba(129, 148, 162, 0.888) 100%);
+    	background: linear-gradient(0deg, rgba(90, 105, 137, 0.778) 0%, rgba(129, 148, 162, 0.888) 100%);
 	transform: translateX(-30%);
 }
 
@@ -298,7 +299,7 @@ input::-ms-reveal {
 
 .btn-signup {
 	color: #050505;
-  background: linear-gradient(0deg, rgb(169, 123, 7) 0%, rgb(243, 207, 3) 100%);
+    	background: linear-gradient(0deg, rgb(169, 112, 7) 0%, rgb(243, 207, 3) 100%);
 	transform: translateX(30%);
 	font-weight: 400;
 }
@@ -308,11 +309,12 @@ input::-ms-reveal {
 }
 
 .btn-forgotPassword {
+	margin-top: 10px;
 	background-color: transparent;
 	color:#dfdfdf;
 }
 
 .btn-forgotPassword:hover {
 	background-color: transparent;
-	color: rgb(255, 184, 71);	
+	color: rgb(255, 184, 71);
 }
