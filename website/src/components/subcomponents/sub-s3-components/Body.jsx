@@ -1,19 +1,20 @@
 import Graph from "./Graph";
-import {useEffect, useState} from "react";
-import {fetchDataset, fetchStreamInfo} from "./api"
-import {Container, Skeleton} from "@mui/material";
+import { useEffect, useState } from "react";
+import { fetchDataset, fetchStreamInfo } from "./api"
+import { Container, Skeleton } from "@mui/material";
 import Video from "./Video";
 import "./videoPlayer.css";
 
-const getEntries = (dataset) => {
+export const getEntries = (dataset) => {
   return (
     Object.entries(dataset?.Items?.reduce((acc, item) => {
       item?.Category?.split(',').map(c => c.trim()).forEach(c => c in acc ? acc[c] += 1 : acc[c] = 1)
       return acc
     }, {}) || {}).filter(([k, _v]) => !['StreamId', 'Time', 'Category'].includes(k))
-  )}
+  )
+}
 
-const toGraphData = (dataset) => {
+export const toGraphData = (dataset) => {
   const obj = Object.fromEntries(getEntries(dataset))
   return ({
     labels: Object.keys(obj), datasets: [{
@@ -40,18 +41,18 @@ const Body = () => {
     return Number(sid) ? updateData(sid) : setGraphData(toGraphData({}))
   })
 
-  useEffect( () => {
+  useEffect(() => {
     (async () => await update())()
     setInterval(async () => await update(), 10 * 1000)
   }, [])
 
   return (
-      <div class="video-box">
-        {Number(streamId) ? <Video sid={streamId}/> : <Skeleton variant="rectangular" maxWidth={false} height={413}/>}
-        
-        {/* Graph that correlates with the video above */}
-        {/* <Graph sid={streamId} data={graphData}/> */}
-      </div>
+    <div class="video-box">
+      {Number(streamId) ? <Video sid={streamId} /> : <Skeleton variant="rectangular" maxWidth={false} height={413} />}
+
+      {/* Graph that correlates with the video above */}
+      {/* <Graph sid={streamId} data={graphData}/> */}
+    </div>
   )
 }
 

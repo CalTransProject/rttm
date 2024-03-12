@@ -11,6 +11,7 @@ import HistoricalDownload from "./components/historical-data-subpages/Historical
 import Configuration from "./components/camera-management-subpages/Configuration";
 import NewCamera from "./components/camera-management-subpages/NewCamera";
 import RemoveCameras from "./components/camera-management-subpages/RemoveCameras";
+// import HistoricalDataVisualization from "./components/historical-data-subpages/historical-data-visualization";
 
 import React, { useState } from "react";
 import {
@@ -45,6 +46,7 @@ function App() {
             <Route path="download" element={<HistoricalDownload />} />
           </Route>
           <Route path="/about-us" element={<AboutUs />} />
+
         </Routes>
       </div>
       <div className="chart"></div>

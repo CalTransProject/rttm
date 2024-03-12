@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { Container, Skeleton } from '@mui/material';
-import { Video, Graph } from '../sub-s3-components';
-import { fetchDataset } from '../sub-s3-components/api';
-import { getEntries, toGraphData } from '../Body';
-import { mockData, loadData } from './mockingData';
+import { Container, Skeleton } from "@mui/material";
+//import { Video, Graph } from '../sub-s3-components';
+import '../sub-s3-components/Graph.jsx';
+import '../sub-s3-components/Video.jsx';
+import { fetchDataset } from '../sub-s3-components/api.js';
+import { getEntries, toGraphData } from '../sub-s3-components/Body.jsx';
+//import { mockData, loadData } from '../../historical-data-subpages/historical-data-visualization/mockingData.js';
 import '../sub-s3-components/videoPlayer.css';
-import '../Body.css';
+//import '../Body.css';
 
-const HistoricalDataVisualization = () => {
+function HistoricalDataVisualizationFilter() {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndtDate] = useState(new Date());
     const [graphData, setGraphData] = useState(null);
@@ -71,17 +73,21 @@ const HistoricalDataVisualization = () => {
             <div className="graph-container">
                 <label>
                     Graph:
-                    <Graph data={graphData} />
+                    {/* <Graph data={graphData} /> */}
                 </label>
             </div>
             <div className="video-container">
                 <label>
                     Video:
                 </label>
-                <Video />
+                {/* <Video /> */}
             </div>
         </div>
     );
 };
 
-export default HistoricalDataVisualization;
+//export default HistoricalDataVisualization;
+
+
+
+export default HistoricalDataVisualizationFilter;
