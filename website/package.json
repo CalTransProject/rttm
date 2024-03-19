@@ -17,11 +17,13 @@
     "bootstrap": "^5.2.3",
     "cdbreact": "^1.5.10",
     "chart.js": "^4.2.1",
+    "dotenv": "^16.4.5",
     "echarts": "^5.4.2",
     "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
     "fs": "^0.0.1-security",
     "ng2-charts": "^4.1.1",
+    "pg": "^8.11.3",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-bootstrap": "^2.6.0",
@@ -62,6 +64,20 @@
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
+  },
+  "overrides": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-bootstrap": "^2.6.0",
+    "focus-trap-react": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "react-bootstrap-range-slider": {
+      "react-bootstrap": "^2.6.0"
+    },
+    "react-hls-player": {
+      "react": "^18.2.0"
+    }
   }
-  
 }

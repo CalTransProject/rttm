@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const pool = require('./database/config');
 
 const app = express();
@@ -32,21 +33,36 @@ app.get('/users', (req, res, next) => {
   });
 });
 
+app.get('/users/:id', (req, res, next) => {
+  const { id } = req.params;
+  pool.query('SELECT * FROM "User" WHERE UserID = $1', [id], (error, results) => {
+    if (error) {
+      next(error);
+    } else {
+      if (results.rows.length === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json(results.rows[0]);
+    }
+  });
+});
+
 const userValidationRules = [
   check('username').isEmail(),
   check('password').isLength({ min: 6 }),
   check('role').not().isEmpty(),
 ];
 
-app.post('/users', userValidationRules, (req, res, next) => {
+app.post('/users', userValidationRules, async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { username, password, role } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
   pool.query('INSERT INTO "User" (Username, Password, Role) VALUES ($1, $2, $3) RETURNING *',
-    [username, password, role], (error, results) => {
+    [username, hashedPassword, role], (error, results) => {
       if (error) {
         next(error);
       } else {
@@ -65,7 +81,7 @@ const userUpdateValidationRules = [
   check('role').optional().not().isEmpty(),
 ];
 
-app.put('/users/:id', userUpdateValidationRules, (req, res, next) => {
+app.put('/users/:id', userUpdateValidationRules, async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -73,8 +89,17 @@ app.put('/users/:id', userUpdateValidationRules, (req, res, next) => {
 
   const { id } = req.params;
   const { username, password, role } = req.body;
-  pool.query('UPDATE "User" SET Username = $1, Password = $2, Role = $3 WHERE UserID = $4 RETURNING *',
-    [username, password, role, id], (error, results) => {
+  const updateFields = {};
+  if (username) updateFields.Username = username;
+  if (password) updateFields.Password = await bcrypt.hash(password, 10);
+  if (role) updateFields.Role = role;
+
+  const setClause = Object.keys(updateFields).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
+  const values = Object.values(updateFields);
+  values.push(id);
+
+  pool.query(`UPDATE "User" SET ${setClause} WHERE UserID = $${values.length} RETURNING *`,
+    values, (error, results) => {
       if (error) {
         next(error);
       } else {
@@ -94,8 +119,33 @@ app.delete('/users/:id', (req, res, next) => {
   });
 });
 
+app.post('/login', [
+  check('username').isEmail(),
+  check('password').not().isEmpty(),
+], (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { username, password } = req.body;
+  pool.query('SELECT * FROM "User" WHERE Username = $1', [username], (error, results) => {
+    if (error) {
+      next(error);
+    } else {
+      const user = results.rows[0];
+      if (!user || !bcrypt.compareSync(password, user.Password)) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+      const token = jwt.sign({ user_id: user.UserID }, process.env.JWT_SECRET, {
+        expiresIn: '2h',
+      });
+      res.status(200).json({ user, token });
+    }
+  });
+});
+
 app.post('/vehicletype', [
-  // Validation middleware here
   check('type').not().isEmpty(),
   check('description').not().isEmpty(),
 ], (req, res, next) => {
@@ -125,8 +175,21 @@ app.get('/vehicletype', (req, res, next) => {
   });
 });
 
+app.get('/vehicletype/:id', (req, res, next) => {
+  const { id } = req.params;
+  pool.query('SELECT * FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
+    if (error) {
+      next(error);
+    } else {
+      if (results.rows.length === 0) {
+        return res.status(404).json({ message: 'Vehicle type not found' });
+      }
+      res.status(200).json(results.rows[0]);
+    }
+  });
+});
+
 app.put('/vehicletype/:id', [
-  // Validation middleware here
   check('type').optional().not().isEmpty(),
   check('description').optional().not().isEmpty(),
 ], (req, res, next) => {
@@ -137,7 +200,7 @@ app.put('/vehicletype/:id', [
 
   const { id } = req.params;
   const { type, description } = req.body;
-  pool.query('UPDATE "VehicleType" SET Type = $1, Description = $2 WHERE ID = $3 RETURNING *',
+  pool.query('UPDATE "VehicleType" SET Type = $1, Description = $2 WHERE TypeID = $3 RETURNING *',
     [type, description, id], (error, results) => {
       if (error) {
         next(error);
@@ -149,7 +212,7 @@ app.put('/vehicletype/:id', [
 
 app.delete('/vehicletype/:id', (req, res, next) => {
   const { id } = req.params;
-  pool.query('DELETE FROM "VehicleType" WHERE ID = $1', [id], (error, results) => {
+  pool.query('DELETE FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
     if (error) {
       next(error);
     } else {
@@ -158,20 +221,17 @@ app.delete('/vehicletype/:id', (req, res, next) => {
   });
 });
 
-// Middleware for validating the input for creating a ModifiedVehicle
 const modifiedVehicleValidationRules = [
   check('vehicleID').isInt(),
   check('modifications').not().isEmpty(),
 ];
 
-// Middleware for validating the input for updating a ModifiedVehicle
 const modifiedVehicleUpdateValidationRules = [
   check('modifications').optional().not().isEmpty(),
 ];
 
-// Middleware for authorization (Assuming you have a function for this)
 const authorize = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+  const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     return res.status(403).json({ message: 'No token provided' });
   }
@@ -180,12 +240,11 @@ const authorize = (req, res, next) => {
     if (err) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    req.user = decoded; // Add user payload to request object
+    req.user = decoded;
     next();
   });
 };
 
-// POST route for creating a new ModifiedVehicle
 app.post('/modifiedvehicle', [authorize, modifiedVehicleValidationRules], (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -203,7 +262,6 @@ app.post('/modifiedvehicle', [authorize, modifiedVehicleValidationRules], (req, 
     });
 });
 
-// GET route for fetching all ModifiedVehicles
 app.get('/modifiedvehicle', authorize, (req, res, next) => {
   pool.query('SELECT * FROM ModifiedVehicle', (error, results) => {
     if (error) {
@@ -214,7 +272,20 @@ app.get('/modifiedvehicle', authorize, (req, res, next) => {
   });
 });
 
-// PUT route for updating a ModifiedVehicle
+app.get('/modifiedvehicle/:id', authorize, (req, res, next) => {
+  const { id } = req.params;
+  pool.query('SELECT * FROM ModifiedVehicle WHERE VehicleID = $1', [id], (error, results) => {
+    if (error) {
+      next(error);
+    } else {
+      if (results.rows.length === 0) {
+        return res.status(404).json({ message: 'Modified vehicle not found' });
+      }
+      res.status(200).json(results.rows[0]);
+    }
+  });
+});
+
 app.put('/modifiedvehicle/:id', [authorize, modifiedVehicleUpdateValidationRules], (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -233,7 +304,6 @@ app.put('/modifiedvehicle/:id', [authorize, modifiedVehicleUpdateValidationRules
     });
 });
 
-// DELETE route for removing a ModifiedVehicle
 app.delete('/modifiedvehicle/:id', authorize, (req, res, next) => {
   const { id } = req.params;
   pool.query('DELETE FROM ModifiedVehicle WHERE VehicleID = $1', [id], (error) => {

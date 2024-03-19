@@ -4,6 +4,7 @@ CREATE TABLE "User" (
   "Password" TEXT NOT NULL,
   "Role" TEXT NOT NULL
 );
+
 CREATE INDEX "idx_user_username" ON "User" ("Username");
 
 CREATE TABLE "VehicleType" (
@@ -21,6 +22,7 @@ CREATE TABLE "ModifiedVehicle" (
   "ConfidenceLevel" REAL NOT NULL,
   "Lane" INTEGER NOT NULL CHECK ("Lane" > 0)
 );
+
 CREATE INDEX "idx_modified_vehicle_timestamp_classification" ON "ModifiedVehicle" ("FrameUnixTimestamp", "Classification");
 
 CREATE TABLE "VehicleHistory" (
@@ -30,6 +32,7 @@ CREATE TABLE "VehicleHistory" (
   "LocationHistory" TEXT NOT NULL,
   FOREIGN KEY ("VehicleID") REFERENCES "ModifiedVehicle" ("VehicleID") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 CREATE INDEX "idx_vehicle_history" ON "VehicleHistory" ("VehicleID", "HistoricalTimestamp");
 
 CREATE TABLE "FramePrediction" (
@@ -38,6 +41,7 @@ CREATE TABLE "FramePrediction" (
   "NumberOfVehiclesInEachLane" TEXT NOT NULL,
   "VehicleObjects" TEXT NOT NULL
 );
+
 CREATE INDEX "idx_frame_prediction_timestamp" ON "FramePrediction" ("UnixTimestamp");
 
 CREATE TABLE "HistoricalData" (
@@ -48,6 +52,7 @@ CREATE TABLE "HistoricalData" (
   "VehicleTypesCount" TEXT NOT NULL,
   FOREIGN KEY ("UnixTimestamp") REFERENCES "FramePrediction" ("UnixTimestamp") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 CREATE INDEX "idx_historical_data_timestamp" ON "HistoricalData" ("UnixTimestamp");
 
 CREATE TABLE "VehicleDetectionEvent" (
@@ -58,4 +63,5 @@ CREATE TABLE "VehicleDetectionEvent" (
   "EventDescription" TEXT NOT NULL,
   FOREIGN KEY ("VehicleID") REFERENCES "ModifiedVehicle" ("VehicleID") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 CREATE INDEX "idx_vehicle_detection_event" ON "VehicleDetectionEvent" ("VehicleID", "UnixTimestamp");
