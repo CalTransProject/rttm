@@ -3,7 +3,9 @@ nav {
   align-items: center;
   height: 55pt;
   max-width: 100%;
-  background-color: #43404F; /* Dark background */
+  /*height:  50px; */
+   background-color: #43404F; /* Dark background */
+  /* border: 1px solid #100000; */
 }
 
 .nav-item{
@@ -49,7 +51,7 @@ nav {
 .user_button {
   background: rgba(10,0,0,0.25); /* Transparent Background */
   color: rgb(231, 231, 231);
-  padding: 12px 24px;
+  padding: 10px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
