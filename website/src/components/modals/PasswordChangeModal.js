@@ -24,11 +24,11 @@ const PasswordChangeModal = ({open, onClose}) => {
     return (
         <div className='overlay'>
             <div className="modalContainer">
-                <p>Change password</p>
+           <p>Change password</p>
                 <div className="modalRight">
                     <p onClick={onClose} style={{position: 'fixed', top: 14 + 'px', right: 16 +'px', fontSize: 16 + 'px', color: 'rgb(255, 69, 1)', cursor: 'pointer'}}>Cancel</p>
                 </div>
-
+                
                     <form style={{width: 100 + '%', alignItems: 'center'}}>  
                             <div style={{width: 75 + '%', fontSize: 14 + 'px'}}>
                                 <label for="current-password">Current password</label>
