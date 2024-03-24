@@ -1,37 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { UserAuth } from '../context/AuthContext';
 import "./subcomponents/sub-user-management/my-account.css"
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeModal from './modals/PasswordChangeModal';
 import EmailChangeModal from './modals/EmailChangeModal';
+import VerifyUsersModal from './modals/VerifyUsersModal';
 import { auth, db } from '../firebase';
 import { getAuth } from 'firebase/auth';
 import { red } from '@mui/material/colors';
 import { collection, doc, getDoc } from 'firebase/firestore';
 
-
 const UserProfile = () => {  
-
     const [openPasswordModal, setOpenPasswordModal] = useState(false);
     const [openEmailModal, setOpenEmailModal] = useState(false);
+    const [openVerifyUsersModal, setOpenVerifyUsersModal] = useState(false);
     const [permission, setPermission] = useState('');
-    var isAdmin = false
-
+    const [username, setUsername] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
     const {user, logout} = UserAuth();
     const navigate = useNavigate();
 
-    const getPermission = async () => {
-      const QuerySnapshot = await getDoc(doc(db, "user_list", auth.currentUser.uid));
+    const getPermission = async () => {  
+      const QuerySnapshot = await getDoc(doc(db, "user_list", auth.currentUser.uid));      
       setPermission(QuerySnapshot.data()['role']);
+      if (permission == "admin")
+      {
+        setIsAdmin(true)
+      }   
+      else 
+      {
+        setIsAdmin(false)
+      }
+      setUsername(auth.currentUser.displayName);
     }
 
     getPermission()
-    if (permission == "admin")
-      isAdmin = true
-
-    const showUserManagement = async () => {
-      //navigate('/user-management');
-    }
 
     const handleLogout = async () => {
       try {
@@ -48,48 +51,67 @@ const UserProfile = () => {
         <section>    
           <PasswordChangeModal open={openPasswordModal} onClose={() => setOpenPasswordModal(false)}/>
           <EmailChangeModal open={openEmailModal} onClose={() => setOpenEmailModal(false)}/>
-          {isAdmin ? (           
-            <div style={{display: "flex", overflow: 'hidden', alignItems: 'center', justifyContent: "center", marginTop: 0 + 'px', background: "linear-gradient(45deg, rgb(63, 64, 112, 0.5),rgb(63, 64, 112, 0.9), rgb(53, 54, 102, 1) 100%)", padding: 10 + "px", width: 100 + "%"}} >
-               <div style={{color: "#eee", paddingRight: 25 +'px'}}>User Management:</div>
-              <div style={{paddingRight: 5 +'px'}}>
-                <button class="Btn" onClick={showUserManagement}>Create a user</button>
-              </div>
-              <div style={{paddingRight: 5 +'px'}}>
-                <button class="Btn">Delete a user</button>
-              </div>   
-              <div>
-                <button class="Btn">Reset Password</button>
-              </div>        
+          <VerifyUsersModal open={openVerifyUsersModal} onClose={() => setOpenVerifyUsersModal(false)}/> 
+
+           <div style={{display: "flex", overflow: 'hidden', alignItems: 'center', justifyContent: "center", marginTop: 25 + 'px', marginBottom: 0 + 'px', background: "transparent", padding: 10 + "px", width: "auto"}} >
+              <div style={{justifyContent:'center', paddingTop: 5 +'px'}}>
+                <label style={{textAlign:'center', fontSize: 20 + "px"}}>Welcome, {username}</label>
+              </div>       
             </div>
+            <br></br>
+            <h5 className="font-title"></h5>  
+            <img style={{borderRadius: 100 + 'px', marginTop: 0 + 'px', width: 94 + 'px', height: 94 + 'px'}} src={ require('../images/userlogo.png') } /><br></br>
+            <h1 className="font-attributes">{user && user.email}</h1>
+            <br></br>
+            
+        <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center", padding: 10 + "px", borderRadius: 10 + 'px'}}>      
+        
+        {isAdmin ? (       
+          <Suspense fallback={<div>Wait</div>}> 
+              <div style={{backgroundColor: "#43404F", margin: 10 + 'px', borderRadius: 10 + 'px', textAlign: "center", padding: 17 + "px", color: "#eee"}}>
+              <i class="fas fa-user-shield"></i> <p>Admin controls</p> 
+              <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 15 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+              <button class="Btn" onClick={() => setOpenVerifyUsersModal(true)}><div><i class="fas fa-user-friends"></i> Pending users</div></button>
+              <button class="Btn"><div><i class="fas fa-user-slash"></i> Delete a user</div></button>
+              <button class="Btn"><div><i class="fas fa-unlock"></i> Reset password</div></button>
+            </div>
+            </Suspense>   
+  
           ) : (
             <div></div>
-          )}  
+          )}
+     
+          <div style={{backgroundColor: "#43404F",  margin: 10 + 'px', borderRadius: 10 + 'px', textAlign: "center", padding: 17 + "px", color: "#eee"}}>
+              <i class="fas fa-list"></i> <p>Actions</p>
+              <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 15 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+                  
+              <button class="Btn" onClick={() => setOpenPasswordModal(true)}><div><i class="fas fa-key"></i> Change my password</div></button>
+              <button class="Btn"  onClick={() => setOpenEmailModal(true)}><div><i class="fas fa-envelope"></i> Change my email</div></button>
+              <button class="log-out-button" onClick={handleLogout}><div><i class="fas fa-sign-out-alt"></i> Log out</div></button>
+          </div>
+
+          <div style={{backgroundColor: "#43404F",  margin: 10 + 'px', borderRadius: 10 + 'px', textAlign: "center", padding: 17 + "px", color: "#eee"}}>
+              <i class="fas fa-user"></i> <p>Information</p>
+              <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+                
+              <div style={{textAlign: 'center', fontSize: 13 + 'px', color: 'rgb(195, 197, 198)'}}>
+                  Sign up date:<br></br>
+                  {getAuth().currentUser?.metadata.creationTime}        
+              <div style={{textAlign: 'center', fontSize: 13 + 'px', color: 'rgb(195, 197, 198)'}}>
+                  <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+                  Last login:<br></br>
+                  {getAuth().currentUser?.metadata.lastSignInTime}
+              <div style={{textAlign: 'center', fontSize: 13+ 'px', color: 'rgb(195, 197, 198)'}}>
+                  <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+                  Account type: <div style={{fontWeight: "bold"}}>{permission.toString()}</div>
+              </div>
+            </div>
+          </div>
+
+         </div>
+       </div>  
           
-        <br></br>
-        <h5 className="font-title"></h5>  
-        <br></br><img style={{borderRadius: 100 + 'px', marginTop: 4 + 'px', width: 106 + 'px', height: 106 + 'px'}} src={ require('../images/userlogo.png') } /><br></br>
-        <h4 className="font-attributes">{user && user.displayName}</h4>
-        <h1 className="font-attributes">{user && user.email}</h1>
-        <br></br>
-        
-        <button class="change_Btn" onClick={() => setOpenPasswordModal(true)}>Change my password</button>
-        <button class="change_Btn"  onClick={() => setOpenEmailModal(true)}>Change my email</button>
-        <button class="log-out-button" onClick={handleLogout}>Log Out</button>
-        <br></br>
-          <hr style={{margin: 'auto', marginTop: 0 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
-          <div style={{textAlign: 'center', fontSize: 14 + 'px', color: 'rgb(195, 197, 198)'}}>
-          Sign up date:<br></br>
-          {getAuth().currentUser?.metadata.creationTime}        
-        <div style={{textAlign: 'center', fontSize: 14 + 'px', color: 'rgb(195, 197, 198)'}}>
-          <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
-          Last login:<br></br>
-          {getAuth().currentUser?.metadata.lastSignInTime}
-        <div style={{textAlign: 'center', fontSize: 14 + 'px', color: 'rgb(195, 197, 198)'}}>
-          <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 10 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
-          Account type: <div style={{fontWeight: "bold"}}>{permission.toString()}</div>
-        </div>
-        </div>
-        </div>
+
         </section>
     )
 } 
