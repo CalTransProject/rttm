@@ -28,11 +28,6 @@ const ProtectedRoute = ({children}) => {
         return <Navigate to='/user-authentication' />
     }
 
-    if (permission == "read-only" && /my-account/.test(window.location.href) == false) {
-        alert("Admin access only")       
-        navigate('/my-account') 
-    }
-
     return children;
 };
 
