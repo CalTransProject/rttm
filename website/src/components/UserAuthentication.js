@@ -8,6 +8,7 @@ import ForgotPasswordModal from './modals/ForgotPasswordModal';
 import { auth } from '../firebase';
 import { collection, doc, getDoc , setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { Alert } from 'bootstrap';
 
 const UserAuthentication = () => { 
   const [name, setName] = useState('');
@@ -17,24 +18,31 @@ const UserAuthentication = () => {
   const [error, setError] =useState('');
   const [openForgotPasswordModal, setOpenForgotPasswordModal] = useState(false);
 
+  const { logout} = UserAuth();
   const { createUser } = UserAuth();
   const { signIn } = UserAuth();
   const navigate = useNavigate();
 
+  // Sign up user and add fields to Firestore
   const SignUp = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await createUser(email, password);
-      await updateProfile(auth.currentUser, { displayName: name}).catch(
+      // Firebase CreateUser and Add Fields to Firestore Document in (user_list) Collection
+      await createUser(email, password); 
+      await updateProfile(auth.currentUser, { displayName: name}).catch( 
         (error) => console.log(error)
       );
-      // Set default user role here  
+        
       await setDoc(doc(db, "user_list", auth.currentUser.uid), {
-        role: "general"
+        role: "general",
+        Active: "False",
+        Email: auth.currentUser.email
       });
 
-      navigate('/my-account');
+      await logout()
+      alert("Sign up request submitted and awaiting admin approval. Please check your email for a verification link.")
+
     } catch (e) {
       setError(e.message);
       alert(error.toString());
@@ -51,12 +59,23 @@ const UserAuthentication = () => {
 
     try {   
       await signIn(email, password);
+      const QuerySnapshot = await getDoc(doc(db, "user_list", auth.currentUser.uid));
+      
+      if ((QuerySnapshot.data()['Active']) == "False") {
+        alert("Your account is not active yet.")
+        await logout();
+        var loginBtn = '<div><i class="fas fa-sign-in-alt"></i> Login</div>'
+        document.getElementById("login-btn").innerHTML = loginBtn     
+      }
+      
+      else
       navigate('/my-account');
     } catch (e) {
       console.log(e.message);
       setError(e.message);
       alert(error);
-      document.getElementById("login-btn").textContent = "Login"    
+      var loginBtn = '<div><i class="fas fa-sign-in-alt"></i> Login</div>'
+      document.getElementById("login-btn").innerHTML = loginBtn     
     }
   };
 
@@ -95,7 +114,7 @@ const UserAuthentication = () => {
                 </div>
               </fieldset>
               <button type="button" class="btn-forgotPassword" onClick={() => setOpenForgotPasswordModal(true)}>forgot password</button>
-              <button id="login-btn" type="submit" class="btn-login">Login</button>
+              <button id="login-btn" type="submit" class="btn-login"><div><i class="fas fa-sign-in-alt"></i> Login</div></button>
             </form>
           </div>
           <div class="form-wrapper">
@@ -123,12 +142,13 @@ const UserAuthentication = () => {
                   <input id="signup-password-confirm" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required></input>
                 </div>
               </fieldset>
-              <button type="submit" class="btn-signup">Continue</button>
+              <button type="submit" class="btn-signup">Request</button>
             </form>
           </div>
         </div>
       </section>
-    )  
+    )
+  
 } 
 
 export default UserAuthentication;
