@@ -69,13 +69,13 @@ const UserProfile = () => {
         {isAdmin ? (       
           <Suspense fallback={<div>Wait</div>}> 
               <div style={{backgroundColor: "#43404F", margin: 10 + 'px', borderRadius: 10 + 'px', textAlign: "center", padding: 17 + "px", color: "#eee"}}>
-              <i class="fas fa-user-shield"></i> <p>Admin controls</p> 
-              <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 15 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
-              <button class="Btn" onClick={() => setOpenVerifyUsersModal(true)}><div><i class="fas fa-user-friends"></i> Pending users</div></button>
-              <button class="Btn"><div><i class="fas fa-user-slash"></i> Delete a user</div></button>
-              <button class="Btn"><div><i class="fas fa-unlock"></i> Reset password</div></button>
-            </div>
-            </Suspense>   
+                <i class="fas fa-user-shield"></i> <p>Admin controls</p> 
+                <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 15 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
+                <button class="Btn" onClick={() => setOpenVerifyUsersModal(true)}><div><i class="fas fa-user-friends"style={{marginRight: 5 +'px'}}></i> Pending users</div></button>
+                <button class="Btn"><div><i class="fas fa-user-slash" style={{marginRight: 5 +'px'}}></i> Delete a user</div></button>
+                <button class="Btn"><div><i class="fas fa-unlock" style={{marginRight: 5 +'px'}}></i> Reset password</div></button>
+              </div>
+          </Suspense>   
   
           ) : (
             <div></div>
@@ -85,9 +85,9 @@ const UserProfile = () => {
               <i class="fas fa-list"></i> <p>Actions</p>
               <hr style={{margin: 'auto', marginTop: 10 + 'px', marginBottom: 15 + 'px', color: "#fff", width: 240 + 'px'}}></hr>
                   
-              <button class="Btn" onClick={() => setOpenPasswordModal(true)}><div><i class="fas fa-key"></i> Change my password</div></button>
-              <button class="Btn"  onClick={() => setOpenEmailModal(true)}><div><i class="fas fa-envelope"></i> Change my email</div></button>
-              <button class="log-out-button" onClick={handleLogout}><div><i class="fas fa-sign-out-alt"></i> Log out</div></button>
+              <button class="Btn" onClick={() => setOpenPasswordModal(true)}><div><i class="fas fa-key" style={{marginRight: 5 +'px'}}></i> Change my password</div></button>
+              <button class="Btn"  onClick={() => setOpenEmailModal(true)}><div><i class="fas fa-envelope" style={{marginRight: 5 +'px'}}></i> Change my email</div></button>
+              <button class="log-out-button" onClick={handleLogout}><div><i class="fas fa-sign-out-alt" style={{marginRight: 5 +'px'}}></i> Log out</div></button>
           </div>
 
           <div style={{backgroundColor: "#43404F",  margin: 10 + 'px', borderRadius: 10 + 'px', textAlign: "center", padding: 17 + "px", color: "#eee"}}>
