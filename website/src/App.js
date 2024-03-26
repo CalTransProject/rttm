@@ -8,11 +8,11 @@ import General from "./components/camera-management-subpages/General";
 import HistoricalGeneral from "./components/historical-data-subpages/HistoricalGeneral";
 import HistoricalUpload from "./components/historical-data-subpages/HistoricalUpload";
 import HistoricalDownload from "./components/historical-data-subpages/HistoricalDownload";
+import HistoricalVisualization from "./components/historical-data-subpages/historical-data-visualization/components/HistoricalVisualization";
+//import HistoricalDataVisualizationFilter from "./components/subcomponents/sub-historical-data/HistoricalDataVisualizationFilter";
 import Configuration from "./components/camera-management-subpages/Configuration";
 import NewCamera from "./components/camera-management-subpages/NewCamera";
 import RemoveCameras from "./components/camera-management-subpages/RemoveCameras";
-// import HistoricalDataVisualization from "./components/historical-data-subpages/historical-data-visualization";
-
 import React, { useState } from "react";
 import {
   BrowserRouter as Router,
@@ -21,6 +21,8 @@ import {
   Switch,
 } from "react-router-dom";
 import AboutUs from "./components/AboutUs";
+import { queryClient, QueryClientProvider } from 'react-query';
+
 
 function App() {
   return (
@@ -29,25 +31,29 @@ function App() {
         <Header />
       </div>
       <div className="container-fluid">
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/technologies" element={<Technologies />} />
+        <QueryClientProvider client={queryClient}>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/technologies" element={<Technologies />} />
 
-          <Route path="/camera-management" element={<CameraManagement />}>
-            <Route path="general" element={<General />} />
-            <Route path="new-camera" element={<NewCamera />} />
-            <Route path="remove-cameras" element={<RemoveCameras />} />
-            <Route path="configuration" element={<Configuration />} />
-          </Route>
+            <Route path="/camera-management" element={<CameraManagement />}>
+              <Route path="general" element={<General />} />
+              <Route path="new-camera" element={<NewCamera />} />
+              <Route path="remove-cameras" element={<RemoveCameras />} />
+              <Route path="configuration" element={<Configuration />} />
+            </Route>
 
-          <Route path="/historical-data" element={<HistoricalData />}>
-            <Route path="general" element={<HistoricalGeneral />} />
-            <Route path="upload" element={<HistoricalUpload />} />
-            <Route path="download" element={<HistoricalDownload />} />
-          </Route>
-          <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/historical-data" element={<HistoricalData />}>
+              <Route path="general" element={<HistoricalGeneral />} />
+              <Route path="upload" element={<HistoricalUpload />} />
+              <Route path="download" element={<HistoricalDownload />} />
+              <Route path="visualization" element={<HistoricalVisualization />} />
+            </Route>
 
-        </Routes>
+            <Route path="/about-us" element={<AboutUs />} />
+
+          </Routes>
+        </QueryClientProvider>
       </div>
       <div className="chart"></div>
       <div className="footer">

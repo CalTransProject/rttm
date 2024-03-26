@@ -1,6 +1,8 @@
 import React from "react";
 import "./styling/SideBarMenu.css";
 import { Outlet } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -9,9 +11,8 @@ import {
   CDBSidebarMenu,
   CDBSidebarMenuItem,
 } from "cdbreact";
-import { NavLink } from "react-router-dom";
 
-function HistoricalSidebarMenu() {
+function SidebarMenu() {
   return (
     <div className="sidebar-container">
       <CDBSidebar textColor="white" backgroundColor="rgb(36, 36, 36)">
@@ -31,6 +32,7 @@ function HistoricalSidebarMenu() {
                 General
               </CDBSidebarMenuItem>
             </NavLink>
+
             <NavLink
               exact
               to="/historical-data/upload"
@@ -40,7 +42,28 @@ function HistoricalSidebarMenu() {
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
-            
+
+            <NavLink
+              exact
+              to="/historical-data/upload"
+              activeClassName="activeClicked"
+            >
+              <CDBSidebarMenuItem className="menu-item" icon="upload">
+                Upload Data
+              </CDBSidebarMenuItem>
+            </NavLink>
+
+
+            <NavLink
+              exact
+              to="/historical-data/HistoricalDataVisualization"
+              activeClassName="activeClicked"
+            >
+              <CDBSidebarMenuItem className="menu-item" icon="chart-line">
+                Historical Data Visualization Filter
+              </CDBSidebarMenuItem>
+            </NavLink>
+
           </CDBSidebarMenu>
         </CDBSidebarContent>
         {/* <CDBSidebarFooter style={{ textAlign: "center" }}>
@@ -52,4 +75,4 @@ function HistoricalSidebarMenu() {
   );
 }
 
-export default HistoricalSidebarMenu;
+export default SidebarMenu;

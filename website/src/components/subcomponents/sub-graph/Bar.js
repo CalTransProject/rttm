@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactEcharts from "echarts-for-react";
 
+//generate a new data point based on the lastItem and the current speedData array
 const generateData = (lastItem, speedData) => {
   const num = Math.floor(Math.random() * 10);
   const newTime = lastItem.time + 1;
@@ -33,7 +34,7 @@ const Bar = () => {
         const newData = generateData(speedData[speedData.length - 1], speedData);
         return newData;
       });
-    }, 1000);
+    }, 1000); // timer runs every 1000ms = 1second
     return () => clearInterval(interval);
   }, []);
 
@@ -84,7 +85,7 @@ const Bar = () => {
     textStyle: {
       color: "#fff",
     },
-    
+
   };
   const chartStyle = {
     height: '225px', // Set the desired height
