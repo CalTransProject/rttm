@@ -7,12 +7,12 @@ import { getAuth } from "firebase/auth";
 
 // Web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC7U5BGazjmJ-JhKcXawyQ7pYDvIKfR3lA",
-  authDomain: "rttm-authentication.firebaseapp.com",
-  projectId: "rttm-authentication",
-  storageBucket: "rttm-authentication.appspot.com",
-  messagingSenderId: "422990141948",
-  appId: "1:422990141948:web:6eefba0160d2159daf3a79"
+  apiKey: "AIzaSyCrCLYyv-_FhUDl1qGanWrfc3UVmyzvuqQ",
+  authDomain: "rttm-6b3f8.firebaseapp.com",
+  projectId: "rttm-6b3f8",
+  storageBucket: "rttm-6b3f8.appspot.com",
+  messagingSenderId: "781554793736",
+  appId: "1:781554793736:web:63302dc147073b1dd080bd"
 };
 
 // Initialize Firebase
