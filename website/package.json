@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "amazon-cognito-identity-js": "^6.3.12",
     "apexcharts": "^3.37.0",
     "aws-sdk": "^2.1369.0",
     "axios": "^1.4.0",
@@ -63,5 +64,4 @@
   "devDependencies": {
     "gh-pages": "^5.0.0"
   }
-  
 }
