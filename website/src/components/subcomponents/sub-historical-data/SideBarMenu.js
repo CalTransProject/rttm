@@ -40,6 +40,15 @@ function HistoricalSidebarMenu() {
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
+
+            <NavLink
+              to="/historical-data/upload-traffic-stream"
+              activeClassName="activeClicked"
+            >
+              <CDBSidebarMenuItem icon="stream">
+                Upload Traffic Stream
+              </CDBSidebarMenuItem>
+            </NavLink>
             
           </CDBSidebarMenu>
         </CDBSidebarContent>

@@ -1,0 +1,50 @@
+.upload-container { 
+    width: 100%;
+    padding: 20px; /* Adjusted from 'pt' to 'px' for consistency */
+    box-sizing: border-box; /* Makes sure padding is included in width */
+    position: relative;
+    display: flex; /* Using flexbox for better control */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    text-align: center;
+}
+
+.upload-container h2 {
+    color: aliceblue;
+    font-size: 35pt;
+    font-weight: bold;
+    font-family: sans-serif, Geneva, Tahoma;
+    margin-bottom: 1rem; /* Space below the header */
+}
+
+.upload-container .file-input-container,
+.upload-container .url-input-container {
+    width: 60%; /* Match the width of the button */
+    margin-bottom: 1rem; /* Space between input and button */
+}
+
+.upload-container input[type="file"],
+.upload-container input[type="text"] {
+    width: 100%; /* Full width of their container */
+    padding: 0.5rem;
+    margin-bottom: 0.5rem; /* Space between inputs */
+    color: black;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.upload-container button {
+    width: 60%; /* Match the width of the inputs */
+    height: 10%;
+    padding: 0.5rem;
+    background-color: lightslategrey;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-container button:hover {
+    background-color: red;
+}
