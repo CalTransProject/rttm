@@ -6,7 +6,7 @@
 
 body {
 	margin: 0;
-	background: #4c4c4c;
+	background: #565264;
 }
 
 .forms-section {
@@ -132,7 +132,7 @@ body {
 	min-width: 280px;
 	margin-top: 50px;
 	padding: 30px 25px;
-    border-radius: 5px;
+    	border-radius: 5px;
 	transform-origin: top;
 }
 
@@ -146,28 +146,28 @@ body {
 
 @keyframes showLogin {
 	0% {
-		background: #303030;
+		background: #43404e;
 		transform: translate(40%, 10px);
 	}
 	50% {
 		transform: translate(0, 0);
 	}
 	100% {
-		background-color: #313131;
+		background-color: #43404e;
 		transform: translate(35%, -8px);
 	}
 }
 
 @keyframes hideLogin {
 	0% {
-		background-color: #1e1e1e;
+		background-color: #3b3942;
 		transform: translate(35%, -20px);
 	}
 	50% {
 		transform: translate(0, 0);
 	}
 	100% {
-		background: #282828;
+		background: #3b3942;
 		transform: translate(40%, 10px);
 	}
 }
@@ -182,28 +182,28 @@ body {
 
 @keyframes showSignup {
 	0% {
-		background: #303030;
+		background: #43404e;
 		transform: translate(-40%, 10px) scaleY(.8);
 	}
 	50% {
 		transform: translate(0, 0) scaleY(.8);
 	}
 	100% {
-		background-color: #313131;
+		background-color: #43404e;
 		transform: translate(-35%, -15px) scaleY(1);
 	}
 }
 
 @keyframes hideSignup {
 	0% {
-		background-color: #1e1e1e;
+		background-color: #3b3942;
 		transform: translate(-35%, -20px) scaleY(1);
 	}
 	50% {
 		transform: translate(0, 0) scaleY(.8);
 	}
 	100% {
-		background: #282828;
+		background: #3b3942;
 		transform: translate(-40%, 10px) scaleY(.8);
 	}
 }
@@ -240,7 +240,7 @@ body {
 }
 
 .input-block {
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 }
 
 input::-ms-reveal {
@@ -250,31 +250,32 @@ input::-ms-reveal {
 
 .input-block label {
 	font-size: 14px;
-    color: #e8e8e8;
+	margin-top: 0px;
+    	color: #e8e8e8;
 }
 
 .input-block input {
 	display: block;
 	width: 100%;
-	margin-top: 5px;
+	margin-top: 0px;
 	padding-right: 15px;
 	padding-left: 15px;
 	font-size: 15px;
 	line-height: 19px;
-	color: #dfdfdf;
-    background: #363636;
-    border: 1px solid #8f8f8f;
-    border-radius: 3px;
+	color: #e6e6e6;
+	background: #43404e;
+    	border: 1px solid #9f9898;
+    	border-radius: 4px;
 }
 
 .form [type='submit'] {
 	opacity: 0;
 	display: block;
 	min-width: 120px;
-    width:  160px;
-	margin: 30px auto 10px;
+   	width:  160px;
+	margin: 14px auto 0px;
 	font-size: 17px;
-	line-height: 25px;
+	line-height: 24px;
 	border-radius: 5px;
 	border: none;
 	transition: all .3s ease-out;
@@ -288,25 +289,27 @@ input::-ms-reveal {
 
 .btn-login {
 	color: #fbfdff;
-    background: linear-gradient(0deg, rgba(36, 107, 86, 0.778) 0%, rgba(62, 163, 116, 0.888) 100%);
+    	background: linear-gradient(0deg, rgba(90, 105, 137, 0.778) 0%, rgba(129, 148, 162, 0.888) 100%);
 	transform: translateX(-30%);
 }
 
 .btn-login:hover {
-	background: linear-gradient(0deg, rgba(41, 125, 100, 0.778) 0%, rgba(73, 185, 133, 0.888) 100%);
+	background: linear-gradient(0deg, rgba(129, 143, 171, 0.778) 0%, rgba(153, 172, 185, 0.888) 100%);
 }
 
 .btn-signup {
-	color: #f3f3f3;
-    background: linear-gradient(0deg, rgba(190, 87, 8, 0.942) 0%, rgb(226, 118, 10) 100%);
+	color: #050505;
+    	background: linear-gradient(0deg, rgb(169, 112, 7) 0%, rgb(243, 207, 3) 100%);
 	transform: translateX(30%);
+	font-weight: 400;
 }
 
 .btn-signup:hover {
-	background: linear-gradient(0deg, rgba(193, 87, 5, 0.942) 0%, rgb(255, 129, 3) 100%);
+	background: linear-gradient(0deg, rgb(193, 141, 9) 0%, rgb(255, 217, 0) 100%);
 }
 
 .btn-forgotPassword {
+	margin-top: 10px;
 	background-color: transparent;
 	color:#dfdfdf;
 }
@@ -314,5 +317,4 @@ input::-ms-reveal {
 .btn-forgotPassword:hover {
 	background-color: transparent;
 	color: rgb(255, 184, 71);
-	
 }
