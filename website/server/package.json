@@ -1,0 +1,15 @@
+{
+  "name": "serverpackage",
+  "version": "1.0.0",
+  "description": "Api Endpoints and CRUD",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Jimwell",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1"
+  }
+}

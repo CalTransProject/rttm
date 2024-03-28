@@ -1,94 +1,101 @@
 import React, { useState, useEffect } from 'react';
 import './styling/general.css';
-import StackedArea from './subcomponents/sub-graph/StackedArea';
-import Bar from './subcomponents/sub-graph/Bar';
-import PieChart from './subcomponents/sub-graph/PieChart';
-import StackedBar from './subcomponents/sub-graph/StackedBar';
-import Density from './subcomponents/sub-graph/Density';
-import VehicleData from './VehicleData';
+import StackedArea from '../subcomponents/sub-graph/StackedArea';
+import Bar from '../subcomponents/sub-graph/Bar';
+import PieChart from '../subcomponents/sub-graph/PieChart';
+import StackedBar from '../subcomponents/sub-graph/StackedBar';
+import Density from '../subcomponents/sub-graph/Density';
 
 const HistoricalGeneral = () => {
-  const [speeds, setSpeeds] = useState([]);
-  const [selectedFile, setSelectedFile] = useState('');
   const [historicalData, setHistoricalData] = useState(null);
+  const [stackedAreaData, setStackedAreaData] = useState(null);
+  const [pieChartData, setPieChartData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch data from the appropriate database tables
     const fetchData = async () => {
       try {
         const response = await fetch('/api/historical-data');
+        if (!response.ok) {
+          throw new Error('Request failed');
+        }
         const data = await response.json();
         setHistoricalData(data);
+
+        const processedStackedAreaData = processStackedAreaData(data);
+        const processedPieChartData = processPieChartData(data);
+        setStackedAreaData(processedStackedAreaData);
+        setPieChartData(processedPieChartData);
       } catch (error) {
         console.error('Error fetching historical data:', error);
+        setError('Failed to fetch historical data. Please try again later.');
       }
     };
 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (selectedFile !== '') {
-      fetch(`/mockData/${selectedFile}`)
-        .then((response) => response.json())
-        .then((data) => setSpeeds(data.speeds));
-    }
-  }, [selectedFile]);
+  // Helper functions to process the fetched data and create the required data objects
+  const processStackedAreaData = (data) => {
+    const stackedAreaDataObject = {
+      labels: data.map(item => new Date(item.UnixTimestamp * 1000).toLocaleString()), // Use timestamps as labels
+      datasets: [
+        {
+          label: 'Vehicle Count',
+          data: data.map(item => item.TotalVehicles), // Extract vehicle count data
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+        },
+        {
+          label: 'Average Speed',
+          data: data.map(item => item.AverageSpeed), // Extract average speed data
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+        },
+      ],
+    };
 
-  const handleFileSelect = (event) => {
-    setSelectedFile(event.target.value);
+    return stackedAreaDataObject;
   };
 
-  const tableStyle = {
-    fontSize: '28px', // Change the font size as needed
-    fontFamily: 'Segoe UI',
+  const processPieChartData = (data) => {
+    const vehicleTypeCounts = {};
+    data.forEach(item => {
+      if (item.VehicleTypeCounts) {
+        Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
+          vehicleTypeCounts[type] = (vehicleTypeCounts[type] || 0) + count;
+        });
+      }
+    });
+
+    const pieChartDataObject = {
+      labels: Object.keys(vehicleTypeCounts),
+      datasets: [
+        {
+          data: Object.values(vehicleTypeCounts),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513'], // Assign colors for different vehicle types
+        },
+      ],
+    };
+
+    return pieChartDataObject;
   };
 
   return (
     <div className="GeneralSection">
       <h1>General</h1>
-      <div className="row row-cols-1 justify-content-center">
-        <div className="col">
-          <label htmlFor="file-select" className="file-select">
-            View Historical Data:
-          </label>
-          <select id="file-select" onChange={handleFileSelect}>
-            <option value="">Choose a file</option>
-            {/* Add the file options */}
-          </select>
-        </div>
-        <div className="col">
-          {speeds.length > 0 && (
-            <div className="tableWrapper">
-              <table className="averageSpeedTable" style={tableStyle}>
-                <thead>
-                  <tr>
-                    <th style={tableStyle}>Time (s)</th>
-                    <th style={tableStyle}>Speed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: 60 }, (_, index) => (
-                    <tr key={index}>
-                      <td style={tableStyle}>{index + 1}</td>
-                      <td style={tableStyle}>{speeds[index]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
-      {historicalData && (
+      {error && <p>{error}</p>}
+      {historicalData && stackedAreaData && pieChartData && (
         <>
-          <StackedArea data={StackedAreaData} />
-          <Bar data={historicalData.vehicleCount} />
-          <PieChart data={PieChartData} />
-          <PieChart data={PieChartDataDy} />
-          <StackedBar data={historicalData.vehicleTypeCounts} />
-          <Density data={historicalData.density} />
-          <VehicleData data={historicalData.vehicleData} />
+          <StackedArea data={stackedAreaData} />
+          <Bar data={historicalData.map(item => ({ time: item.UnixTimestamp, speed: item.AverageSpeed }))} />
+          <PieChart data={pieChartData} />
+          <StackedBar
+            data={historicalData.map(item => ({
+              ...JSON.parse(item.LaneVehicleCounts || '{}'),
+            }))}
+          />
+          <Density data={historicalData.map(item => item.Density)} />
         </>
       )}
     </div>
