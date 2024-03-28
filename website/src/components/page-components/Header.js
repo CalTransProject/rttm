@@ -28,13 +28,13 @@ const Header = () => {
                 </NavLink>
               </li>
               <li class="nav-item">
-                <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
-                Technologies
+                <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
+                About Us
                 </NavLink>
               </li>
               <li class="nav-item">
-                <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
-                About Us
+                <NavLink exact to="/research-and-resources" className="nav-link" activeClassName="active">
+                Resources
                 </NavLink>
               </li>
             </ul>

@@ -20,6 +20,7 @@ import {
   Switch,
 } from "react-router-dom";
 import AboutUs from "./components/AboutUs";
+import ResearchAndResources from "./components/ResearchAndResources";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="download" element={<HistoricalDownload />} />
           </Route>
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/research-and-resources" element={<ResearchAndResources />} />
         </Routes>
       </div>
       <div className="chart"></div>
