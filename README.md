@@ -7,3 +7,6 @@ Github repo for Real-Time Traffic Monitoring project! This branch may not contai
 ## Build
 In order to run these files properly, [NODE](https://nodejs.org/en/) and [Bootstrap](https://react-bootstrap.github.io/getting-started/introduction) must be installed on the system. Additionally, [Google Firebase](https://www.npmjs.com/package/firebase
 ) is required for user management services.
+ ## Install
+ Recommended to use command under website directory
+ So cd website then npm install firebase --save --legacy-peer-deps
