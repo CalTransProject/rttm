@@ -3,8 +3,8 @@
 body {
   background-color: black;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -12,16 +12,16 @@ body {
 
 /* Header style */
 header {
-  background-color: #43404F;  /* Dark gray color */
+  background-color: #43404f; /* Dark gray color */
   padding: 10px 0;
   text-align: center;
   color: white;
-  font-size: 24px;  /* Large text for the logo */
+  font-size: 24px; /* Large text for the logo */
 }
 
 /* Footer style */
 footer {
-  background-color: rgb(37, 37, 37);  /* Dark gray color */
+  background-color: rgb(37, 37, 37); /* Dark gray color */
   position: absolute;
   left: 0;
   bottom: 0;
@@ -31,19 +31,19 @@ footer {
   color: white;
 }
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-.background{
+.background {
   height: 100%;
   width: 100%;
-  background:linear-gradient(rgba(0, 0, 0, 0.d),transparent);
-  background-color:#565264 /*this your primary color*/
+  background: linear-gradient(rgba(0, 0, 0, 0d), transparent);
+  background-color: #565264; /*this your primary color*/
 }
 
 /* This box below has width that reaches the entire div but its height is based on the content */
-.box{
+.box {
   position: relative;
   width: 100%;
   margin-top: 5pt;
@@ -59,11 +59,10 @@ code {
   /* Box border and background shadow */
   border-radius: 5px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-  
 }
 
 /* This below has a defined dimension which is why the text is fully covered with space */
-.text-box{
+.text-box {
   position: relative;
   height: 23.2em;
   text-align: center;
@@ -82,15 +81,14 @@ code {
 }
 
 /*this is for the description section of the web page*/
-.RTTMDescription{
-  font-size:13pt;
-  
+.RTTMDescription {
+  font-size: 13pt;
 }
-.section{
+.section {
   background-color: black;
 }
-.welcome{
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.welcome {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   padding-top: 10pt;
   padding-bottom: 3pt;
   color: rgb(248, 248, 248);
@@ -105,8 +103,6 @@ code {
   width: 100%;
 }
 
-
-
 .camera-container {
   display: flex;
   justify-content: center; /* Center horizontally */
@@ -115,7 +111,7 @@ code {
 }
 
 .camera-button {
-  background: linear-gradient(to right, #56CCF2, #2F80ED); /* Blue gradient */
+  background: linear-gradient(to right, #56ccf2, #2f80ed); /* Blue gradient */
   color: white; /* Text color */
   padding: 5px 10px; /* Smaller padding */
   border: none; /* No border */
@@ -131,9 +127,12 @@ code {
   transform: scale(0.95); /* Scales down the button a bit when hovered over */
 }
 
-
 .gradient-label {
-  background: linear-gradient(to right, #d22030, #565264); /* Gradient background */
+  background: linear-gradient(
+    to right,
+    #d22030,
+    #565264
+  ); /* Gradient background */
   color: white; /* Text color */
   padding: 1px 10px; /* Vertical padding is 1px, horizontal padding is 10px */
   border-radius: 5px; /* Rounded corners */
@@ -147,7 +146,7 @@ code {
 
 .echarts-container {
   height: 300px; /* Set the height you want for all charts */
-  width: 300px;  /* Set the width you want for all charts */
+  width: 300px; /* Set the width you want for all charts */
   /* Add any other styles you want to apply globally */
 }
 
