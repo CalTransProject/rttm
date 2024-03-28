@@ -1,326 +1,98 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const { check, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const pool = require('./database/config');
+import React, { useState, useEffect } from 'react';
+import './styling/general.css';
+import StackedArea from './subcomponents/sub-graph/StackedArea';
+import Bar from './subcomponents/sub-graph/Bar';
+import PieChart from './subcomponents/sub-graph/PieChart';
+import StackedBar from './subcomponents/sub-graph/StackedBar';
+import Density from './subcomponents/sub-graph/Density';
 
-const app = express();
+const HistoricalGeneral = () => {
+  const [historicalData, setHistoricalData] = useState(null);
+  const [stackedAreaData, setStackedAreaData] = useState(null);
+  const [pieChartData, setPieChartData] = useState(null);
 
-app.use(bodyParser.json());
+  useEffect(() => {
+    // Fetch data from the appropriate database tables
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/historical-data');
+        const data = await response.json();
+        setHistoricalData(data);
 
-pool.connect(err => {
-  if (err) {
-    console.error('Database connection error', err.stack);
-  } else {
-    console.log('Database connected');
-  }
-});
+        // Process the fetched data to create the required data objects
+        const processedStackedAreaData = processStackedAreaData(data);
+        const processedPieChartData = processPieChartData(data);
 
-app.get('/', (req, res) => {
-  res.send('Server is running.');
-});
-
-// User CRUD operations
-app.get('/users', (req, res, next) => {
-  pool.query('SELECT * FROM "User"', (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).json(results.rows);
-    }
-  });
-});
-
-app.get('/users/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('SELECT * FROM "User" WHERE UserID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      if (results.rows.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
+        setStackedAreaData(processedStackedAreaData);
+        setPieChartData(processedPieChartData);
+      } catch (error) {
+        console.error('Error fetching historical data:', error);
       }
-      res.status(200).json(results.rows[0]);
-    }
-  });
-});
+    };
 
-const userValidationRules = [
-  check('username').isEmail(),
-  check('password').isLength({ min: 6 }),
-  check('role').not().isEmpty(),
-];
+    fetchData();
+  }, []);
 
-app.post('/users', userValidationRules, async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+  // Helper functions to process the fetched data and create the required data objects
+  const processStackedAreaData = (data) => {
+    const stackedAreaDataObject = {
+      labels: data.map(item => new Date(item.UnixTimestamp * 1000).toLocaleString()), // Use timestamps as labels
+      datasets: [
+        {
+          label: 'Vehicle Count',
+          data: data.map(item => item.TotalVehicles), // Extract vehicle count data
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+        },
+        {
+          label: 'Average Speed',
+          data: data.map(item => item.AverageSpeed), // Extract average speed data
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+        },
+      ],
+    };
 
-  const { username, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  pool.query('INSERT INTO "User" (Username, Password, Role) VALUES ($1, $2, $3) RETURNING *',
-    [username, hashedPassword, role], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        const user = results.rows[0];
-        const token = jwt.sign({ user_id: user.UserID }, process.env.JWT_SECRET, {
-          expiresIn: '2h',
+    return stackedAreaDataObject;
+  };
+
+  const processPieChartData = (data) => {
+    const vehicleTypeCounts = {};
+    data.forEach(item => {
+      if (item.VehicleTypeCounts) {
+        Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
+          vehicleTypeCounts[type] = (vehicleTypeCounts[type] || 0) + count;
         });
-        res.status(201).json({ user, token });
       }
     });
-});
 
-const userUpdateValidationRules = [
-  check('username').optional().isEmail(),
-  check('password').optional().isLength({ min: 6 }),
-  check('role').optional().not().isEmpty(),
-];
+    const pieChartDataObject = {
+      labels: Object.keys(vehicleTypeCounts),
+      datasets: [
+        {
+          data: Object.values(vehicleTypeCounts),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513'], // Assign colors for different vehicle types
+        },
+      ],
+    };
 
-app.put('/users/:id', userUpdateValidationRules, async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+    return pieChartDataObject;
+  };
 
-  const { id } = req.params;
-  const { username, password, role } = req.body;
-  const updateFields = {};
-  if (username) updateFields.Username = username;
-  if (password) updateFields.Password = await bcrypt.hash(password, 10);
-  if (role) updateFields.Role = role;
-
-  const setClause = Object.keys(updateFields).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
-  const values = Object.values(updateFields);
-  values.push(id);
-
-  pool.query(`UPDATE "User" SET ${setClause} WHERE UserID = $${values.length} RETURNING *`,
-    values, (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(200).json(results.rows[0]);
-      }
-    });
-});
-
-app.delete('/users/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('DELETE FROM "User" WHERE UserID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).send(`User deleted with ID: ${id}`);
-    }
-  });
-});
-
-app.post('/login', [
-  check('username').isEmail(),
-  check('password').not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { username, password } = req.body;
-  pool.query('SELECT * FROM "User" WHERE Username = $1', [username], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      const user = results.rows[0];
-      if (!user || !bcrypt.compareSync(password, user.Password)) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-      const token = jwt.sign({ user_id: user.UserID }, process.env.JWT_SECRET, {
-        expiresIn: '2h',
-      });
-      res.status(200).json({ user, token });
-    }
-  });
-});
-
-app.post('/vehicletype', [
-  check('type').not().isEmpty(),
-  check('description').not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { type, description } = req.body;
-  pool.query('INSERT INTO "VehicleType" (Type, Description) VALUES ($1, $2) RETURNING *',
-    [type, description], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(201).json(results.rows[0]);
-      }
-    });
-});
-
-app.get('/vehicletype', (req, res, next) => {
-  pool.query('SELECT * FROM "VehicleType"', (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).json(results.rows);
-    }
-  });
-});
-
-app.get('/vehicletype/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('SELECT * FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      if (results.rows.length === 0) {
-        return res.status(404).json({ message: 'Vehicle type not found' });
-      }
-      res.status(200).json(results.rows[0]);
-    }
-  });
-});
-
-app.put('/vehicletype/:id', [
-  check('type').optional().not().isEmpty(),
-  check('description').optional().not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { id } = req.params;
-  const { type, description } = req.body;
-  pool.query('UPDATE "VehicleType" SET Type = $1, Description = $2 WHERE TypeID = $3 RETURNING *',
-    [type, description, id], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(200).json(results.rows[0]);
-      }
-    });
-});
-
-app.delete('/vehicletype/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('DELETE FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).send(`VehicleType deleted with ID: ${id}`);
-    }
-  });
-});
-
-const modifiedVehicleValidationRules = [
-  check('vehicleID').isInt(),
-  check('modifications').not().isEmpty(),
-];
-
-const modifiedVehicleUpdateValidationRules = [
-  check('modifications').optional().not().isEmpty(),
-];
-
-const authorize = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    return res.status(403).json({ message: 'No token provided' });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-    req.user = decoded;
-    next();
-  });
+  return (
+    <div className="GeneralSection">
+      <h1>General</h1>
+      {historicalData && stackedAreaData && pieChartData && (
+        <>
+          <StackedArea data={stackedAreaData} />
+          <Bar data={historicalData.map(item => ({ time: item.UnixTimestamp, speed: item.AverageSpeed }))} />
+          <PieChart data={pieChartData} />
+          <StackedBar data={historicalData.map(item => ({ ...item.LaneVehicleCounts }))} />
+          <Density data={historicalData.map(item => item.Density)} />
+        </>
+      )}
+    </div>
+  );
 };
 
-app.post('/modifiedvehicle', [authorize, modifiedVehicleValidationRules], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { vehicleID, modifications } = req.body;
-  pool.query('INSERT INTO ModifiedVehicle (VehicleID, Modifications) VALUES ($1, $2) RETURNING *',
-    [vehicleID, modifications], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(201).json(results.rows[0]);
-      }
-    });
-});
-
-app.get('/modifiedvehicle', authorize, (req, res, next) => {
-  pool.query('SELECT * FROM ModifiedVehicle', (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).json(results.rows);
-    }
-  });
-});
-
-app.get('/modifiedvehicle/:id', authorize, (req, res, next) => {
-  const { id } = req.params;
-  pool.query('SELECT * FROM ModifiedVehicle WHERE VehicleID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      if (results.rows.length === 0) {
-        return res.status(404).json({ message: 'Modified vehicle not found' });
-      }
-      res.status(200).json(results.rows[0]);
-    }
-  });
-});
-
-app.put('/modifiedvehicle/:id', [authorize, modifiedVehicleUpdateValidationRules], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { id } = req.params;
-  const { modifications } = req.body;
-  pool.query('UPDATE ModifiedVehicle SET Modifications = $1 WHERE VehicleID = $2 RETURNING *',
-    [modifications, id], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(200).json(results.rows[0]);
-      }
-    });
-});
-
-app.delete('/modifiedvehicle/:id', authorize, (req, res, next) => {
-  const { id } = req.params;
-  pool.query('DELETE FROM ModifiedVehicle WHERE VehicleID = $1', [id], (error) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).send(`ModifiedVehicle deleted with ID: ${id}`);
-    }
-  });
-});
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('An error occurred!');
-});
+export default HistoricalGeneral;
