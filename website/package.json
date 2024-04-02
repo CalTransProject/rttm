@@ -24,6 +24,7 @@
     "express-validator": "^7.0.1",
     "file-saver": "^2.0.5",
     "fs": "^0.0.1-security",
+    "json-server": "^1.0.0-alpha.23",
     "jsonwebtoken": "^9.0.2",
     "ng2-charts": "^4.1.1",
     "pg": "^8.11.3",

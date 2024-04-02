@@ -40,7 +40,17 @@ function HistoricalSidebarMenu() {
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
-            
+
+            <NavLink
+              exact
+              to="/historical-data/visualization"
+              activeClassName="activeClicked"
+            >
+              <CDBSidebarMenuItem className="menu-item" icon="far fa-chart-bar">
+                Historical Data Visualization
+              </CDBSidebarMenuItem>
+            </NavLink>
+
           </CDBSidebarMenu>
         </CDBSidebarContent>
         {/* <CDBSidebarFooter style={{ textAlign: "center" }}>
