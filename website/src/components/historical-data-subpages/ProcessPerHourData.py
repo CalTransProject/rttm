@@ -20,9 +20,13 @@ db_credentials = {
 
 def process_per_hour_data(cur, start_time, end_time):
      """Process per-hour data and store in history_hr_data table"""
+<<<<<<< Updated upstream
 #     #convert per-sec data to per-hour data
 #     start_time//= 3600
 #     end_time//= 3600
+=======
+    #query DB, values held in cur
+>>>>>>> Stashed changes
      cur.execute("""
          SELECT 
             "Timestamp",
@@ -39,11 +43,19 @@ def process_per_hour_data(cur, start_time, end_time):
      
      per_hour_data = []
      
+<<<<<<< Updated upstream
      for row in cur.fetchall():
          second, total_vehicles, average_speed, density, average_confidence, vehicle_type_counts, lane_vehicle_counts, lane_type_counts = row
          #convert per-sec data to per-hour data
          hour = second *(1/3600)
          
+=======
+     for row in cur.fetchall(): #iterate through each row returned from query
+         second, total_vehicles, average_speed, density, average_confidence, vehicle_type_counts, lane_vehicle_counts, lane_type_counts = row
+         #convert per-sec data to per-hour data
+         hour = second /3600
+         #populate per-hour data list with new data point
+>>>>>>> Stashed changes
          per_hour_data.append((
             hour,
             total_vehicles, 
@@ -69,7 +81,11 @@ def process_per_hour_data(cur, start_time, end_time):
             "LaneTypeCounts"    
         )])
         
+<<<<<<< Updated upstream
         placeholders = ',  '.join(['%s']*len(process_per_hour_data[0]))
+=======
+        placeholders = ',  '.join(['%s']*len(per_hour_data[0]))
+>>>>>>> Stashed changes
             
         # SQL query
         query = f"INSERT INTO PerHourData ({columns}) VALUES ({placeholders})"

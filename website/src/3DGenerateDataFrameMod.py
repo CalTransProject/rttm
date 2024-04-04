@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 
 print(os.getcwd())
 # Load environment variables from .env file for database credentials
+<<<<<<< Updated upstream
 load_dotenv(dotenv_path='server/database/db.env')
+=======
+load_dotenv(dotenv_path='../server/database/db.env')
+>>>>>>> Stashed changes
 
 # Database credentials
 db_credentials = {
@@ -32,6 +36,7 @@ cur = conn.cursor()
 for lane_id in range(1, 4):  # Adjust range as necessary
     cur.execute(
         '''
+<<<<<<< Updated upstream
         INSERT INTO "Lane" ("LaneID", "RoadName", "Direction")
         VALUES (%s, 'Main Street', 'North') ON CONFLICT ("LaneID") DO NOTHING;
         ''',
@@ -39,6 +44,17 @@ for lane_id in range(1, 4):  # Adjust range as necessary
     )
 conn.commit()
 
+=======
+        INSERT INTO "Lane" (RoadName, Direction)
+        VALUES (%s, %s) ON CONFLICT DO NOTHING;
+        ''',
+        ('Main Street', 'North')
+    )
+conn.commit()
+
+# Ensure Lane IDs Exist (Assuming lanes 1 to 3 need to exist)
+
+>>>>>>> Stashed changes
 veh_label = ["sedan", "suv", "truck", "bus", "pickup", "van"]
 
 # Function to generate fake data and insert it into the database
