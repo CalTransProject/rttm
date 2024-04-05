@@ -8,20 +8,19 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.11.10",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "apexcharts": "^3.37.0",
     "aws-sdk": "^2.1369.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.8",
     "bootstrap": "^5.2.3",
     "cdbreact": "^1.5.10",
     "chart.js": "^4.2.1",
     "echarts": "^5.4.2",
     "echarts-for-react": "^3.0.2",
     "file-saver": "^2.0.5",
-    "firebase": "^10.9.0",
+    "firebase": "^10.10.0",
     "fs": "^0.0.1-security",
+    "miragejs": "^0.1.48",
     "ng2-charts": "^4.1.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
@@ -40,11 +39,10 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "test:ci": "CI=true react-scripts test",
+    "test": "react-scripts test --env=jsdom",
+    "test:ci": "CI=true react-scripts test --reporters=default --reporters=jest-html-reporter",
     "eject": "react-scripts eject"
   },
-  
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -64,6 +62,14 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0"
+    "@babel/core": "^7.24.4",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-env": "^7.24.4",
+    "@babel/runtime": "^7.24.4",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "gh-pages": "^5.0.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-html-reporter": "^3.10.2"
   }
 }

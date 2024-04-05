@@ -8,6 +8,11 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import AboutUs from '../components/AboutUs';
+import MainPage from '../components/Mainpage';
+import CameraManagement from '../components/CameraManagement';
+import HistoricalData from '../components/HistoricalData';
+import Technologies from '../components/Technologies';
 
 // Mock Firebase Authentication and Firestore modules including specific functions
 jest.mock('firebase/auth', () => ({
@@ -109,5 +114,56 @@ describe('Integration Tests', () => {
     );
 
     expect(screen.getByText('Please login or create an account.')).toBeInTheDocument();
+
+    // Test rendering of other components
+    it('AboutUs component renders correctly', () => {
+      render(
+        <Router>
+          <AboutUs />
+        </Router>
+      );
+
+      expect(screen.getByText('About Us')).toBeInTheDocument();
+    });
+
+    it('CameraManagement component renders correctly', () => {
+      render(
+        <Router>
+          <CameraManagement />
+        </Router>
+      );
+
+      expect(screen.getByText('Camera Management')).toBeInTheDocument();
+    });
+
+    it('HistoricalData component renders correctly', () => {
+      render(
+        <Router>
+          <HistoricalData />
+        </Router>
+      );
+
+      expect(screen.getByText('Historical Data')).toBeInTheDocument();
+    });
+
+    it('MainPage component renders correctly', () => {
+      render(
+        <Router>
+          <MainPage />
+        </Router>
+      );
+
+      expect(screen.getByText('Main Page')).toBeInTheDocument();
+    });
+
+    it('Technologies component renders correctly', () => {
+      render(
+        <Router>
+          <Technologies />
+        </Router>
+      );
+
+      expect(screen.getByText('Technologies')).toBeInTheDocument();
+    });
   });
 });
