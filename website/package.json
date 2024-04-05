@@ -64,6 +64,7 @@
   "devDependencies": {
     "@babel/core": "^7.24.4",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-runtime": "^7.24.3",
     "@babel/preset-env": "^7.24.4",
     "@babel/runtime": "^7.24.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -71,5 +72,8 @@
     "gh-pages": "^5.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-html-reporter": "^3.10.2"
+  },
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
   }
 }
