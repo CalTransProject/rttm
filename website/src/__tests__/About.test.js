@@ -1,9 +1,12 @@
 import React from 'react';
+import axios from 'axios';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import AboutUs from '../components/AboutUs';
 
-describe('AboutUs Tests', () => {
+jest.mock('axios');
+
+describe('AboutUs component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
