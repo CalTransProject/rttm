@@ -6,6 +6,7 @@ import UserAuthentication from '../components/UserAuthentication';
 import UserProfile from '../components/UserProfile';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import '../setupTests';
 
