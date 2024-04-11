@@ -40,12 +40,13 @@ function App() {
             <Route path="configuration" element={<Configuration />} />
           </Route>
 
-          <Route path="/historical-data" element={<HistoricalData />}>
+          <Route path="/historical-data" element={<HistoricalData />} >
             <Route path="general" element={<HistoricalGeneral />} />
             <Route path="upload" element={<HistoricalUpload />} />
             <Route path="download" element={<HistoricalDownload />} />
-            <Route path="/historical-data/visualization" element={<HistDataViz />} />          </Route>
-          <Route path="/about-us" element={<AboutUs />} />
+            <Route path="visualization" element={<HistDataViz />} />
+            {/* <Route path="/about-us" element={<AboutUs />} /> */}
+          </Route>
         </Routes>
       </div>
       <div className="chart"></div>

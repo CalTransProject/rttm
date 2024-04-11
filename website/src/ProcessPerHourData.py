@@ -3,7 +3,7 @@ import os
 import time
 from dotenv import load_dotenv 
 import json
-from ...ProcessHistoricalData import process_per_second_data, ensure_vehicle_types_exist, ensure_lanes_exist 
+from ProcessHistoricalData import process_per_second_data, ensure_vehicle_types_exist, ensure_lanes_exist
 
 # Load environment variables from .env file for database credentials
 load_dotenv(dotenv_path='../../../server/database/db.env')
@@ -20,13 +20,10 @@ db_credentials = {
 
 def process_per_hour_data(cur, start_time, end_time):
      """Process per-hour data and store in history_hr_data table"""
-<<<<<<< Updated upstream
 #     #convert per-sec data to per-hour data
 #     start_time//= 3600
 #     end_time//= 3600
-=======
     #query DB, values held in cur
->>>>>>> Stashed changes
      cur.execute("""
          SELECT 
             "Timestamp",
@@ -43,19 +40,11 @@ def process_per_hour_data(cur, start_time, end_time):
      
      per_hour_data = []
      
-<<<<<<< Updated upstream
-     for row in cur.fetchall():
-         second, total_vehicles, average_speed, density, average_confidence, vehicle_type_counts, lane_vehicle_counts, lane_type_counts = row
-         #convert per-sec data to per-hour data
-         hour = second *(1/3600)
-         
-=======
      for row in cur.fetchall(): #iterate through each row returned from query
          second, total_vehicles, average_speed, density, average_confidence, vehicle_type_counts, lane_vehicle_counts, lane_type_counts = row
          #convert per-sec data to per-hour data
          hour = second /3600
          #populate per-hour data list with new data point
->>>>>>> Stashed changes
          per_hour_data.append((
             hour,
             total_vehicles, 
@@ -67,6 +56,7 @@ def process_per_hour_data(cur, start_time, end_time):
             lane_type_counts
              
          ))
+     print(per_hour_data)    
         
     #insert per-hour data into columns
      if per_hour_data:
@@ -81,11 +71,9 @@ def process_per_hour_data(cur, start_time, end_time):
             "LaneTypeCounts"    
         )])
         
-<<<<<<< Updated upstream
-        placeholders = ',  '.join(['%s']*len(process_per_hour_data[0]))
-=======
         placeholders = ',  '.join(['%s']*len(per_hour_data[0]))
->>>>>>> Stashed changes
+        print(columns)
+        print(placeholders)
             
         # SQL query
         query = f"INSERT INTO PerHourData ({columns}) VALUES ({placeholders})"
@@ -143,9 +131,10 @@ if __name__ == "__main__":
         min_timestamp, max_timestamp = cur.fetchone()
 
         # Process the data for the available time range
-        start_time = min_timestamp
-        end_time = max_timestamp
-        process_per_second_data(cur, start_time, end_time)
+        start_time = int(min_timestamp/1000)
+        end_time = int(max_timestamp/1000)
+        # print(str(start_time) + " " + str(end_time))
+        process_per_hour_data(cur, start_time, end_time)
 
         # Commit the changes
         conn.commit()
