@@ -13,10 +13,17 @@ app.use(bodyParser.json());
 pool.connect(err => {
   if (err) {
     console.error('Database connection error', err.stack);
+    process.exit(1); // Exit the process if there's a database connection error
   } else {
     console.log('Database connected');
   }
 });
+
+// Error handler middleware
+const errorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+};
 
 app.get('/', (req, res) => {
   res.send('Server is running.');
@@ -316,20 +323,27 @@ app.delete('/modifiedvehicle/:id', authorize, (req, res, next) => {
 });
 
 // Historical Data API endpoints
-
 app.get('/api/historical-data', async (req, res, next) => {
-try {
+  try {
     const result = await pool.query('SELECT * FROM HistoricalData');
+    console.log('Database result:', result.rows);
+
     const processedData = result.rows.map(item => ({
-    ...item,
-    VehicleTypeCounts: item.VehicleTypeCounts ? JSON.parse(item.VehicleTypeCounts) : {},
-    LaneVehicleCounts: item.LaneVehicleCounts ? JSON.parse(item.LaneVehicleCounts) : {},
+      ...item,
+      VehicleTypeCounts: item.VehicleTypeCounts ? JSON.parse(item.VehicleTypeCounts) : {},
+      LaneVehicleCounts: item.LaneVehicleCounts ? JSON.parse(item.LaneVehicleCounts) : {},
     }));
-    res.json(processedData);
-} catch (error) {
+    console.log('Processed data:', processedData);
+
+    if (processedData.length === 0) {
+      res.status(404).json({ error: 'No historical data found' });
+    } else {
+      res.json(processedData);
+    }
+  } catch (error) {
     console.error('Error fetching historical data:', error);
-    res.status(500).json({ error: 'Internal server error' });
-}
+    next(error); // Pass the error to the error handler middleware
+  }
 });
 
 app.get('/api/vehicle-type-count', async (req, res, next) => {
@@ -338,7 +352,7 @@ app.get('/api/vehicle-type-count', async (req, res, next) => {
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching vehicle type counts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error); // Pass the error to the error handler middleware
   }
 });
 
@@ -348,7 +362,7 @@ app.get('/api/lane-vehicle-count', async (req, res, next) => {
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching lane vehicle counts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error); // Pass the error to the error handler middleware
   }
 });
 
@@ -358,16 +372,14 @@ app.get('/api/lane-type-count', async (req, res, next) => {
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching lane type counts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error); // Pass the error to the error handler middleware
   }
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('An error occurred!');
-});
+// Use the error handler middleware after all other routes
+app.use(errorHandler);

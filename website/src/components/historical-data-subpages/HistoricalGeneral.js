@@ -7,7 +7,7 @@ import StackedBar from '../subcomponents/sub-graph/StackedBar';
 import Density from '../subcomponents/sub-graph/Density';
 
 const HistoricalGeneral = () => {
-  const [historicalData, setHistoricalData] = useState(null);
+  const [historicalData, setHistoricalData] = useState([]);
   const [stackedAreaData, setStackedAreaData] = useState(null);
   const [pieChartData, setPieChartData] = useState(null);
   const [error, setError] = useState(null);
@@ -16,14 +16,23 @@ const HistoricalGeneral = () => {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/historical-data');
+        console.log('Fetch response:', response); // Log the fetch response
+
         if (!response.ok) {
-          throw new Error('Request failed');
+          throw new Error(`Request failed with status ${response.status}`);
         }
+
         const data = await response.json();
+        console.log('Fetched data:', data); // Log the fetched data
+
         setHistoricalData(data);
 
         const processedStackedAreaData = processStackedAreaData(data);
+        console.log('Processed stacked area data:', processedStackedAreaData); // Log the processed stacked area data
+
         const processedPieChartData = processPieChartData(data);
+        console.log('Processed pie chart data:', processedPieChartData); // Log the processed pie chart data
+
         setStackedAreaData(processedStackedAreaData);
         setPieChartData(processedPieChartData);
       } catch (error) {
@@ -38,17 +47,17 @@ const HistoricalGeneral = () => {
   // Helper functions to process the fetched data and create the required data objects
   const processStackedAreaData = (data) => {
     const stackedAreaDataObject = {
-      labels: data.map(item => new Date(item.UnixTimestamp * 1000).toLocaleString()), // Use timestamps as labels
+      labels: data.map((item) => new Date(item.UnixTimestamp * 1000).toLocaleString()),
       datasets: [
         {
           label: 'Vehicle Count',
-          data: data.map(item => item.TotalVehicles), // Extract vehicle count data
+          data: data.map((item) => item.TotalVehicles),
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
         },
         {
           label: 'Average Speed',
-          data: data.map(item => item.AverageSpeed), // Extract average speed data
+          data: data.map((item) => item.AverageSpeed),
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           borderColor: 'rgba(153, 102, 255, 1)',
         },
@@ -60,7 +69,7 @@ const HistoricalGeneral = () => {
 
   const processPieChartData = (data) => {
     const vehicleTypeCounts = {};
-    data.forEach(item => {
+    data.forEach((item) => {
       if (item.VehicleTypeCounts) {
         Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
           vehicleTypeCounts[type] = (vehicleTypeCounts[type] || 0) + count;
@@ -73,7 +82,7 @@ const HistoricalGeneral = () => {
       datasets: [
         {
           data: Object.values(vehicleTypeCounts),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513'], // Assign colors for different vehicle types
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513'],
         },
       ],
     };
@@ -85,17 +94,20 @@ const HistoricalGeneral = () => {
     <div className="GeneralSection">
       <h1>General</h1>
       {error && <p>{error}</p>}
-      {historicalData && stackedAreaData && pieChartData && (
+      {historicalData.length > 0 && stackedAreaData && pieChartData && (
         <>
           <StackedArea data={stackedAreaData} />
-          <Bar data={historicalData.map(item => ({ time: item.UnixTimestamp, speed: item.AverageSpeed }))} />
+          <Bar data={historicalData.map((item, index) => ({ time: item.UnixTimestamp, speed: item.AverageSpeed, key: index }))} />
           <PieChart data={pieChartData} />
-          <StackedBar
-            data={historicalData.map(item => ({
-              ...JSON.parse(item.LaneVehicleCounts || '{}'),
-            }))}
-          />
-          <Density data={historicalData.map(item => item.Density)} />
+          {historicalData.map((item, index) => (
+            <StackedBar
+              data={{
+                ...JSON.parse(item.LaneVehicleCounts || '{}'),
+              }}
+              key={index}
+            />
+          ))}
+          <Density data={historicalData.map((item, index) => ({ value: item.Density, key: index }))} />
         </>
       )}
     </div>

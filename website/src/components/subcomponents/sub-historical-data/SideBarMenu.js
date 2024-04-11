@@ -23,29 +23,25 @@ function HistoricalSidebarMenu() {
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
             <NavLink
-              exact
+              exact="true"
               to="/historical-data/general"
-              activeClassName="activeClicked"
+              activeClassName="active-link"
             >
               <CDBSidebarMenuItem className="menu-item" icon="book">
                 General
               </CDBSidebarMenuItem>
             </NavLink>
             <NavLink
-              exact
+              exact="true"
               to="/historical-data/upload"
-              activeClassName="activeClicked"
+              activeClassName="active-link"
             >
               <CDBSidebarMenuItem className="menu-item" icon="upload">
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
-            
           </CDBSidebarMenu>
         </CDBSidebarContent>
-        {/* <CDBSidebarFooter style={{ textAlign: "center" }}>
-          <div className="sidebar-footer">Sidebar Footer</div>
-        </CDBSidebarFooter> */}
       </CDBSidebar>
       <Outlet />
     </div>
