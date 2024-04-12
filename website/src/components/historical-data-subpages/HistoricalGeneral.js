@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 import './styling/general.css';
 
 const HistoricalGeneral = () => {
     const fixedDates = [
-        '2023-01-01',
-        '2023-02-01',
-        '2023-03-01',
-        '2023-04-01',
-        '2023-05-01',
-        '2023-06-01',
-        '2023-07-01'
+        '2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01',
+        '2023-05-01', '2023-06-01', '2023-07-01', '2023-08-01',
+        '2023-09-01', '2023-10-01', '2023-11-01', '2023-12-01'
     ];
 
     const [dates] = useState(fixedDates);
@@ -18,24 +16,30 @@ const HistoricalGeneral = () => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [uploadStatus, setUploadStatus] = useState('');
 
-    // Generate fake data for the table
-    const generateFakeData = () => {
-        const fakeData = [];
-        for (let i = 0; i < 9; i++) {
-            fakeData.push({
-                date: `2023-01-${i + 1}`,
-                avgVehiclesPeak: Math.floor(Math.random() * 100),
-                avgVehiclesLow: Math.floor(Math.random() * 50),
-                avgSpeedPeak: Math.floor(Math.random() * 60) + 40,
-                avgSpeedLow: Math.floor(Math.random() * 40) + 20,
-                highestAvgVehiclePercent: Math.floor(Math.random() * 100),
-                density: Math.floor(Math.random() * 1000)
-            });
-        }
-        return fakeData;
+    const buttonStyle = {
+        cursor: 'pointer',
+        padding: '8px 16px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        borderRadius: '5px',
+        border: 'none',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        margin: '10px 0'
     };
 
-    // Use fake data
+    const generateFakeData = () => {
+        return dates.map(date => ({
+            date,
+            avgVehiclesPeak: Math.floor(Math.random() * 100 + 100),
+            avgVehiclesLow: Math.floor(Math.random() * 100),
+            avgSpeedPeak: Math.floor(Math.random() * 20 + 60),
+            avgSpeedLow: Math.floor(Math.random() * 20 + 40),
+            highestAvgVehiclePercent: Math.floor(Math.random() * 100),
+            density: Math.floor(Math.random() * 1000)
+        }));
+    };
+
     const fakeData = generateFakeData();
 
     const handleDateSelect = (event) => {
@@ -46,13 +50,11 @@ const HistoricalGeneral = () => {
         if (selectedDate) {
             const blob = new Blob([''], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
-
             const a = document.createElement('a');
             a.href = url;
-            a.download = `blank_file_${selectedDate}.txt`;
+            a.download = `data_${selectedDate}.txt`;
             document.body.appendChild(a);
             a.click();
-
             URL.revokeObjectURL(url);
             a.remove();
         }
@@ -72,28 +74,46 @@ const HistoricalGeneral = () => {
                 'Content-Type': 'multipart/form-data',
             },
         })
-            .then(response => {
-                setUploadedFile(file);
-                setUploadStatus('File uploaded successfully');
-            })
-            .catch(error => {
-                setUploadStatus('Error uploading file');
-            });
+        .then(response => {
+            setUploadedFile(file);
+            setUploadStatus('File uploaded successfully');
+        })
+        .catch(error => {
+            setUploadStatus('Error uploading file');
+        });
     };
 
-    const handleView = (rowData) => {
-        console.log('View data:', rowData); // Example action, you can replace this with your own logic
-        // Implement your logic to view the data here
+    const handleView = (data) => {
+        console.log('View data:', data);
     };
 
-    const buttonStyle = {
-        cursor: 'pointer',
-        padding: '5px 10px',
-        backgroundColor: '#505050',
-        color: 'white',
-        borderRadius: '5px',
-        border: 'none',
-        fontWeight: 'bold' // Make the font bold
+    const chartData = {
+        labels: fakeData.map(data => data.date),
+        datasets: [
+            {
+                label: 'Avg Vehicles Peak',
+                data: fakeData.map(data => data.avgVehiclesPeak),
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            },
+            {
+                label: 'Avg Vehicles Low',
+                data: fakeData.map(data => data.avgVehiclesLow),
+                fill: false,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                tension: 0.1
+            }
+        ]
+    };
+
+    const options = {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        maintainAspectRatio: false
     };
 
     return (
