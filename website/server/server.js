@@ -1,3 +1,4 @@
+// Required dependencies and library imports
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -6,37 +7,46 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('./database/config');
 
+// Initialize Express app
 const app = express();
 
+// Apply middleware for parsing JSON and URL-encoded data
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// Apply middleware to set the Content-Type header for all responses
+app.use((req, res, next) => {
+  res.header('Content-Type', 'application/json');
+  next();
+});
+
+// Function to safely parse JSON strings
+function safelyParseJSON(json) {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    console.error('Failed to parse JSON:', e);
+    return {};
+  }
+}
+
+// Database connection
 pool.connect(err => {
   if (err) {
     console.error('Database connection error', err.stack);
-    process.exit(1); // Exit the process if there's a database connection error
   } else {
     console.log('Database connected');
   }
 });
 
-// Error handler middleware
-const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
-};
-
-app.get('/', (req, res) => {
-  res.send('Server is running.');
-});
 
 // User CRUD operations
 app.get('/users', (req, res, next) => {
   pool.query('SELECT * FROM "User"', (error, results) => {
     if (error) {
-      next(error);
-    } else {
-      res.status(200).json(results.rows);
+      return next(error);
     }
+    res.status(200).json(results.rows);
   });
 });
 
@@ -44,13 +54,12 @@ app.get('/users/:id', (req, res, next) => {
   const { id } = req.params;
   pool.query('SELECT * FROM "User" WHERE UserID = $1', [id], (error, results) => {
     if (error) {
-      next(error);
-    } else {
-      if (results.rows.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.status(200).json(results.rows[0]);
+      return next(error);
     }
+    if (results.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(results.rows[0]);
   });
 });
 
@@ -65,21 +74,23 @@ app.post('/users', userValidationRules, async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
   const { username, password, role } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  pool.query('INSERT INTO "User" (Username, Password, Role) VALUES ($1, $2, $3) RETURNING *',
-    [username, hashedPassword, role], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    pool.query('INSERT INTO "User" (Username, Password, Role) VALUES ($1, $2, $3) RETURNING *',
+      [username, hashedPassword, role], (error, results) => {
+        if (error) {
+          return next(error);
+        }
         const user = results.rows[0];
         const token = jwt.sign({ user_id: user.UserID }, process.env.JWT_SECRET, {
           expiresIn: '2h',
         });
         res.status(201).json({ user, token });
-      }
-    });
+      });
+  } catch (error) {
+    next(error);
+  }
 });
 
 const userUpdateValidationRules = [
@@ -93,25 +104,28 @@ app.put('/users/:id', userUpdateValidationRules, async (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
   const { id } = req.params;
   const { username, password, role } = req.body;
-  const updateFields = {};
+  let updateFields = {};
   if (username) updateFields.Username = username;
-  if (password) updateFields.Password = await bcrypt.hash(password, 10);
+  if (password) {
+    try {
+      updateFields.Password = await bcrypt.hash(password, 10);
+    } catch (error) {
+      return next(error);
+    }
+  }
   if (role) updateFields.Role = role;
 
   const setClause = Object.keys(updateFields).map((key, index) => `"${key}" = $${index + 1}`).join(', ');
-  const values = Object.values(updateFields);
-  values.push(id);
+  const values = [...Object.values(updateFields), id];
 
   pool.query(`UPDATE "User" SET ${setClause} WHERE UserID = $${values.length} RETURNING *`,
     values, (error, results) => {
       if (error) {
-        next(error);
-      } else {
-        res.status(200).json(results.rows[0]);
+        return next(error);
       }
+      res.status(200).json(results.rows[0]);
     });
 });
 
@@ -119,112 +133,9 @@ app.delete('/users/:id', (req, res, next) => {
   const { id } = req.params;
   pool.query('DELETE FROM "User" WHERE UserID = $1', [id], (error, results) => {
     if (error) {
-      next(error);
-    } else {
-      res.status(200).send(`User deleted with ID: ${id}`);
+      return next(error);
     }
-  });
-});
-
-app.post('/login', [
-  check('username').isEmail(),
-  check('password').not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { username, password } = req.body;
-  pool.query('SELECT * FROM "User" WHERE Username = $1', [username], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      const user = results.rows[0];
-      if (!user || !bcrypt.compareSync(password, user.Password)) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-      const token = jwt.sign({ user_id: user.UserID }, process.env.JWT_SECRET, {
-        expiresIn: '2h',
-      });
-      res.status(200).json({ user, token });
-    }
-  });
-});
-
-app.post('/vehicletype', [
-  check('type').not().isEmpty(),
-  check('description').not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { type, description } = req.body;
-  pool.query('INSERT INTO "VehicleType" (Type, Description) VALUES ($1, $2) RETURNING *',
-    [type, description], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(201).json(results.rows[0]);
-      }
-    });
-});
-
-app.get('/vehicletype', (req, res, next) => {
-  pool.query('SELECT * FROM "VehicleType"', (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).json(results.rows);
-    }
-  });
-});
-
-app.get('/vehicletype/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('SELECT * FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      if (results.rows.length === 0) {
-        return res.status(404).json({ message: 'Vehicle type not found' });
-      }
-      res.status(200).json(results.rows[0]);
-    }
-  });
-});
-
-app.put('/vehicletype/:id', [
-  check('type').optional().not().isEmpty(),
-  check('description').optional().not().isEmpty(),
-], (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { id } = req.params;
-  const { type, description } = req.body;
-  pool.query('UPDATE "VehicleType" SET Type = $1, Description = $2 WHERE TypeID = $3 RETURNING *',
-    [type, description, id], (error, results) => {
-      if (error) {
-        next(error);
-      } else {
-        res.status(200).json(results.rows[0]);
-      }
-    });
-});
-
-app.delete('/vehicletype/:id', (req, res, next) => {
-  const { id } = req.params;
-  pool.query('DELETE FROM "VehicleType" WHERE TypeID = $1', [id], (error, results) => {
-    if (error) {
-      next(error);
-    } else {
-      res.status(200).send(`VehicleType deleted with ID: ${id}`);
-    }
+    res.status(200).send(`User deleted with ID: ${id}`);
   });
 });
 
@@ -322,29 +233,48 @@ app.delete('/modifiedvehicle/:id', authorize, (req, res, next) => {
   });
 });
 
-// Historical Data API endpoints
+// Ensure that the content type for JSON responses is set correctly
+app.use((req, res, next) => {
+  res.header('Content-Type', 'application/json');
+  next();
+});
+
+// Exports for testing
+module.exports = app;
+
+// Historical Data API endpoint
 app.get('/api/historical-data', async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM HistoricalData');
-    console.log('Database result:', result.rows);
-
-    const processedData = result.rows.map(item => ({
-      ...item,
-      VehicleTypeCounts: item.VehicleTypeCounts ? JSON.parse(item.VehicleTypeCounts) : {},
-      LaneVehicleCounts: item.LaneVehicleCounts ? JSON.parse(item.LaneVehicleCounts) : {},
-    }));
-    console.log('Processed data:', processedData);
-
-    if (processedData.length === 0) {
-      res.status(404).json({ error: 'No historical data found' });
-    } else {
-      res.json(processedData);
+    // Check if any data was returned
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No historical data found' });
     }
+
+    // Process and send the data
+    const processedData = result.rows.map(item => {
+      return {
+        ...item,
+        VehicleTypeCounts: item.VehicleTypeCounts ? safelyParseJSON(item.VehicleTypeCounts) : {},
+        LaneVehicleCounts: item.LaneVehicleCounts ? safelyParseJSON(item.LaneVehicleCounts) : {}
+      };
+    });
+
+    res.json(processedData);
   } catch (error) {
     console.error('Error fetching historical data:', error);
-    next(error); // Pass the error to the error handler middleware
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+// Safely parse JSON and catch any errors
+function safelyParseJSON(json) {
+  try {
+    return JSON.parse(json);
+  } catch (e) {
+    console.error('Failed to parse JSON:', e);
+    return {};
+  }
+}
 
 app.get('/api/vehicle-type-count', async (req, res, next) => {
   try {
@@ -376,10 +306,17 @@ app.get('/api/lane-type-count', async (req, res, next) => {
   }
 });
 
-const PORT = process.env.PORT || 3005;
+// Error handler middleware to catch all server errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'An error occurred' });
+});
+
+// Start the server on the specified port
+const PORT = process.env.PORT || 3008;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Use the error handler middleware after all other routes
-app.use(errorHandler);
+// Export the app for testing purposes
+module.exports = app;

@@ -4,7 +4,7 @@ const TechnologyLidarPicture = () => {
       <img
         src="./images/img-technologies/TechnologyLidarPicture.png"
         alt=""
-        class="img-webthumbnail"
+        className="img-webthumbnail"
       />
     </div>
   );
