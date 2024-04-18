@@ -6,9 +6,13 @@ const { check, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('./database/config');
+const cors = require('cors'); // Import the cors middleware
 
 // Initialize Express app
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Apply middleware for parsing JSON and URL-encoded data
 app.use(bodyParser.json());
@@ -38,7 +42,6 @@ pool.connect(err => {
     console.log('Database connected');
   }
 });
-
 
 // User CRUD operations
 app.get('/users', (req, res, next) => {
@@ -266,16 +269,27 @@ app.get('/api/historical-data', async (req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-// Safely parse JSON and catch any errors
-function safelyParseJSON(json) {
-  try {
-    return JSON.parse(json);
-  } catch (e) {
-    console.error('Failed to parse JSON:', e);
-    return {};
-  }
-}
 
+// PerSecondData API endpoint
+// PerSecondData API endpoint
+// PerSecondData API endpoint with limit parameter
+app.get('/api/per-second-data', async (req, res, next) => {
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 100; // Default to 100 if no limit is provided
+  try {
+    const result = await pool.query('SELECT * FROM public."PerSecondData" ORDER BY "Timestamp" LIMIT $1', [limit]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No per-second data found' });
+    }
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching per-second data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Vehicle Type Count API endpoint
 app.get('/api/vehicle-type-count', async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM HistoricalData_VehicleTypeCount');
@@ -286,6 +300,7 @@ app.get('/api/vehicle-type-count', async (req, res, next) => {
   }
 });
 
+// Lane Vehicle Count API endpoint
 app.get('/api/lane-vehicle-count', async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM HistoricalData_LaneVehicleCount');
@@ -296,6 +311,7 @@ app.get('/api/lane-vehicle-count', async (req, res, next) => {
   }
 });
 
+// Lane Type Count API endpoint
 app.get('/api/lane-type-count', async (req, res, next) => {
   try {
     const result = await pool.query('SELECT * FROM HistoricalData_LaneTypeCount');

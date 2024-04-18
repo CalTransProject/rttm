@@ -1,13 +1,17 @@
+// HistoricalGeneral.js
+
 import React, { useState, useEffect } from 'react';
 import './styling/general.css';
-import StackedArea from '../subcomponents/sub-graph/StackedArea';
-import Bar from '../subcomponents/sub-graph/Bar';
-import PieChart from '../subcomponents/sub-graph/PieChart';
-import StackedBar from '../subcomponents/sub-graph/StackedBar';
-import Density from '../subcomponents/sub-graph/Density';
+
+import StackedArea from '../subcomponents/sub-graph/StackedAreaHist'; // Update the path to the subcomponent
+import Bar from '../subcomponents/sub-graph/BarHist'; // Update the path to the subcomponent
+import PieChart from '../subcomponents/sub-graph/PieChartHist'; // Update the path to the subcomponent
+import StackedBar from '../subcomponents/sub-graph/StackedBarHist'; // Update the path to the subcomponent
+import Density from '../subcomponents/sub-graph/DensityHist'; // Update the path to the subcomponent
+
 
 const HistoricalGeneral = () => {
-  const [historicalData, setHistoricalData] = useState([]);
+  const [perSecondData, setPerSecondData] = useState([]);
   const [stackedAreaData, setStackedAreaData] = useState(null);
   const [pieChartData, setPieChartData] = useState(null);
   const [error, setError] = useState(null);
@@ -16,26 +20,25 @@ const HistoricalGeneral = () => {
     const fetchData = async () => {
       setError(null);
       try {
-        const response = await fetch('/api/historical-data');
+        const response = await fetch('http://localhost:3008/api/per-second-data?limit=100');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setHistoricalData(data);
+        setPerSecondData(data);
         setStackedAreaData(processStackedAreaData(data));
         setPieChartData(processPieChartData(data));
       } catch (err) {
         console.error('Fetch error:', err);
-        setError('Failed to fetch historical data. Please try again later.');
+        setError('Failed to fetch per-second data. Please try again later.');
       }
     };
-
     fetchData();
   }, []);
 
   const processStackedAreaData = (data) => {
     return {
-      labels: data.map((item) => new Date(item.UnixTimestamp * 1000).toLocaleString()),
+      labels: data.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
       datasets: [
         {
           label: 'Vehicle Count',
@@ -74,25 +77,26 @@ const HistoricalGeneral = () => {
 
   return (
     <div className="GeneralSection">
-      <h1>General</h1>
+      <h1>Per Second Data</h1>
       {error && <p className="error">{error}</p>}
-      {historicalData.length > 0 && stackedAreaData && pieChartData && !error && (
+      {perSecondData.length > 0 && stackedAreaData && pieChartData && !error && (
         <>
           <StackedArea data={stackedAreaData} />
-          <Bar data={historicalData.map((item) => ({
-            time: new Date(item.UnixTimestamp * 1000).toLocaleString(),
-            speed: item.AverageSpeed,
-          }))} />
+          <Bar
+            data={perSecondData.map((item) => ({
+              time: new Date(item.Timestamp * 1000).toLocaleString(),
+              speed: item.AverageSpeed,
+            }))}
+          />
           <PieChart data={pieChartData} />
-          {historicalData.map((item, index) => (
-            <StackedBar
-              data={item.LaneVehicleCounts}
-              key={index}
-            />
+          {perSecondData.map((item, index) => (
+            <StackedBar data={item.LaneVehicleCounts} key={index} />
           ))}
-          <Density data={historicalData.map((item) => ({
-            value: item.Density,
-          }))} />
+          <Density
+            data={perSecondData.map((item) => ({
+              value: item.Density,
+            }))}
+          />
         </>
       )}
     </div>

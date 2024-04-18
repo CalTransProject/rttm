@@ -38,9 +38,9 @@ veh_label = ["sedan", "suv", "truck", "bus", "pickup", "van"]
 # Function to generate fake data and insert it into the database
 def insert_fake_data(num_days=1, num_seconds_per_day=86400):
     # Fetch the highest UnixTimestamp currently in the database to avoid duplicates
-    cur.execute("SELECT MAX(\"UnixTimestamp\") FROM \"FramePrediction\";")
+    cur.execute('SELECT MAX("UnixTimestamp") FROM "FramePrediction";')
     result = cur.fetchone()
-    last_timestamp = result[0] if result else int(time.time()) # Properly check if the result is not None
+    last_timestamp = result[0] if result[0] is not None else int(time.time())
 
     for day in range(num_days):
         for second in range(num_seconds_per_day):

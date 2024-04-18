@@ -70,6 +70,11 @@ def process_per_second_data(cur, start_time, num_seconds=86400):
                     print(f"Timestamp: {timestamp}, Lane Vehicle Counts: {lane_vehicle_counts}")
                     print(f"Timestamp: {timestamp}, Lane Type Counts: {lane_type_counts}")
 
+                    # Convert the data to JSON strings
+                    vehicle_type_counts_json = json.dumps(vehicle_type_counts)
+                    lane_vehicle_counts_json = json.dumps(lane_vehicle_counts)
+                    lane_type_counts_json = json.dumps(lane_type_counts)
+
                     cur.execute("""
                         INSERT INTO "PerSecondData" ("Timestamp", "TotalVehicles", "AverageSpeed", "Density", "AverageConfidence",
                                                      "VehicleTypeCounts", "LaneVehicleCounts", "LaneTypeCounts")
@@ -83,7 +88,7 @@ def process_per_second_data(cur, start_time, num_seconds=86400):
                             "LaneVehicleCounts" = EXCLUDED."LaneVehicleCounts",
                             "LaneTypeCounts" = EXCLUDED."LaneTypeCounts";
                     """, (timestamp, num_vehicles, average_speed, density, average_confidence,
-                          json.dumps(vehicle_type_counts), json.dumps(lane_vehicle_counts), json.dumps(lane_type_counts)))
+                          vehicle_type_counts_json, lane_vehicle_counts_json, lane_type_counts_json))
                 except Exception as e:
                     print(f"Error occurred for timestamp {timestamp}: {e}")
             else:
