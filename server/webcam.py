@@ -5,7 +5,7 @@ import math
 
 camera = cv2.VideoCapture(0)
 
-PATH_TO_MODEL = "/Users/Robin1/Desktop/LIDAR Project/rttm/model/2dModel.pt"
+PATH_TO_MODEL = "../model/2dModel.pt"
 model = YOLO(PATH_TO_MODEL)
 
 # Object classes
