@@ -10,8 +10,8 @@ const HistoricalData = () => {
     <section>
       <HistoricalSidebarMenu />
       <HistoricalGeneral />
-      <HistoricalUpload />
-      <HistoricalDownload />
+      {/* <HistoricalUpload />
+      <HistoricalDownload /> */}
     </section>
   );
 };

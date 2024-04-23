@@ -5,7 +5,7 @@ import ReactEcharts from "echarts-for-react";
 const Bar = ({ data }) => {
   const option = {
     title: {
-      text: "Average Speed Per Second",
+      text: "Average Speed Per hour",
       textStyle: {
         color: "white",
       },

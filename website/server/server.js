@@ -277,14 +277,31 @@ app.get('/api/per-second-data', async (req, res, next) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 100; // Default to 100 if no limit is provided
   try {
     const result = await pool.query('SELECT * FROM public."PerSecondData" ORDER BY "Timestamp" LIMIT $1', [limit]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-second data found' });
     }
-    
+
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching per-second data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//Per-hour
+app.get('/api/per-hour-data', async (req, res, next) => {
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 100; // Default to 100 if no limit is provided
+  try {
+    const result = await pool.query('SELECT * FROM public."PerHourData" ORDER BY "Timestamp" LIMIT $1', [limit]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No per-hour data found' });
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching per-hour data:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

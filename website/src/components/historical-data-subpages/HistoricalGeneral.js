@@ -77,7 +77,7 @@ const HistoricalGeneral = () => {
 
   return (
     <div className="GeneralSection">
-      <h1>Per Second Data</h1>
+      <h1>Per Hour Data</h1>
       {error && <p className="error">{error}</p>}
       {perSecondData.length > 0 && stackedAreaData && pieChartData && !error && (
         <>
