@@ -1,4 +1,5 @@
 import Header from "./components/page-components/Header";
+import DropdownNav from "./components/page-components/DropDownMenu";
 import Footer from "./components/page-components/Footer";
 import MainPage from "./components/Mainpage";
 import Technologies from "./components/Technologies";
@@ -27,6 +28,7 @@ function App() {
     <div className="App">
       <div className="content">
         <Header />
+        <DropdownNav />
       </div>
       <div className="container-fluid">
         <Routes>

@@ -90,6 +90,10 @@ const ResearchAndResources = () => {
                       YOLO Object Detection
                     </a> - In-depth information about the YOLO algorithm used in this project for vehicle detection
                   </li>
+                  <li>
+                    <a href="https://github.com/onnx/models/tree/main/validated/vision/object_detection_segmentation/yolov4">
+                      YOLO v4 </a> - Github page for YOLO v4 model (ONNX)
+                  </li>
                 </ul>
               </p>
             </div>
