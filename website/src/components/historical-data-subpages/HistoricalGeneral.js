@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Line } from 'react-chartjs-2';
+import { jsPDF } from 'jspdf';
 import 'chart.js/auto';
 import './styling/general.css';
 
@@ -46,20 +46,6 @@ const HistoricalGeneral = () => {
         setSelectedDate(event.target.value);
     };
 
-    const handleDownload = () => {
-        if (selectedDate) {
-            const blob = new Blob([''], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `data_${selectedDate}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            URL.revokeObjectURL(url);
-            a.remove();
-        }
-    };
-
     const handleUpload = (event) => {
         const file = event.target.files[0];
         if (!file) {
@@ -83,46 +69,63 @@ const HistoricalGeneral = () => {
         });
     };
 
-    const handleView = (data) => {
-        console.log('View data:', data);
+    const handleDownload = () => {
+        const pdfUrl = 'https://drive.google.com/file/d/1ne0uvEQ82mOty5O6y2M4BA0TVtt_3kdu/view?usp=sharing';
+        
+        window.open(pdfUrl, '_blank'); // Opens the PDF in a new tab
+    };
+    
+    
+
+    const drawHistogram = (doc, data, startX, startY, title, maxDataValue, unit) => {
+        const scale = 50 / maxDataValue;
+        const barWidth = 5;
+        const numBars = data.length;
+        const axisColor = 0;
+
+        // Draw Y axis
+        doc.setDrawColor(axisColor);
+        doc.line(startX, startY, startX, startY - 55); // Y-axis line
+        doc.line(startX, startY, startX + numBars * barWidth, startY); // X-axis line
+
+        // Y-axis labels and ticks
+        for (let i = 0; i <= maxDataValue; i += 5) {
+            const y = startY - i * scale;
+            doc.text(`${i}`, startX - 10, y + 2); // Label
+            doc.line(startX - 2, y, startX, y); // Tick mark
+        }
+
+        // X-axis labels (for each bar, optional)
+        data.forEach((value, index) => {
+            const x = startX + index * barWidth;
+            const y = startY + 2;
+            doc.text(unit, x, y, { maxWidth: barWidth });
+        });
+
+        // Draw bars
+        doc.setFillColor(100);
+        data.forEach((value, index) => {
+            const barHeight = value * scale;
+            const x = startX + index * barWidth;
+            const y = startY - barHeight;
+            doc.rect(x, y, barWidth, barHeight, 'F');
+        });
+
+        // Title
+        doc.setFontSize(10);
+        doc.text(title, startX, startY - 60);
     };
 
-    const chartData = {
-        labels: fakeData.map(data => data.date),
-        datasets: [
-            {
-                label: 'Avg Vehicles Peak',
-                data: fakeData.map(data => data.avgVehiclesPeak),
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            },
-            {
-                label: 'Avg Vehicles Low',
-                data: fakeData.map(data => data.avgVehiclesLow),
-                fill: false,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                tension: 0.1
-            }
-        ]
-    };
-
-    const options = {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        maintainAspectRatio: false
+    const handleView = () => {
+        handleDownload(); // This will trigger the same download process as the 'Download Data' button
     };
 
     return (
         <div className='GeneralSection'>
-            <h3></h3>
+            <h3>Traffic Data Analysis</h3>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div>
                     <label htmlFor='date-select'>Select Date:</label>
-                    <br />
                     <select id='date-select' onChange={handleDateSelect} style={{ width: '200px' }}>
                         <option value=''>Choose a date</option>
                         {dates.map((date, index) => (
@@ -130,17 +133,10 @@ const HistoricalGeneral = () => {
                         ))}
                     </select>
                 </div>
-
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={handleDownload} style={buttonStyle}>Download</button>
+                    <button onClick={handleDownload} style={buttonStyle}>Download Data</button>
                     <label htmlFor="upload-file" style={buttonStyle}>Upload Data</label>
-                    <input
-                        type="file"
-                        id="upload-file"
-                        accept=".json"
-                        onChange={handleUpload}
-                        style={{ display: 'none' }}
-                    />
+                    <input type="file" id="upload-file" accept=".json" onChange={handleUpload} style={{ display: 'none' }}/>
                 </div>
             </div>
             {uploadStatus && <p>{uploadStatus}</p>}
