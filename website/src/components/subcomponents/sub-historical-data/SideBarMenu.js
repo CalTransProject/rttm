@@ -1,10 +1,8 @@
 import React from "react";
 import "./styling/SideBarMenu.css";
-import { Outlet } from "react-router-dom";
 import {
   CDBSidebar,
   CDBSidebarContent,
-  CDBSidebarFooter,
   CDBSidebarHeader,
   CDBSidebarMenu,
   CDBSidebarMenuItem,
@@ -24,7 +22,7 @@ function HistoricalSidebarMenu() {
           <CDBSidebarMenu>
             <NavLink
               exact="true"
-              to="/historical-data/general"
+              to="general"
               activeClassName="active-link"
             >
               <CDBSidebarMenuItem className="menu-item" icon="book">
@@ -33,7 +31,7 @@ function HistoricalSidebarMenu() {
             </NavLink>
             <NavLink
               exact="true"
-              to="/historical-data/upload"
+              to="upload"
               activeClassName="active-link"
             >
               <CDBSidebarMenuItem className="menu-item" icon="upload">
@@ -43,7 +41,6 @@ function HistoricalSidebarMenu() {
           </CDBSidebarMenu>
         </CDBSidebarContent>
       </CDBSidebar>
-      <Outlet />
     </div>
   );
 }

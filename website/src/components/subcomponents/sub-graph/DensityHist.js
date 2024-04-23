@@ -1,7 +1,7 @@
 import ReactEcharts from "echarts-for-react";
 import React from "react";
 
-const Density = ({ data }) => {
+const DensityHist = ({ data }) => {
   const option = {
     title: {
       text: 'Density Over Time',
@@ -102,4 +102,4 @@ const Density = ({ data }) => {
   return <ReactEcharts option={option} style={chartStyle} />;
 };
 
-export default Density;
+export default DensityHist;

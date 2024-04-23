@@ -2,7 +2,7 @@
 import React from "react";
 import ReactEcharts from "echarts-for-react";
 
-const Bar = ({ data }) => {
+const BarHist = ({ data }) => {
   const option = {
     title: {
       text: "Average Speed Per Second",
@@ -57,4 +57,4 @@ const Bar = ({ data }) => {
   return <ReactEcharts option={option} style={chartStyle} />;
 };
 
-export default Bar;
+export default BarHist;

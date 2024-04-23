@@ -1,19 +1,14 @@
-// HistoricalGeneral.js
-
 import React, { useState, useEffect } from 'react';
 import './styling/general.css';
-
-import StackedArea from '../subcomponents/sub-graph/StackedAreaHist'; // Update the path to the subcomponent
-import Bar from '../subcomponents/sub-graph/BarHist'; // Update the path to the subcomponent
-import PieChart from '../subcomponents/sub-graph/PieChartHist'; // Update the path to the subcomponent
-import StackedBar from '../subcomponents/sub-graph/StackedBarHist'; // Update the path to the subcomponent
-import Density from '../subcomponents/sub-graph/DensityHist'; // Update the path to the subcomponent
-
+import StackedAreaHist from '../subcomponents/sub-graph/StackedAreaHist';
+import BarHist from '../subcomponents/sub-graph/BarHist';
+import PieChartHist from '../subcomponents/sub-graph/PieChartHist';
+import StackedBarHist from '../subcomponents/sub-graph/StackedBarHist';
+import DensityHist from '../subcomponents/sub-graph/DensityHist';
+import HeatMapHist from '../subcomponents/sub-graph/HeatMapHist'; // Ensure the new component is imported
 
 const HistoricalGeneral = () => {
   const [perSecondData, setPerSecondData] = useState([]);
-  const [stackedAreaData, setStackedAreaData] = useState(null);
-  const [pieChartData, setPieChartData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -26,8 +21,6 @@ const HistoricalGeneral = () => {
         }
         const data = await response.json();
         setPerSecondData(data);
-        setStackedAreaData(processStackedAreaData(data));
-        setPieChartData(processPieChartData(data));
       } catch (err) {
         console.error('Fetch error:', err);
         setError('Failed to fetch per-second data. Please try again later.');
@@ -36,68 +29,106 @@ const HistoricalGeneral = () => {
     fetchData();
   }, []);
 
-  const processStackedAreaData = (data) => {
+  const getStackedBarData = () => {
+    const data = {};
+    perSecondData.forEach((item) => {
+      Object.entries(item.LaneVehicleCounts).forEach(([lane, count]) => {
+        if (!data[lane]) {
+          data[lane] = [];
+        }
+        data[lane].push(count);
+      });
+    });
+    return data;
+  };
+
+  const getStackedAreaData = () => {
     return {
-      labels: data.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
+      labels: perSecondData.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
       datasets: [
         {
           label: 'Vehicle Count',
-          data: data.map((item) => item.TotalVehicles),
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+          data: perSecondData.map((item) => item.TotalVehicles),
         },
         {
           label: 'Average Speed',
-          data: data.map((item) => item.AverageSpeed),
-          backgroundColor: 'rgba(153, 102, 255, 0.2)',
-          borderColor: 'rgba(153, 102, 255, 1)',
+          data: perSecondData.map((item) => item.AverageSpeed),
         },
       ],
     };
   };
 
-  const processPieChartData = (data) => {
-    const vehicleTypeCounts = data.reduce((acc, item) => {
+  const getPieChartData = () => {
+    const vehicleTypeCounts = perSecondData.reduce((acc, item) => {
       Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
         acc[type] = (acc[type] || 0) + count;
       });
       return acc;
     }, {});
-
     return {
       labels: Object.keys(vehicleTypeCounts),
       datasets: [
         {
           data: Object.values(vehicleTypeCounts),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513'],
         },
       ],
     };
+  };
+
+  const getDensityData = () => {
+    return perSecondData.map((item) => ({
+      value: item.Density,
+    }));
   };
 
   return (
     <div className="GeneralSection">
       <h1>Per Second Data</h1>
       {error && <p className="error">{error}</p>}
-      {perSecondData.length > 0 && stackedAreaData && pieChartData && !error && (
-        <>
-          <StackedArea data={stackedAreaData} />
-          <Bar
-            data={perSecondData.map((item) => ({
-              time: new Date(item.Timestamp * 1000).toLocaleString(),
-              speed: item.AverageSpeed,
-            }))}
-          />
-          <PieChart data={pieChartData} />
-          {perSecondData.map((item, index) => (
-            <StackedBar data={item.LaneVehicleCounts} key={index} />
-          ))}
-          <Density
-            data={perSecondData.map((item) => ({
-              value: item.Density,
-            }))}
-          />
-        </>
+      {perSecondData.length > 0 && !error && (
+        <div className="container-fluid">
+          <div className="row row-cols-2">
+            <div className="col">
+              <div className="box">
+                <div className="chart">
+                  <StackedAreaHist data={getStackedAreaData()} />
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <div className="box">
+                <div className="chart">
+                  <PieChartHist data={getPieChartData()} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row row-cols-2">
+            <div className="col">
+              <div className="box">
+                <div className="chart" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <StackedBarHist data={getStackedBarData()} />
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <div className="box">
+                <div className="chart">
+                  <DensityHist data={getDensityData()} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col">
+              <div className="box">
+                <div className="chart">
+                  <HeatMapHist data={getDensityData()} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

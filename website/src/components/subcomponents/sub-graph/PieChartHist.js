@@ -1,7 +1,7 @@
 import ReactEcharts from "echarts-for-react";
 import React from "react";
 
-const PieChart = ({ data }) => {
+const PieChartHist = ({ data }) => {
   const option = {
     title: {
       text: 'Percentage of Vehicles by Type',
@@ -69,4 +69,4 @@ const PieChart = ({ data }) => {
   return <ReactEcharts option={option} style={chartStyle} />;
 }
 
-export default PieChart;
+export default PieChartHist;

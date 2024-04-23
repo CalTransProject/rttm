@@ -30,3 +30,12 @@
   color: red;
 }
 
+.sidebar-container {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  height: calc(100vh - 60px); /* Adjust the height as needed */
+  overflow-y: auto;
+}

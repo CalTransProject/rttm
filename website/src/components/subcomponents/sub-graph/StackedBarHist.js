@@ -1,36 +1,66 @@
 import ReactEcharts from "echarts-for-react";
 import React from "react";
 
-const StackedBar = ({ data }) => {
+const StackedBarHist = ({ data }) => {
   if (!data) {
-    return <p>Data is loading...</p>;  // Display loading or error message if data is not available
+    return <p>Data is loading...</p>; // Display loading or error message if data is not available
   }
 
   const option = {
+    title: {
+      text: 'Vehicle Counts by Lane',
+      textStyle: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+      },
+      left: 'center',
+      top: 1,
+    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
         type: "shadow",
       },
       formatter: function (params) {
-        return `${params[0].axisValueLabel}<br/>${params.map(param => `${param.marker}${param.seriesName}: ${param.value}`).join('<br/>')}`;
-      }
+        const lane = params[0].axisValue;
+        const totalCount = params.reduce((sum, param) => sum + param.value, 0);
+        return `
+          <div>
+            <p><strong>Lane:</strong> ${lane}</p>
+            <p><strong>Total Vehicle Count:</strong> ${totalCount}</p>
+            ${params.map(param => `
+              <p style="color: ${param.color};">
+                <strong>${param.seriesName}:</strong> ${param.value}
+              </p>
+            `).join('')}
+          </div>
+        `;
+      },
     },
     legend: {
+      data: Object.keys(data).map(lane => `Vehicle Type - Lane ${lane}`),
       textStyle: {
         color: "#fff",
       },
+      top: 40,
     },
     grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
+      left: "10%",
+      right: "10%",
+      bottom: "15%",
       containLabel: true,
     },
     xAxis: {
       type: "value",
+      name: 'Vehicle Count',
       axisLabel: {
         color: "white",
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#333',
+        },
       },
     },
     yAxis: {
@@ -40,34 +70,39 @@ const StackedBar = ({ data }) => {
         color: "white",
       },
     },
-    series: Object.entries(data).map(([category, value]) => ({
-      name: category,
+    series: Object.entries(data).map(([category, values]) => ({
+      name: `Vehicle Type - Lane ${category}`,
       type: "bar",
       stack: "total",
       label: {
         show: true,
         color: "#fff",
+        position: 'insideRight',
+        formatter: '{c}',
       },
       emphasis: {
         focus: "series",
       },
-      data: [value],  // Ensure the data is an array
+      data: values,
     })),
+    color: ['#83bff6', '#188df0', '#c4ccd3', '#32c5e9', '#7bd3f6'],
   };
 
   const chartStyle = {
-    height: "225px",
+    height: "400px",
     width: "100%",
   };
 
   return (
-    <ReactEcharts
-      option={option}
-      style={chartStyle}
-      notMerge={true}  // This prop ensures that the chart does not merge with the previous state
-      lazyUpdate={true}  // This prop ensures that the chart only updates when necessary
-    />
+    <div className="chart-container" style={{ maxHeight: "500px", overflowY: "auto", overflowX: "auto" }}>
+      <ReactEcharts
+        option={option}
+        style={chartStyle}
+        notMerge={true}
+        lazyUpdate={true}
+      />
+    </div>
   );
 };
 
-export default StackedBar;
+export default StackedBarHist;
