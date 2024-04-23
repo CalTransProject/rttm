@@ -123,9 +123,9 @@ const HistoricalGeneral = () => {
     return (
         <div className='GeneralSection'>
             <h3>Traffic Data Analysis</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
                 <div>
-                    <label htmlFor='date-select'>Select Date:</label>
+                    <label htmlFor='date-select'>Select Date:      </label>
                     <select id='date-select' onChange={handleDateSelect} style={{ width: '200px' }}>
                         <option value=''>Choose a date</option>
                         {dates.map((date, index) => (
@@ -141,7 +141,7 @@ const HistoricalGeneral = () => {
             </div>
             {uploadStatus && <p>{uploadStatus}</p>}
             {/* Table */}
-            <table style={{ border: '1px solid black', marginTop: '20px', borderCollapse: 'collapse', width: '100%' }}>
+            <table style={{ border: '1px solid black', marginTop: '10px', borderCollapse: 'collapse', width: '100%' }}>
                 <tbody>
                     <tr>
                         <th style={{ fontSize: '12px', padding: '8px' }}>Date</th>
