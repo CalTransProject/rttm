@@ -16,7 +16,7 @@ function HistoricalSidebarMenu() {
     <div className="sidebar-container">
       <CDBSidebar textColor="white" backgroundColor="rgb(36, 36, 36)">
         <CDBSidebarHeader
-          prefix={<i className="fa fa-bars fa-large" hover="red"></i>}
+          prefix={<i className="fa fa-bars fa-large"></i>}
         >
           Historical Data
         </CDBSidebarHeader>
@@ -40,8 +40,8 @@ function HistoricalSidebarMenu() {
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
-
             <NavLink
+              exact
               to="/historical-data/upload-traffic-stream"
               activeClassName="activeClicked"
             >
@@ -49,9 +49,19 @@ function HistoricalSidebarMenu() {
                 Upload Traffic Stream
               </CDBSidebarMenuItem>
             </NavLink>
-            
+            {/* New NavLink for managing traffic streams */}
+            <NavLink
+              exact
+              to="/historical-data/manage-traffic-stream"
+              activeClassName="activeClicked"
+            >
+              <CDBSidebarMenuItem icon="tasks">
+                Manage Traffic Stream
+              </CDBSidebarMenuItem>
+            </NavLink>
           </CDBSidebarMenu>
         </CDBSidebarContent>
+        {/* CDBSidebarFooter can be uncommented if needed */}
         {/* <CDBSidebarFooter style={{ textAlign: "center" }}>
           <div className="sidebar-footer">Sidebar Footer</div>
         </CDBSidebarFooter> */}
