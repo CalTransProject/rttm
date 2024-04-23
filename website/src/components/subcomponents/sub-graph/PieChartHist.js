@@ -2,6 +2,14 @@ import ReactEcharts from "echarts-for-react";
 import React from "react";
 
 const PieChartHist = ({ data }) => {
+  // Convert the data to a format that ECharts expects and calculate total for percentage calculation
+  const formattedData = data.datasets[0].data.map((value, index) => ({
+    value: value,
+    name: data.labels[index]
+  }));
+
+  const total = formattedData.reduce((sum, curr) => sum + curr.value, 0);
+
   const option = {
     title: {
       text: 'Percentage of Vehicles by Type',
@@ -26,8 +34,13 @@ const PieChartHist = ({ data }) => {
       textStyle: {
         color: 'white'
       },
-      formatter: name => {
-        return `${name} - {d}%`;
+      formatter: function (name) {
+        const item = formattedData.find(item => item.name === name);
+        if (item) {
+          const percentage = ((item.value / total) * 100).toFixed(2); // Calculate percentage and fix to 2 decimal places
+          return `${name} - ${percentage}%`;
+        }
+        return name;
       }
     },
     series: [
@@ -36,10 +49,7 @@ const PieChartHist = ({ data }) => {
         type: 'pie',
         radius: '55%',
         center: ['50%', '60%'],
-        data: data.datasets[0].data.map((value, index) => ({
-          value: value,
-          name: data.labels[index],
-        })),
+        data: formattedData,
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -67,6 +77,6 @@ const PieChartHist = ({ data }) => {
   };
 
   return <ReactEcharts option={option} style={chartStyle} />;
-}
+};
 
 export default PieChartHist;

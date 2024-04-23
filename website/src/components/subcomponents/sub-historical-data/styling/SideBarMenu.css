@@ -5,6 +5,8 @@
   margin-left: -15px;
   margin-bottom: -9px;
 }
+
+
 .text-decoration-none {
   color: rgb(255, 0, 0);
   padding-right: 10px;
@@ -23,19 +25,22 @@
 }
 
 .sidebar-footer {
-  padding: "20px 5px";
+  padding: 20px 5px; /* Corrected padding without quotes */
 }
 
 .fa-fa-bars-fa-large {
   color: red;
 }
 
-.sidebar-container {
-  height: 100vh;
-  overflow-y: auto;
-}
-
 .sidebar-content {
   height: calc(100vh - 60px); /* Adjust the height as needed */
-  overflow-y: auto;
+  overflow-y: auto; /* Ensuring content can scroll independently if needed */
+}
+.border-sidebar {
+  border-right: 1px solid white; /* Adds a white border */
+}
+.sidebar-container {
+  .CDBSidebar {
+    border-right: 10px solid white; 
+}
 }

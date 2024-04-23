@@ -1,56 +1,74 @@
+/* General Heading Styles */
 h1 {
     color: aliceblue;
-  }
-  
-  .tableWrapper {
+}
+
+/* General Section Styles */
+.GeneralSection {
+    padding: 20pt;
+    height: 100vh;
+    overflow-y: auto; /* Allows vertical scrolling within the General Section if content overflows */
+}
+
+/* Table Styles */
+.tableWrapper {
     width: 100%;
-    max-height: 500px; /* Changed to max-height for better responsiveness */
+    max-height: 500px; /* Allows vertical scrolling */
     overflow: auto;
-  }
-  
-  .tableHead {
+}
+
+.tableHead,
+.tableCell {
     font-size: medium;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .tableCell {
-    font-size: medium;
-  }
-  
-  .file-select {
-    width: 400px; /* Set the desired width */
-  }
-  
-  label {
-    color: aliceblue;
-  }
-  
-  .GeneralSection {
-    padding: 20pt;
-  }
-  
-  .averageSpeedTable {
-    width: 100%; /* Changed to 100% for better responsiveness */
-    max-height: 200pt; /* Increased max-height for more visible content */
-    overflow-x: auto; /* Changed to auto for horizontal scrolling only when needed */
-  }
-  
-  .fileInput {
-    background-color: snow;
-  }
-  
-  .output {
-    overflow: auto; /* Changed to auto for scrolling only when needed */
-    margin: 1rem 0;
-    max-height: 200px; /* Changed to max-height for better responsiveness */
-  }
+}
 
-  .GeneralSection {
-    height: 100vh;
-    overflow-y: auto;
+.averageSpeedTable {
+    width: 100%;
+    max-height: 200pt;
+    overflow-x: auto; /* Horizontal scrolling only when needed */
+}
+
+/* Input and Label Styles */
+.file-select,
+.fileInput {
+    width: 400px; /* Standard width for file input */
+    background-color: snow; /* Background color for file input */
+}
+
+label {
+    color: aliceblue;
+}
+
+/* Output Styles */
+.output {
+    overflow: auto; /* Only adds scrolling when necessary */
+    margin: 1rem 0;
+    max-height: 200px;
+}
+
+/* Chart Container Styles */
+.chart-container {
+    height: 300px; /* Set height for chart containers */
+    overflow-y: auto; /* Enable vertical scrolling within chart containers */
+}
+
+/* Box Styles */
+.box {
+    border: 1px solid #ccc; /* Standard border style */
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 4px; /* Rounded corners for aesthetic */
+}
+.small-text {
+    font-size: 0.8rem; /* Smaller font size */
+    text-align: center; /* Center alignment */
+    margin-top: 10px; /* Space above the text for clear separation */
   }
-  
-  .chart-container {
-    height: 300px; /* Adjust the height to match the DensityHist component */
-    overflow-y: auto; /* Enable vertical scrolling */
+  .GeneralSection h1 {
+    text-align: center; /* Center the title text */
+    margin-top: 20px; /* Add space above the title */
+    margin-bottom: 20px; /* Add space below the title */
+    color: aliceblue; /* Adjust the color if needed */
   }
+   

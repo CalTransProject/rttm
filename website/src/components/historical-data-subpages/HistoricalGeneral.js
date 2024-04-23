@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styling/general.css';
 import StackedAreaHist from '../subcomponents/sub-graph/StackedAreaHist';
-import BarHist from '../subcomponents/sub-graph/BarHist';
 import PieChartHist from '../subcomponents/sub-graph/PieChartHist';
 import StackedBarHist from '../subcomponents/sub-graph/StackedBarHist';
 import DensityHist from '../subcomponents/sub-graph/DensityHist';
@@ -83,50 +82,27 @@ const HistoricalGeneral = () => {
 
   return (
     <div className="GeneralSection">
-      <h1>Per Second Data</h1>
+      <h1>Per Second Traffic Data Analysis</h1>
       {error && <p className="error">{error}</p>}
       {perSecondData.length > 0 && !error && (
-        <div className="container-fluid">
-          <div className="row row-cols-2">
-            <div className="col">
-              <div className="box">
-                <div className="chart">
-                  <StackedAreaHist data={getStackedAreaData()} />
+        <div className="container-fluid d-flex flex-column align-items-center">
+          <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
+            {/* Chart boxes with centered descriptions */}
+            {[
+              { title: "Stacked Area Chart", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
+              { title: "Pie Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: PieChartHist, data: getPieChartData() },
+              { title: "Stacked Bar Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: StackedBarHist, data: getStackedBarData() },
+              { title: "Density Chart", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency", Component: DensityHist, data: getDensityData() },
+              { title: "Heatmap", description: "Visualizes vehicle density over time, with color intensity reflecting density levels", Component: HeatMapHist, data: getDensityData() }
+            ].map(({ title, description, Component, data }) => (
+              <div className="col" key={title}>
+                <div className="box">
+                  <h2>{title}</h2>
+                  <Component data={data} />
+                  <p className="small-text">{description}</p>
                 </div>
               </div>
-            </div>
-            <div className="col">
-              <div className="box">
-                <div className="chart">
-                  <PieChartHist data={getPieChartData()} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row row-cols-2">
-            <div className="col">
-              <div className="box">
-                <div className="chart" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  <StackedBarHist data={getStackedBarData()} />
-                </div>
-              </div>
-            </div>
-            <div className="col">
-              <div className="box">
-                <div className="chart">
-                  <DensityHist data={getDensityData()} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">
-              <div className="box">
-                <div className="chart">
-                  <HeatMapHist data={getDensityData()} />
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       )}

@@ -12,7 +12,7 @@ import { NavLink } from "react-router-dom";
 function HistoricalSidebarMenu() {
   return (
     <div className="sidebar-container">
-      <CDBSidebar textColor="white" backgroundColor="rgb(36, 36, 36)">
+      <CDBSidebar textColor="white" backgroundColor="#565264" className="border-sidebar">
         <CDBSidebarHeader
           prefix={<i className="fa fa-bars fa-large" hover="red"></i>}
         >

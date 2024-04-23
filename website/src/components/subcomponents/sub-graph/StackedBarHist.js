@@ -54,6 +54,13 @@ const StackedBarHist = ({ data }) => {
     xAxis: {
       type: "value",
       name: 'Vehicle Count',
+      nameLocation: 'center', // Centers the axis name
+      nameGap: 30, // Distance between the axis name and the axis line
+      nameTextStyle: {
+        color: "white",
+        fontSize: 14, // Optional: adjust font size as needed
+        fontWeight: 'bold' // Optional: set font weight
+      },
       axisLabel: {
         color: "white",
       },
