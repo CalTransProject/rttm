@@ -38,6 +38,16 @@ function HistoricalSidebarMenu() {
                 Upload Data
               </CDBSidebarMenuItem>
             </NavLink>
+
+
+            <NavLink exact="true"
+              to="/historical-data/visual"
+              activeClassName="active-link"
+            >
+              <CDBSidebarMenuItem className="menu-item" icon="chart-line">
+                Historical Data Visualization
+              </CDBSidebarMenuItem>
+            </NavLink>
           </CDBSidebarMenu>
         </CDBSidebarContent>
       </CDBSidebar>
