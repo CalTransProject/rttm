@@ -291,7 +291,7 @@ app.get('/api/per-second-data', async (req, res, next) => {
 app.get('/api/per-minute-data', async (req, res, next) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1440; // Default to 1440 if no limit is provided
   try {
-    const result = await pool.query('SELECT * FROM public."PerMinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
+    const result = await pool.query('SELECT * FROM "PerMinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-minute data found' });
@@ -308,7 +308,7 @@ app.get('/api/per-minute-data', async (req, res, next) => {
 app.get('/api/per-5-minute-data', async (req, res, next) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 288; // Default to 288 if no limit is provided
   try {
-    const result = await pool.query('SELECT * FROM public."Per5MinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
+    const result = await pool.query('SELECT * FROM "Per5MinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-5-minute data found' });
@@ -325,7 +325,7 @@ app.get('/api/per-5-minute-data', async (req, res, next) => {
 app.get('/api/per-hour-data', async (req, res, next) => {
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 24; // Default to 24 if no limit is provided
   try {
-    const result = await pool.query('SELECT * FROM public."PerHourData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
+    const result = await pool.query('SELECT * FROM "PerHourData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-hour data found' });

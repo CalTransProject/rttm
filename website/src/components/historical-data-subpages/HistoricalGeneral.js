@@ -39,8 +39,7 @@ const HistoricalGeneral = () => {
             throw new Error('Invalid data type');
         }
 
-        const response = await fetch(`${url}?limit=${limit}`);
-
+        const response = await fetch(`${url}?limit=${limit}`, { cache: 'no-cache' }); // Added no-cache
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -54,7 +53,8 @@ const HistoricalGeneral = () => {
     };
 
     fetchData();
-  }, [dataType]);
+  }, [dataType]); // Dependency array ensures this effect runs when dataType changes
+
 
   const getStackedBarData = () => {
     const processedData = {};
@@ -86,12 +86,23 @@ const HistoricalGeneral = () => {
   };
 
   const getPieChartData = () => {
+    console.log(data); // Log the raw data to see what's different for per-minute and per-hour
     const vehicleTypeCounts = data.reduce((acc, item) => {
-      Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
-        acc[type] = (acc[type] || 0) + count;
-      });
+      const itemCounts = item.AggregatedVehicleTypeCounts || {};
+  
+      if (!Object.keys(itemCounts).length) {
+        const vehicleTypeCounts = item.VehicleTypeCounts || {};
+        Object.entries(vehicleTypeCounts).forEach(([type, count]) => {
+          acc[type] = (acc[type] || 0) + count;
+        });
+      } else {
+        Object.entries(itemCounts).forEach(([type, count]) => {
+          acc[type] = (acc[type] || 0) + count;
+        });
+      }
       return acc;
     }, {});
+    console.log(vehicleTypeCounts); // Log the processed data to compare
     return {
       labels: Object.keys(vehicleTypeCounts),
       datasets: [
@@ -123,12 +134,18 @@ const HistoricalGeneral = () => {
           <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
             {[
               { title: "Stacked Area Chart", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
-              { title: "Pie Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: PieChartHist, data: getPieChartData() },
+              {
+                title: "Pie Chart", 
+                description: "Breaks down vehicle counts by type, useful for spotting congestion.", 
+                Component: PieChartHist, 
+                data: getPieChartData(), 
+                key: `pie-chart-${dataType}-${new Date().getTime()}` // Force re-render by using a unique key
+              },
               { title: "Stacked Bar Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: StackedBarHist, data: getStackedBarData() },
               { title: "Density Chart", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency", Component: DensityHist, data: getDensityData() },
               { title: "Heatmap", description: "Visualizes vehicle density over time, with color intensity reflecting density levels", Component: HeatMapHist, data: getDensityData() }
-            ].map(({ title, description, Component, data }) => (
-              <div className="col" key={title}>
+            ].map(({ title, description, Component, data, key }) => (
+              <div className="col" key={key}>
                 <div className="box">
                   <h2>{title}</h2>
                   <Component data={data} />
