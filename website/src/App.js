@@ -53,29 +53,11 @@ function App() {
               <Route path="edit-stream/:streamId" element={<ProtectedRoute><EditTrafficStream /></ProtectedRoute>} />
             </Route>
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/research-and-resources" element={<ResearchAndResources />} />
             <Route path="/my-account" element={<ProtectedRoute><MyAccount /></ProtectedRoute>} />
             <Route path="/user-authentication" element={<ProtectLogin><UserAuthentication /></ProtectLogin>} />
           </Routes>
         </AuthContextProvider>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/technologies" element={<Technologies />} />
-
-          <Route path="/camera-management" element={<CameraManagement />}>
-            <Route path="general" element={<General />} />
-            <Route path="new-camera" element={<NewCamera />} />
-            <Route path="remove-cameras" element={<RemoveCameras />} />
-            <Route path="configuration" element={<Configuration />} />
-          </Route>
-
-          <Route path="/historical-data" element={<HistoricalData />}>
-            <Route path="general" element={<HistoricalGeneral />} />
-            <Route path="upload" element={<HistoricalUpload />} />
-            <Route path="download" element={<HistoricalDownload />} />
-          </Route>
-          <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/research-and-resources" element={<ResearchAndResources />} />
-        </Routes>
       </div>
       <div className="chart"></div>
       <div className="footer">

@@ -1,6 +1,6 @@
 import React from "react";
 import "./styling/SideBarMenu.css";
-import { Outlet, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   CDBSidebar,
   CDBSidebarContent,
@@ -37,7 +37,6 @@ function SidebarMenu() {
           </CDBSidebarMenu>
         </CDBSidebarContent>
       </CDBSidebar>
-      <Outlet />
     </div>
   );
 }
