@@ -37,17 +37,7 @@ function HistoricalSidebarMenu() {
               <CDBSidebarMenuItem className="menu-item" icon="upload">
                 Upload Data
               </CDBSidebarMenuItem>
-            </NavLink>
-
-
-            <NavLink exact="true"
-              to="/historical-data/visual"
-              activeClassName="active-link"
-            >
-              <CDBSidebarMenuItem className="menu-item" icon="chart-line">
-                Historical Data Visualization
-              </CDBSidebarMenuItem>
-            </NavLink>
+            </NavLink>  
           </CDBSidebarMenu>
         </CDBSidebarContent>
       </CDBSidebar>
