@@ -6,7 +6,7 @@ import time
 from dotenv import load_dotenv
 
 # Load environment variables from .env file for database credentials
-load_dotenv(dotenv_path='server/database/db.env')
+load_dotenv(dotenv_path='../server/database/db.env')
 
 # Database credentials
 db_credentials = {
@@ -25,13 +25,15 @@ cur = conn.cursor()
 for lane_id in range(1, 4):
     cur.execute(
         '''
-        INSERT INTO "Lane" ("LaneID", "RoadName", "Direction")
-        VALUES (%s, 'Main Street', 'North') ON CONFLICT ("LaneID") DO NOTHING;
+        INSERT INTO "Lane" ("RoadName", "Direction")
+        VALUES (%s, %s) ON CONFLICT DO NOTHING;
         ''',
-        (lane_id,)
+        ('Main Street', 'North')
     )
 
 conn.commit()
+
+# Ensure Lane IDs Exist (Assuming lanes 1 to 3 need to exist)
 
 veh_label = ["sedan", "suv", "truck", "bus", "pickup", "van"]
 
