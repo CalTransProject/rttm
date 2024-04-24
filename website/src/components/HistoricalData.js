@@ -27,4 +27,3 @@ const HistoricalData = () => {
 };
 
 export default HistoricalData;
-export default HistoricalData;
