@@ -1,6 +1,9 @@
 /* General Heading Styles */
 h1 {
     color: aliceblue;
+    text-align: center; /* Center the title text */
+    margin-top: 20px; /* Add space above the title */
+    margin-bottom: 20px; /* Add space below the title */
 }
 
 /* General Section Styles */
@@ -60,15 +63,10 @@ label {
     margin-bottom: 16px;
     border-radius: 4px; /* Rounded corners for aesthetic */
 }
+
+/* Small Text Styles for Description Below Charts */
 .small-text {
     font-size: 0.8rem; /* Smaller font size */
     text-align: center; /* Center alignment */
     margin-top: 10px; /* Space above the text for clear separation */
-  }
-  .GeneralSection h1 {
-    text-align: center; /* Center the title text */
-    margin-top: 20px; /* Add space above the title */
-    margin-bottom: 20px; /* Add space below the title */
-    color: aliceblue; /* Adjust the color if needed */
-  }
-   
+}

@@ -4,7 +4,7 @@ import StackedAreaHist from '../subcomponents/sub-graph/StackedAreaHist';
 import PieChartHist from '../subcomponents/sub-graph/PieChartHist';
 import StackedBarHist from '../subcomponents/sub-graph/StackedBarHist';
 import DensityHist from '../subcomponents/sub-graph/DensityHist';
-import HeatMapHist from '../subcomponents/sub-graph/HeatMapHist'; // Ensure the new component is imported
+import HeatMapHist from '../subcomponents/sub-graph/HeatMapHist';
 
 const HistoricalGeneral = () => {
   const [perSecondData, setPerSecondData] = useState([]);
@@ -87,7 +87,6 @@ const HistoricalGeneral = () => {
       {perSecondData.length > 0 && !error && (
         <div className="container-fluid d-flex flex-column align-items-center">
           <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
-            {/* Chart boxes with centered descriptions */}
             {[
               { title: "Stacked Area Chart", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
               { title: "Pie Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: PieChartHist, data: getPieChartData() },

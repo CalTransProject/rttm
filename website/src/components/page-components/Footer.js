@@ -1,29 +1,23 @@
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./footer.css";
 
 const Footer = () => {
   return (
-    <footer id="sticky-footer" className="flex-shrink-0 py-4 bg-light text-white-50">
-      <div className="footer-all">
-        <small>
-          <a href="/home" className="footer-links">
-            Home
-          </a>
-          <a className="footer-links" href="/camera-management">
-            Camera Management
-          </a>
-          <a className="footer-links" href="/historical-data">
-            Historical Data
-          </a>
-          <a className="footer-links" href="/technologies">
-            Technologies
-          </a>
-          <a className="footer-links" href="/about-us">
-            About Us
-          </a>
-        </small>
+    <footer className="footer">
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-12 footer-content">
+            <NavLink to="/" className="footer-link">Home</NavLink>
+            <NavLink to="/camera-management/general" className="footer-link">Camera Management</NavLink>
+            <NavLink to="/historical-data/general" className="footer-link">Historical Data</NavLink>
+            <NavLink to="/technologies" className="footer-link">Technologies</NavLink>
+            <NavLink to="/about-us" className="footer-link">About Us</NavLink>
+          </div>
+        </div>
+        <div className="footer-line"></div>
       </div>
-      <div className="footer-line"></div>
     </footer>
   );
 };
