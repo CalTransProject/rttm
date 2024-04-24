@@ -40,7 +40,7 @@ function App() {
             <Route path="download" element={<HistoricalDownload />} />
             <Route path="upload-traffic-stream" element={<UploadTrafficStream />} />
             <Route path="manage-traffic-stream" element={<ManageTrafficStream />} />
-            <Route path="edit-stream/:streamId" element={<EditTrafficStream />} /> {/* New Route for editing a stream */}
+            <Route path="edit-stream/:streamId" element={<EditTrafficStream />} />
           </Route>
           <Route path="/about-us" element={<AboutUs />} />
         </Routes>
