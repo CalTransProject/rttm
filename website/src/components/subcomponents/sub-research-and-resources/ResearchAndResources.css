@@ -1,0 +1,136 @@
+
+.box{
+    text-align: center;
+}
+
+.main-container{
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width:100%;
+}
+
+.flex-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Distribute items equally between */
+  align-items: center;
+  justify-content: center;
+  width:80%;
+    /* display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 50%; */
+}
+
+.flex-item {
+    flex: 1;
+    font-size: 1.3rem;
+    display:flex;
+    justify-content: center;
+    
+    color:white;
+    margin-top: 20px;
+    /* margin-left: 10vw; */
+}  
+
+.flex-item:first-child {
+   
+    /* margin-right: 50px; */
+    /* margin-left: 20vw; */
+} 
+
+.flex-item:second-child {
+   
+    margin-right: 50px;
+    margin-left: 600px;
+} 
+
+.info-container{
+    margin-top: 10px;
+    font-size: 24px;
+    coloR:white;
+    /* height:400px; */
+}
+
+/* #title-text{
+    color: red;
+} */
+
+.text-box{
+    background-color: transparent;
+    font-size: 25px;
+    text-align: left;
+
+  }
+  /* These below are for headers and paragraphs on the left side */
+  .techRTTM{
+    text-align: left;
+    margin-top: 100pt;
+    color: aliceblue;
+  }
+  .techH{
+    text-align: left;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techP{
+    text-align: left;
+    color: aliceblue;
+    font-size: large;
+  }
+  /* These below are for Headers and Paragraphs on the right side */
+  .techHR{
+    text-align: right;
+    margin-top: 100pt;
+    color: red;
+  }
+  .techPR{
+    text-align: right;
+    color: aliceblue;
+    font-size: large;
+  }
+
+
+  h3{
+    font-size: 55px;
+    color: white;
+    font-weight: 800;
+    text-decoration: underline;
+    text-align: center;
+  }
+  .img-webthumbnail{
+    height: 95%;
+    width: 95%;
+    border: 2px solid white;
+    border-radius: 5px;
+  }
+
+  .text-box-right{
+    background-color: transparent;
+    font-size: 25px;
+    text-align: right;
+    color: white;
+
+  }
+  
+  .tech-photo{
+   height: 450px;
+   width: 700px;
+   margin-top: 10%;
+   margin-bottom: 10%;
+  }
+
+  @media screen and (max-width: 768px) {
+    .flex-container{ 
+      width:80%;
+      justify-content:space-between;
+    }
+
+    
+    .flex-item {
+      margin-left: 5vw;
+    }  
+
+  }
