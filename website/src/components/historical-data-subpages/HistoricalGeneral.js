@@ -15,16 +15,36 @@ const HistoricalGeneral = () => {
     const fetchData = async () => {
       setError(null);
       try {
-        const url = dataType === 'per-second' 
-          ? `http://localhost:3000/api/per-second-data?limit=100`
-          : `http://localhost:3000/api/per-hour-data?limit=24`;
-        
-        const response = await fetch(url);
-        
+        let url;
+        let limit;
+
+        switch (dataType) {
+          case 'per-second':
+            url = 'http://localhost:3000/api/per-second-data';
+            limit = 100;
+            break;
+          case 'per-minute':
+            url = 'http://localhost:3000/api/per-minute-data';
+            limit = 1440;
+            break;
+          case 'per-5-minute':
+            url = 'http://localhost:3000/api/per-5-minute-data';
+            limit = 288;
+            break;
+          case 'per-hour':
+            url = 'http://localhost:3000/api/per-hour-data';
+            limit = 24;
+            break;
+          default:
+            throw new Error('Invalid data type');
+        }
+
+        const response = await fetch(`${url}?limit=${limit}`);
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const fetchedData = await response.json();
         setData(fetchedData);
       } catch (err) {
@@ -32,7 +52,7 @@ const HistoricalGeneral = () => {
         setError(`Failed to fetch ${dataType} data. Please try again later.`);
       }
     };
-    
+
     fetchData();
   }, [dataType]);
 
@@ -93,6 +113,8 @@ const HistoricalGeneral = () => {
       <h1>Traffic Data Analysis</h1>
       <div>
         <button onClick={() => setDataType('per-second')}>Per Second</button>
+        <button onClick={() => setDataType('per-minute')}>Per Minute</button>
+        <button onClick={() => setDataType('per-5-minute')}>Per 5 Minutes</button>
         <button onClick={() => setDataType('per-hour')}>Per Hour</button>
       </div>
       {error && <p className="error">{error}</p>}
