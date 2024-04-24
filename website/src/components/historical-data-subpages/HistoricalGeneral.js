@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { jsPDF } from 'jspdf';
+import 'chart.js/auto';
 import './styling/general.css';
 import StackedAreaHist from '../subcomponents/sub-graph/StackedAreaHist';
 import PieChartHist from '../subcomponents/sub-graph/PieChartHist';
