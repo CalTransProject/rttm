@@ -1,0 +1,25 @@
+.edit-traffic-stream {
+    max-width: 600px;
+    margin: auto;
+    padding: 1rem;
+  }
+  
+  .edit-traffic-stream form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .edit-traffic-stream label {
+    margin-top: 1rem;
+  }
+  
+  .edit-traffic-stream input {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .edit-traffic-stream button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  
