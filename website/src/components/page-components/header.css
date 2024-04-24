@@ -1,10 +1,10 @@
 nav {
   position: absolute;
+  align-items: center;
   height: 34pt; /* Adjusted height */
-  width: 100%;
+  max-width: 100%;
+  background-color: #43404F; /* Dark background */
 }
-
-/* Rest of the styles can remain unchanged. */
 
 .nav-item {
   padding: 1pt;
@@ -31,6 +31,7 @@ nav {
 }
 
 .logo {
+  padding-top: 4px;
   color: #D22030;
   font-weight: bold;
   font-family: Geneva, Tahoma, sans-serif;
@@ -42,12 +43,41 @@ nav {
   padding: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between; /* Corrected typo */
+  justify-content: space-between;
   align-items: center;
+  align-content: center;
   background-color: #091e05; /* Ensure this matches nav's background */
 }
 
 /* Ensure no element inside .div-header has a different background */
 .div-header * {
   background-color: inherit;
+}
+
+.user_button {
+  background: rgba(10, 0, 0, 0.25); /* Transparent Background */
+  color: rgb(231, 231, 231);
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  text-wrap: balance;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  margin: 2px 0px 0px 0px;
+  transition-duration: 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.user_button.active {
+  background-color: rgb(232, 232, 232);
+  border-radius: 5px;
+  color: rgb(30, 30, 30);
+}
+
+.user_button:hover {
+  background-color: #e7e7e7;
+  color: black;
 }

@@ -1,0 +1,96 @@
+* {box-sizing: border-box;}
+
+.right-spacer {
+  padding-right: 1.2%;
+}
+
+.font-title{
+	color: white;
+	font-size: 26px;
+	font-weight: 700;	
+  margin-top: 15px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-attributes{
+  display: grid;
+	color: white;
+	font-size: 20px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0px;
+}
+
+.box h1{
+	font-size: 20px;
+  display: grid;
+	justify-content: center;
+	color: white;
+	margin-top: 0%;
+  margin-bottom: 0%;
+  align-items: center;
+  position: relative;
+}
+
+.box{
+	background: transparent; 
+}
+
+.log-out-button {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  font-weight: 500;
+  border-radius: 5px;
+  width: 236px;
+  height: 46px;
+  color: rgb(222, 222, 222);
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  font-size: 15.5px;
+  justify-content: left;
+  align-items: baseline;
+  margin: 10px 2px;
+  margin-bottom: 0px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  background: linear-gradient(0deg, rgba(85, 65, 85, 0.571) 0%, rgba(130, 119, 138, 0.914) 100%); 
+  border: 1px solid #454242;
+}
+
+.log-out-button:hover {
+  background: linear-gradient(0deg, rgba(184, 15, 15, 0.764) 0%, rgba(252,5,5,1) 100%);
+}
+
+.Btn {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid #454242;
+  background: linear-gradient(0deg, rgba(85, 65, 85, 0.571) 0%, rgba(130, 119, 138, 0.914) 100%);
+  font-weight: 500;
+  border-radius: 5px;
+  width: 236px;
+  height: 46px;
+  color: rgb(230, 230, 230);
+  padding: 10px 25px;
+  align-items: baseline;
+  justify-content: left;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  font-size: 15.5px;
+  margin: 10px 2px;
+  margin-bottom: 0px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+.Btn:hover {
+  background: linear-gradient(0deg, rgba(234, 234, 234, 0.719) 0%, rgb(247, 247, 247) 100%);
+  color: rgb(23, 23, 23);
+}
+

@@ -2,17 +2,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+}
+
+.all{
+  height:40svw;
   width: 100%;
 }
 
 table {
   margin: 0 auto;
   border-collapse: collapse;
+  border:hidden;
   width: 100%;
   max-width: 100%;
-  /* font-size: 1.6rem;
-  font-weight: 400; */
   color: #c6c6c6;
   text-align: center;
   background-color: #222;
@@ -24,13 +26,18 @@ table {
 th {
   padding: 2rem;
   color: #fff;
-  background-color: #333;
-  border-bottom: 2px solid #ffffff;
-  text-transform: uppercase;
+  background-color: #5A5A5A;
+  border:none;
   font-size: 2.3rem;
   font-weight: 500;
   letter-spacing: 1px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header-row{
+  background-color: #5A5A5A;
+  font-size: 72px;
+  border: hidden;
 }
 
 tbody tr:hover {
@@ -38,11 +45,16 @@ tbody tr:hover {
 }
 
 td {
+  border:none; 
   padding: 1.5rem 2rem;
   color: #fafafa;
   font-size: 2.2rem;
   font-weight: 300;
   font-family: "Open Sans", sans-serif;
+}
+
+tr:not(:last-child) td {
+  border-bottom: 1px solid #5A5A5A; /* Add a bottom border to all cells except the last one in each row */
 }
 
 .modal-content {
@@ -84,4 +96,14 @@ td {
 
 .modal-footer button:hover {
   background-color: #ff00005b;
+}
+
+.checkbox-large{
+  width: 30px;
+  height: 30px;
+}
+
+.page-title{
+  text-align: center;
+  padding-top: 20px;
 }
