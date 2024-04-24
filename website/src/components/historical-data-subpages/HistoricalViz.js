@@ -19,7 +19,7 @@ const HistoricalViz = () => {
         const fetchData = async () => {
             setError(null);
             try {
-                const response = await fetch('http://localhost:3008/api/per-hour-data?limit=24');
+                const response = await fetch('http://localhost:3000/api/per-hour-data?limit=24');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

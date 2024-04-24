@@ -7,58 +7,66 @@ import DensityHist from '../subcomponents/sub-graph/DensityHist';
 import HeatMapHist from '../subcomponents/sub-graph/HeatMapHist';
 
 const HistoricalGeneral = () => {
-  const [perSecondData, setPerSecondData] = useState([]);
+  const [dataType, setDataType] = useState('per-second');
+  const [data, setData] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setError(null);
       try {
-        const response = await fetch('http://localhost:3008/api/per-second-data?limit=100');
+        const url = dataType === 'per-second' 
+          ? `http://localhost:3000/api/per-second-data?limit=100`
+          : `http://localhost:3000/api/per-hour-data?limit=24`;
+        
+        const response = await fetch(url);
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        setPerSecondData(data);
+        
+        const fetchedData = await response.json();
+        setData(fetchedData);
       } catch (err) {
         console.error('Fetch error:', err);
-        setError('Failed to fetch per-second data. Please try again later.');
+        setError(`Failed to fetch ${dataType} data. Please try again later.`);
       }
     };
+    
     fetchData();
-  }, []);
+  }, [dataType]);
 
   const getStackedBarData = () => {
-    const data = {};
-    perSecondData.forEach((item) => {
+    const processedData = {};
+    data.forEach((item) => {
       Object.entries(item.LaneVehicleCounts).forEach(([lane, count]) => {
-        if (!data[lane]) {
-          data[lane] = [];
+        if (!processedData[lane]) {
+          processedData[lane] = [];
         }
-        data[lane].push(count);
+        processedData[lane].push(count);
       });
     });
-    return data;
+    return processedData;
   };
 
   const getStackedAreaData = () => {
     return {
-      labels: perSecondData.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
+      labels: data.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
       datasets: [
         {
           label: 'Vehicle Count',
-          data: perSecondData.map((item) => item.TotalVehicles),
+          data: data.map((item) => item.TotalVehicles),
         },
         {
           label: 'Average Speed',
-          data: perSecondData.map((item) => item.AverageSpeed),
+          data: data.map((item) => item.AverageSpeed),
         },
       ],
     };
   };
 
   const getPieChartData = () => {
-    const vehicleTypeCounts = perSecondData.reduce((acc, item) => {
+    const vehicleTypeCounts = data.reduce((acc, item) => {
       Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
         acc[type] = (acc[type] || 0) + count;
       });
@@ -75,16 +83,20 @@ const HistoricalGeneral = () => {
   };
 
   const getDensityData = () => {
-    return perSecondData.map((item) => ({
+    return data.map((item) => ({
       value: item.Density,
     }));
   };
 
   return (
     <div className="GeneralSection">
-      <h1>Per Second Traffic Data Analysis</h1>
+      <h1>Traffic Data Analysis</h1>
+      <div>
+        <button onClick={() => setDataType('per-second')}>Per Second</button>
+        <button onClick={() => setDataType('per-hour')}>Per Hour</button>
+      </div>
       {error && <p className="error">{error}</p>}
-      {perSecondData.length > 0 && !error && (
+      {data.length > 0 && !error && (
         <div className="container-fluid d-flex flex-column align-items-center">
           <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
             {[
