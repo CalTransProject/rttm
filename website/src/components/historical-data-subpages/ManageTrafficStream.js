@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import './styling/manageTrafficStream.css';
 
-// The modal component for viewing stream details
 const StreamDetailsModal = ({ stream, onClose }) => {
   return (
     <div className="stream-details-modal">
@@ -25,21 +24,19 @@ const ManageTrafficStream = () => {
     // ... more streams
   ]);
   const [viewingStream, setViewingStream] = useState(null);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
-  // Handlers for actions
   const handleView = (stream) => {
     setViewingStream(stream);
   };
 
   const handleEdit = (streamId) => {
-    navigate(`/historical-data/edit-stream/${streamId}`); // Corrected path
+    navigate(`/historical-data/edit-stream/${streamId}`);
   };
-  
 
   const handleDelete = (streamId) => {
     if (window.confirm('Are you sure you want to delete this stream?')) {
-      setStreams(streams.filter(stream => stream.id !== streamId)); // Remove the stream from the list
+      setStreams(streams.filter(stream => stream.id !== streamId));
     }
   };
 

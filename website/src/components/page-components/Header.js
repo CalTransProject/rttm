@@ -23,7 +23,7 @@ const Header = () => {
               About Us
             </NavLink>
             <NavLink to="/research-and-resources" className="nav-link">
-              ResearchAndResources
+              Research And Resources
             </NavLink>
           </div>
           <div className="col-2 text-right">

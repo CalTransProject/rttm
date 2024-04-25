@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState, useEffect } from "react";
+import React, { useState } from 'react';
+import "./subcomponents/sub-research-and-resources/ResearchAndResources.css"
 import TechnologyTrafficPicture from "./subcomponents/sub-technologies/TechnologyTrafficPicture";
 import TechnologyLidarPicture from "./subcomponents/sub-technologies/TechnologyLidarPicture";
 import TechnologyWebDevPicture from "./subcomponents/sub-technologies/TechnologyWebDevPicture";
@@ -7,34 +7,24 @@ import Technology3DModelPicture from "./subcomponents/sub-technologies/Technolog
 import TechnologyDataPicture from "./subcomponents/sub-technologies/TechnologyDataPicture";
 import TechnologyObjectDetectionPicture from "./subcomponents/sub-technologies/TechnologyObjectDetectionPicture";
 import Technology2DModelPicture from "./subcomponents/sub-technologies/Technology2DModelPicture";
-import "./subcomponents/sub-research-and-resources/ResearchAndResources.css"
 
-const ResearchAndResources = () => { 
+const ResearchAndResources = () => {
+  const [selectedLabel, setSelectedLabel] = useState('Resources');
 
- // State to track the currently selected label
- const [selectedLabel, setSelectedLabel] = useState('Resources');
+  const handleLabelClick = (label) => {
+    setSelectedLabel(label);
+  };
 
- // Function to handle label click
- const handleLabelClick = (label) => {
-   setSelectedLabel(label);
- };
-
-    return(
-      <div class='main-container'>
-          <div className='flex-container'>
-            <div className='flex-item research' onClick={() => handleLabelClick('Research')}
-            style={{ textDecoration: selectedLabel === 'Research' ? 'underline' : 'none' }}>
-               Research
-            </div>
-            <div className='flex-item resources' onClick={() => handleLabelClick('Resources')} 
-            style={{ textDecoration: selectedLabel === 'Resources' ? 'underline' : 'none' }}>
-              Resources
-            </div>
-            <div className='flex-item technology' onClick={() => handleLabelClick('Technologies')} 
-            style={{ textDecoration: selectedLabel === 'Technologies' ? 'underline' : 'none' }}>
-              Technologies
-            </div>
+  return (
+    <div className='main-container'>
+      <div className='flex-container'>
+        {['Research', 'Resources', 'Technologies'].map(label => (
+          <div key={label} className={`flex-item ${label.toLowerCase()}`} onClick={() => handleLabelClick(label)}
+               style={{ textDecoration: selectedLabel === label ? 'underline' : 'none' }}>
+            {label}
           </div>
+        ))}
+      </div>
     
          {selectedLabel && (
           <div className='info-container'>

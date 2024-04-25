@@ -86,30 +86,29 @@ const HistoricalGeneral = () => {
   };
 
   const getPieChartData = () => {
-    console.log(data); // Log the raw data to see what's different for per-minute and per-hour
+    console.log('Raw data:', data);  // Detailed log of raw data
+    
     const vehicleTypeCounts = data.reduce((acc, item) => {
-      const itemCounts = item.AggregatedVehicleTypeCounts || {};
-
-      if (!Object.keys(itemCounts).length) {
-        const vehicleTypeCounts = item.VehicleTypeCounts || {};
-        Object.entries(vehicleTypeCounts).forEach(([type, count]) => {
+      // Check if AggregatedVehicleTypeCounts exists and use it if available
+      if (item.AggregatedVehicleTypeCounts) {
+        Object.entries(item.AggregatedVehicleTypeCounts).forEach(([type, count]) => {
           acc[type] = (acc[type] || 0) + count;
         });
       } else {
-        Object.entries(itemCounts).forEach(([type, count]) => {
+        // Fallback to using VehicleTypeCounts if AggregatedVehicleTypeCounts is not available
+        const vehicleTypeCounts = item.VehicleTypeCounts || {};
+        Object.entries(vehicleTypeCounts).forEach(([type, count]) => {
           acc[type] = (acc[type] || 0) + count;
         });
       }
       return acc;
     }, {});
-    console.log(vehicleTypeCounts); // Log the processed data to compare
+  
+    console.log('Processed vehicle counts:', vehicleTypeCounts); // Log processed data for comparison
+  
     return {
       labels: Object.keys(vehicleTypeCounts),
-      datasets: [
-        {
-          data: Object.values(vehicleTypeCounts),
-        },
-      ],
+      datasets: [{ data: Object.values(vehicleTypeCounts) }]
     };
   };
 
@@ -124,7 +123,7 @@ const HistoricalGeneral = () => {
       textAlign: 'center',
       color: 'white',
       fontSize: '18px',
-      backgroundColor: '#4a4a4a',
+      backgroundColor: '#888',
       padding: '5px',
       borderRadius: '5px',
       margin: '10px 0',
@@ -151,6 +150,7 @@ const HistoricalGeneral = () => {
   
     return description ? <div style={descriptionStyle}>{description}</div> : null;
   };
+
   const handleDataTypeClick = (type) => {
     setDataType(type);
     setShowTable(false);
@@ -165,12 +165,34 @@ const HistoricalGeneral = () => {
       <h1>Historical Data Visualization</h1>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <button onClick={() => handleDataTypeClick('per-second')}>Per Second</button>
-          <button onClick={() => handleDataTypeClick('per-minute')}>Per Minute</button>
-          <button onClick={() => handleDataTypeClick('per-5-minute')}>Per 5 Minutes</button>
-          <button onClick={() => handleDataTypeClick('per-hour')}>Per Hour</button>
+          <button
+            className={`button button-per-second ${dataType === 'per-second' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-second')}
+          >
+            Per Second
+          </button>
+          <button
+            className={`button button-per-minute ${dataType === 'per-minute' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-minute')}
+          >
+            Per Minute
+          </button>
+          <button
+            className={`button button-per-5-minute ${dataType === 'per-5-minute' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-5-minute')}
+          >
+            Per 5 Minutes
+          </button>
+          <button
+            className={`button button-per-hour ${dataType === 'per-hour' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-hour')}
+          >
+            Per Hour
+          </button>
         </div>
-        <button onClick={handleTableClick}>{showTable ? 'Table' : 'Table'}</button>
+        <button className="button button-table" onClick={handleTableClick}>
+          {showTable ? 'Hide Table' : 'Show Table'}
+        </button>
       </div>
       {error && <p className="error">{error}</p>}
       {data.length > 0 && !error && !showTable && (
@@ -229,4 +251,12 @@ const HistoricalGeneral = () => {
   );
 };
 
-export default HistoricalGeneral;
+const CenteredHistoricalGeneral = () => {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <HistoricalGeneral />
+    </div>
+  );
+};
+
+export default CenteredHistoricalGeneral;

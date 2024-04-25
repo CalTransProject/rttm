@@ -1,7 +1,12 @@
 import ReactEcharts from "echarts-for-react";
-import React from "react";
+import React, { useEffect } from "react";
 
 const PieChartHist = ({ data }) => {
+  // Use useEffect to log data whenever the 'data' prop changes
+  useEffect(() => {
+    console.log("Pie Chart data updated:", data);
+  }, [data]);  // Dependency array includes 'data' to ensure the effect runs on data change
+
   // Convert the data to a format that ECharts expects and calculate total for percentage calculation
   const formattedData = data.datasets[0].data.map((value, index) => ({
     value: value,
