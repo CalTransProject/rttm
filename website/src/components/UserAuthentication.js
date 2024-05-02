@@ -23,7 +23,7 @@ const UserAuthentication = () => {
   const { signIn } = UserAuth();
   const navigate = useNavigate();
 
-  // Sign up user and add fields to Firestore
+  // Sign up user and add fields to Firestore db
   const SignUp = async (e) => {
     e.preventDefault();
     setError('');
@@ -69,7 +69,7 @@ const UserAuthentication = () => {
       }
       
       else
-      navigate('/my-account');
+        navigate('/my-account');
     } catch (e) {
       console.log(e.message);
       setError(e.message);

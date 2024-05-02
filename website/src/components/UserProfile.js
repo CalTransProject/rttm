@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { UserAuth } from '../context/AuthContext';
 import "./subcomponents/sub-user-management/my-account.css"
 import { useNavigate } from 'react-router-dom';
@@ -6,9 +6,8 @@ import PasswordChangeModal from './modals/PasswordChangeModal';
 import EmailChangeModal from './modals/EmailChangeModal';
 import VerifyUsersModal from './modals/VerifyUsersModal';
 import { auth, db } from '../firebase';
-import { getAuth } from 'firebase/auth';
-import { red } from '@mui/material/colors';
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { deleteUser, getAuth } from 'firebase/auth';
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
 
 const UserProfile = () => {  
     const [openPasswordModal, setOpenPasswordModal] = useState(false);
@@ -21,20 +20,41 @@ const UserProfile = () => {
     const navigate = useNavigate();
 
     const getPermission = async () => {  
-      const QuerySnapshot = await getDoc(doc(db, "user_list", auth.currentUser.uid));      
-      setPermission(QuerySnapshot.data()['role']);
-      if (permission == "admin")
-      {
-        setIsAdmin(true)
-      }   
-      else 
-      {
-        setIsAdmin(false)
-      }
-      setUsername(auth.currentUser.displayName);
+      try {
+        const QuerySnapshot = await getDoc(doc(db, "user_list", auth.currentUser.uid));      
+        setPermission(QuerySnapshot.data()['role']);
+        if (permission == "admin")
+        {
+          setIsAdmin(true)
+          setUsername("Admin");
+        }   
+        else 
+        {
+          setIsAdmin(false)
+          setUsername(auth.currentUser.displayName);
+        }    
+      } catch (e) {
+        console.log(e.message);
+      }     
     }
 
     getPermission()
+
+    const DeleteAccount = async () => {
+      try {  
+        var answer = window.confirm("This action cannot be undone. Are you sure you want to delete your account?");
+        if (answer) {
+          await deleteUser(auth.currentUser); // Remove user from Firebase auth
+          await deleteDoc(doc(db, "user_list", auth.currentUser.uid)) // Remove user details from Firestore db
+          console.log('Account deleted successfully.');
+          navigate('/user-authentication');
+        } else {
+          console.log('Error. Account is not deleted');
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
 
     const handleLogout = async () => {
       try {
@@ -46,23 +66,23 @@ const UserProfile = () => {
       }
     };
 
-    //Page Layout
+    // My Account Page Layout
     return (
         <section>    
           <PasswordChangeModal open={openPasswordModal} onClose={() => setOpenPasswordModal(false)}/>
           <EmailChangeModal open={openEmailModal} onClose={() => setOpenEmailModal(false)}/>
           <VerifyUsersModal open={openVerifyUsersModal} onClose={() => setOpenVerifyUsersModal(false)}/> 
 
-           <div style={{display: "flex", overflow: 'hidden', alignItems: 'center', justifyContent: "center", marginTop: 25 + 'px', marginBottom: 0 + 'px', background: "transparent", padding: 10 + "px", width: "auto"}} >
+          <div style={{display: "flex", overflow: 'hidden', alignItems: 'center', justifyContent: "center", marginTop: 25 + 'px', marginBottom: 0 + 'px', background: "transparent", padding: 10 + "px", width: "auto"}} >
               <div style={{justifyContent:'center', paddingTop: 5 +'px'}}>
                 <label style={{textAlign:'center', fontSize: 20 + "px"}}>Welcome, {username}</label>
               </div>       
-            </div>
-            <br></br>
-            <h5 className="font-title"></h5>  
-            <img style={{borderRadius: 100 + 'px', marginTop: 0 + 'px', width: 94 + 'px', height: 94 + 'px'}} src={ require('../images/userlogo.png') } /><br></br>
-            <h1 className="font-attributes">{user && user.email}</h1>
-            <br></br>
+          </div>
+          <br></br>
+          <h5 className="font-title"></h5>  
+          <img style={{borderRadius: 100 + 'px', marginTop: 0 + 'px', width: 94 + 'px', height: 94 + 'px'}} src={ require('../images/userlogo.png') } /><br></br>
+          <h1 className="font-attributes">{user && user.email}</h1>
+          <br></br>
             
         <div style={{display: "flex", flexWrap: "wrap", justifyContent: "center", padding: 10 + "px", borderRadius: 10 + 'px'}}>      
         
@@ -109,6 +129,15 @@ const UserProfile = () => {
           </div>
          </div>
        </div>  
+
+        {isAdmin ? (       
+           <div></div>
+          ) : (
+            <div style={{textAlign: 'center'}}>
+              <button style={{color: "#eee", background: "transparent", margin: "25"+"px"}} onClick={DeleteAccount}><i class='fas fa-exclamation-triangle' style={{marginRight: 6+'px'}}></i> Delete Account</button>
+            </div>
+        )}
+       
       </section>
     )
 } 
