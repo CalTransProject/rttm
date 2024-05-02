@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./header.css";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -12,17 +12,45 @@ const Header = () => {
             <NavLink exact to="/" className="nav-link" activeClassName="active">
               Home
             </NavLink>
-            <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
+            <NavLink
+              exact
+              to="/camera-management/general"
+              className="nav-link"
+              activeClassName="active"
+            >
               Camera Management
             </NavLink>
-            <NavLink exact to="/historical-data/general" className="nav-link" activeClassName="active">
+            <NavLink
+              exact
+              to="/historical-data/general"
+              className="nav-link"
+              activeClassName="active"
+            >
               Historical Data
             </NavLink>
-            <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
+            <NavLink
+              exact
+              to="/technologies"
+              className="nav-link"
+              activeClassName="active"
+            >
               Technologies
             </NavLink>
-            <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
+            <NavLink
+              exact
+              to="/about-us"
+              className="nav-link"
+              activeClassName="active"
+            >
               About Us
+            </NavLink>
+            <NavLink
+              exact
+              to="/upload-video"
+              className="nav-link"
+              activeClassName="active"
+            >
+              Upload Video
             </NavLink>
           </div>
           <div className="col-2 text-right">

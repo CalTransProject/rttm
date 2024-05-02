@@ -11,6 +11,7 @@ import HistoricalDownload from "./components/historical-data-subpages/Historical
 import Configuration from "./components/camera-management-subpages/Configuration";
 import NewCamera from "./components/camera-management-subpages/NewCamera";
 import RemoveCameras from "./components/camera-management-subpages/RemoveCameras";
+import UploadVideo from "./components/UploadVideo";
 
 import React, { useState } from "react";
 import {
@@ -31,6 +32,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/technologies" element={<Technologies />} />
+
+          <Route path="/upload-video" element={<UploadVideo />} />
 
           <Route path="/camera-management" element={<CameraManagement />}>
             <Route path="general" element={<General />} />

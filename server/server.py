@@ -1,20 +1,27 @@
 import tempfile
-from flask import Flask,  Response, request, jsonify
+from flask import Flask,  Response, request, jsonify, send_file
 import cv2
 from ultralytics import YOLO
 from webcam import gen_frames
 import os
+from flask_cors import CORS
 
 
 
 # Initializing flask app
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/webcam')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+def webcam_feed():
+    return Response(gen_frames(video_source='webcam'), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/video_feed')
+def video_feed():
+    folder_path = os.getcwd()
+    mp4_files = '/output.mp4' # Path to the saved video
+    print(folder_path+mp4_files)
+    return send_file(folder_path+mp4_files, mimetype='video/mp4')
 
 @app.route('/upload-and-predict', methods=['POST'])
 def upload_and_predict():
@@ -68,15 +75,12 @@ def upload_and_predict():
             clss = boxes.cls  # Detected Class 
             xyxy = boxes.xyxy
             xywh = boxes.xywh
-            print("Class:", clss)
-    
- 
-               
+            print("Class:", clss)     
     cap.release()
     out.release()
     cv2.destroyAllWindows()     
       
-    return 'Successfully Proccesed video'
+    return video_feed()
 
 
 # Running app
