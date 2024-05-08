@@ -21,19 +21,19 @@ const HistoricalGeneral = () => {
 
         switch (dataType) {
           case 'per-second':
-            url = 'http://localhost:3000/api/per-second-data';
+            url = 'http://localhost:3008/api/per-second-data';
             limit = 100;
             break;
           case 'per-minute':
-            url = 'http://localhost:3000/api/per-minute-data';
-            limit = 1440;
+            url = 'http://localhost:3008/api/per-minute-data';
+            limit = 8;
             break;
           case 'per-5-minute':
-            url = 'http://localhost:3000/api/per-5-minute-data';
-            limit = 288;
+            url = 'http://localhost:3008/api/per-5-minute-data';
+            limit = 3;
             break;
           case 'per-hour':
-            url = 'http://localhost:3000/api/per-hour-data';
+            url = 'http://localhost:3008/api/per-hour-data';
             limit = 24;
             break;
           default:
@@ -129,9 +129,9 @@ const HistoricalGeneral = () => {
       borderRadius: '5px',
       margin: '10px 0',
     };
-  
+
     let description = '';
-  
+
     switch (dataType) {
       case 'per-second':
         description = 'Showing per-second data';
@@ -148,7 +148,7 @@ const HistoricalGeneral = () => {
       default:
         description = '';
     }
-  
+
     return description ? <div style={descriptionStyle}>{description}</div> : null;
   };
   const handleDataTypeClick = (type) => {
