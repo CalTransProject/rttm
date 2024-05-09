@@ -4,7 +4,7 @@ import json
 import os
 
 # Load environment variables from .env file for database credentials
-load_dotenv(dotenv_path='server/database/db.env')
+load_dotenv(dotenv_path='../server/database/db.env')
 
 # Database credentials
 db_credentials = {

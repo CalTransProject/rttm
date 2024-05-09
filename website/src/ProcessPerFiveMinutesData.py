@@ -4,7 +4,7 @@ import json
 import os
 
 # Load environment variables from .env file for database credentials
-load_dotenv(dotenv_path='server/database/db.env')
+load_dotenv(dotenv_path='../server/database/db.env')
 
 # Database credentials
 db_credentials = {
@@ -129,6 +129,8 @@ def create_per_5_minute_table(cur):
             "LaneTypeCounts" JSONB NOT NULL
         );
     """)
+    
+print(db_credentials)
 
 with psycopg2.connect(**db_credentials) as conn:
     with conn.cursor() as cur:

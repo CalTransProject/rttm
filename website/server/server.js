@@ -289,9 +289,9 @@ app.get('/api/per-second-data', async (req, res, next) => {
 
 // PerMinuteData API endpoint with limit parameter
 app.get('/api/per-minute-data', async (req, res, next) => {
-  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1440; // Default to 1440 if no limit is provided
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 1; // Default to 1440 if no limit is provided
   try {
-    const result = await pool.query('SELECT * FROM "PerMinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
+    const result = await pool.query('SELECT * FROM public."PerMinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-minute data found' });
@@ -306,9 +306,9 @@ app.get('/api/per-minute-data', async (req, res, next) => {
 
 // Per5MinuteData API endpoint with limit parameter
 app.get('/api/per-5-minute-data', async (req, res, next) => {
-  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 288; // Default to 288 if no limit is provided
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 2; // Default to 288 if no limit is provided
   try {
-    const result = await pool.query('SELECT * FROM "Per5MinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
+    const result = await pool.query('SELECT * FROM public."Per5MinuteData" ORDER BY "Timestamp" DESC LIMIT $1', [limit]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'No per-5-minute data found' });
@@ -378,7 +378,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server on the specified port
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3008;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
