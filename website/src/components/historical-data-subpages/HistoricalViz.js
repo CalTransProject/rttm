@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './styling/general.css';
 
-import StackedArea from '../subcomponents/sub-graph/StackedAreaHist'; // Update the path to the subcomponent
-import Bar from '../subcomponents/sub-graph/BarHist'; // Update the path to the subcomponent
-import PieChart from '../subcomponents/sub-graph/PieChartHist'; // Update the path to the subcomponent
-import StackedBar from '../subcomponents/sub-graph/StackedBarHist'; // Update the path to the subcomponent
-import Density from '../subcomponents/sub-graph/DensityHist'; // Update the path to the subcomponent
+import StackedArea from '../subcomponents/sub-graph/StackedAreaHist';
+import Bar from '../subcomponents/sub-graph/BarHist';
+import PieChart from '../subcomponents/sub-graph/PieChartHist';
+import StackedBar from '../subcomponents/sub-graph/StackedBarHist';
+import Density from '../subcomponents/sub-graph/DensityHist';
 
 
 const HistoricalViz = () => {

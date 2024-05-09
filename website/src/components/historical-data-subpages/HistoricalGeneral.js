@@ -177,17 +177,26 @@ const HistoricalGeneral = () => {
         <div className="container-fluid d-flex flex-column align-items-center">
           <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
             {[
-              { title: "Stacked Area Chart", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
+              //Stacked Area Chart: 
+              { title: "Vehicle Count & Avg Speed vs. Time", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
+
+              //Pie Chart
               {
-                title: "Pie Chart",
+                title: "Vehicle Type Count",
                 description: "Breaks down vehicle counts by type, useful for spotting congestion.",
                 Component: PieChartHist,
                 data: getPieChartData(),
                 key: `pie-chart-${dataType}-${new Date().getTime()}` // Force re-render by using a unique key
               },
-              { title: "Stacked Bar Chart", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: StackedBarHist, data: getStackedBarData() },
-              { title: "Density Chart", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency", Component: DensityHist, data: getDensityData() },
-              { title: "Heatmap", description: "Visualizes vehicle density over time, with color intensity reflecting density levels", Component: HeatMapHist, data: getDensityData() }
+
+              //Stacked Bar Chart
+              { title: "Vehicle Count Per Lane", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: StackedBarHist, data: getStackedBarData() },
+
+              //Density Chart
+              { title: "Traffic Density vs Time", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency", Component: DensityHist, data: getDensityData() },
+
+              //Heatmap
+              { title: "Traffic Density", description: "Visualizes vehicle density over time, with color intensity reflecting density levels", Component: HeatMapHist, data: getDensityData() }
             ].map(({ title, description, Component, data, key }) => (
               <div className="col" key={key}>
                 <div className="box">

@@ -79,7 +79,7 @@ def process_per_second_data(cur, start_time, num_seconds=86400):
                         INSERT INTO "PerSecondData" ("Timestamp", "TotalVehicles", "AverageSpeed", "Density", "AverageConfidence",
                                                      "VehicleTypeCounts", "LaneVehicleCounts", "LaneTypeCounts")
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT ("Timestamp") DO UPDATE SET
+                        ON CONFLICT ("Timestamp") DO UPDATE SET --This ensures data is updated not duplicated 
                             "TotalVehicles" = EXCLUDED."TotalVehicles",
                             "AverageSpeed" = EXCLUDED."AverageSpeed",
                             "Density" = EXCLUDED."Density",
