@@ -6,7 +6,7 @@ import time
 from dotenv import load_dotenv
 
 # Load environment variables from .env file for database credentials
-load_dotenv(dotenv_path='../server/database/db.env')
+load_dotenv(dotenv_path='website/server/database/db.env')
 
 # Database credentials
 db_credentials = {
@@ -17,63 +17,92 @@ db_credentials = {
     "port": os.getenv("DB_PORT")
 }
 
+# Print the credentials to verify they are loaded correctly
+print(db_credentials)
+
 # Connect to your PostgreSQL database
 conn = psycopg2.connect(**db_credentials)
 cur = conn.cursor()
 
-# Ensure Lane IDs Exist (Assuming lanes 1 to 3 need to exist)
-for lane_id in range(1, 4):
-    cur.execute(
-        '''
-        INSERT INTO "Lane" ("RoadName", "Direction")
-        VALUES (%s, %s) ON CONFLICT DO NOTHING;
-        ''',
-        ('Main Street', 'North')
-    )
+def clear_tables():
+    """
+    Function to clear the relevant tables in the database.
+    """
+    tables_to_clear = ["FramePrediction", "Lane"]
+    for table in tables_to_clear:
+        cur.execute(f'TRUNCATE TABLE "{table}" CASCADE;')
+    conn.commit()
+    print("Tables cleared successfully.")
 
-conn.commit()
-
-# Ensure Lane IDs Exist (Assuming lanes 1 to 3 need to exist)
+# Function to ensure Lane IDs exist
+def ensure_lane_ids():
+    for lane_id in range(1, 4):
+        cur.execute(
+            '''
+            INSERT INTO "Lane" ("RoadName", "Direction")
+            VALUES (%s, %s) ON CONFLICT DO NOTHING;
+            ''',
+            ('Main Street', 'North')
+        )
+    conn.commit()
+    print("Lane IDs ensured.")
 
 veh_label = ["sedan", "suv", "truck", "bus", "pickup", "van"]
 
 # Function to generate fake data and insert it into the database
-def insert_fake_data(num_days=1, num_seconds_per_day=86400):
-    # Fetch the highest UnixTimestamp currently in the database to avoid duplicates
-    cur.execute('SELECT MAX("UnixTimestamp") FROM "FramePrediction";')
-    result = cur.fetchone()
-    last_timestamp = result[0] if result[0] is not None else int(time.time())
+def insert_fake_data(num_hours=1, frames_per_second=24):
+    start_timestamp = int(time.time() * 1000)  # Current time in milliseconds
+    
+    total_frames = num_hours * 3600 * frames_per_second
+    records_inserted = 0
 
-    for day in range(num_days):
-        for second in range(num_seconds_per_day):
-            # Increment the timestamp to ensure uniqueness
-            timestamp = last_timestamp + (day * num_seconds_per_day) + second
+    for frame in range(total_frames):
+        # Calculate timestamp for this frame
+        timestamp = start_timestamp + (frame * (1000 // frames_per_second))
+        
+        generate_lane = lambda: random.choice([1, 2, 3])
+        pred = [{
+            "vid": random.randint(0, 5),
+            "position": [random.randint(0, 2000), random.randint(0, 2000)],
+            "dimension": [random.randint(0, 20), random.randint(0, 20)],
+            "label": random.choice(veh_label),
+            "lane": generate_lane(),
+            "confidence": round(random.random(), 2),
+            "speed": random.uniform(30, 100)
+        } for _ in range(random.randint(1, 10))]
+        
+        veh_in_lane = {f"lane{lane_id}": sum(v['lane'] == lane_id for v in pred) for lane_id in range(1, 4)}
+        
+        # Insert data into the "FramePrediction" table
+        insert_frame_query = """
+        INSERT INTO "FramePrediction" ("UnixTimestamp", "NumberOfVehicles", "NumberOfVehiclesInEachLane", "VehicleObjects")
+        VALUES (%s, %s, %s, %s);
+        """
+        cur.execute(insert_frame_query, (timestamp, len(pred), json.dumps(veh_in_lane), json.dumps(pred)))
+        records_inserted += 1
+        
+        if frame % (frames_per_second * 60) == 0:  # Commit every minute to avoid large transactions
+            conn.commit()
+            print(f"Inserted {records_inserted} records...")
+    
+    conn.commit()  # Final commit
+    print(f"Total records inserted: {records_inserted}")
 
-            generate_lane = lambda: random.choice([1, 2, 3])
-
-            pred = [{
-                "vid": random.randint(0, 5),
-                "position": [random.randint(0, 2000), random.randint(0, 2000)],
-                "dimension": [random.randint(0, 20), random.randint(0, 20)],
-                "label": random.choice(veh_label),
-                "land": generate_lane(),
-                "confidence": round(random.random(), 2),
-                "speed": random.uniform(30, 100)  # Add the "speed" attribute here
-            } for _ in range(random.randint(1, 10))]
-
-            veh_in_lane = {f"lane{lane_id}": sum(v['land'] == lane_id for v in pred) for lane_id in range(1, 4)}
-
-            # Insert data into the "FramePrediction" table, handling unique timestamp conflict
-            insert_frame_query = """
-            INSERT INTO "FramePrediction" ("UnixTimestamp", "NumberOfVehicles", "NumberOfVehiclesInEachLane", "VehicleObjects")
-            VALUES (%s, %s, %s, %s) ON CONFLICT ("UnixTimestamp") DO NOTHING;
-            """
-            cur.execute(insert_frame_query, (timestamp, len(pred), json.dumps(veh_in_lane), json.dumps(pred)))
-
-        conn.commit()
-
-insert_fake_data(num_days=1)  # Generating fake data for 1 day
-
-# Close the connection and cursor
-cur.close()
-conn.close()
+# Main execution
+if __name__ == "__main__":
+    try:
+        # Clear tables
+        clear_tables()
+        
+        # Ensure Lane IDs exist
+        ensure_lane_ids()
+        
+        # Generate fake data for 1 hour with 24 frames per second
+        insert_fake_data(num_hours=1, frames_per_second=24)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # Close the connection and cursor
+        cur.close()
+        conn.close()
+        print("Database connection closed.")

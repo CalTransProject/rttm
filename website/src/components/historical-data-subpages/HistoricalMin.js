@@ -1,40 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './styling/general.css';
-
-import StackedArea from '../subcomponents/sub-graph/StackedAreaHist'; // Update & Modify file
-import Bar from '../subcomponents/sub-graph/BarHist'; // Update & Modify file
-import PieChart from '../subcomponents/sub-graph/PieChartMin'; // Shows PieChart per Min
-import StackedBar from '../subcomponents/sub-graph/StackedBarHist'; // Update & Modify file
-import Density from '../subcomponents/sub-graph/DensityHist'; // Update & Modify file
-
+import StackedArea from '../subcomponents/sub-graph/StackedAreaHist';
+import Bar from '../subcomponents/sub-graph/BarHist';
+import PieChart from '../subcomponents/sub-graph/PieChartMin';
+import StackedBar from '../subcomponents/sub-graph/StackedBarHist';
+import Density from '../subcomponents/sub-graph/DensityHist';
 
 const HistoricalMin = () => {
     const [perMinData, setPerMinData] = useState([]);
     const [stackedAreaData, setStackedAreaData] = useState(null);
     const [pieChartData, setPieChartData] = useState(null);
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [timeRange, setTimeRange] = useState('1hour'); // Default to 1 hour
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setError(null);
-            try {
-                const response = await fetch('http://localhost:3008/api/per-minute-data?limit=1');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setPerMinData(data);
-                setStackedAreaData(processStackedAreaData(data));
-                setPieChartData(processPieChartData(data));
-            } catch (err) {
-                console.error('Fetch error:', err);
-                setError('Failed to fetch per-Min data. Please try again later.');
-            }
-        };
-        fetchData();
-    }, []);
-
-    const processStackedAreaData = (data) => {
+    const processStackedAreaData = useCallback((data) => {
         return {
             labels: data.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
             datasets: [
@@ -52,16 +32,15 @@ const HistoricalMin = () => {
                 },
             ],
         };
-    };
+    }, []);
 
-    const processPieChartData = (data) => {
+    const processPieChartData = useCallback((data) => {
         const vehicleTypeCounts = data.reduce((acc, item) => {
             Object.entries(item.VehicleTypeCounts).forEach(([type, count]) => {
                 acc[type] = (acc[type] || 0) + count;
             });
             return acc;
         }, {});
-
         return {
             labels: Object.keys(vehicleTypeCounts),
             datasets: [
@@ -71,13 +50,48 @@ const HistoricalMin = () => {
                 },
             ],
         };
+    }, []);
+
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`http://localhost:3008/api/per-minute-data?timeRange=${timeRange}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setPerMinData(data);
+            setStackedAreaData(processStackedAreaData(data));
+            setPieChartData(processPieChartData(data));
+        } catch (err) {
+            console.error('Fetch error:', err);
+            setError('Failed to fetch per-minute data. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [timeRange, processStackedAreaData, processPieChartData]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const handleTimeRangeChange = (event) => {
+        setTimeRange(event.target.value);
     };
 
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div className="error">{error}</div>;
+
     return (
-        <div className="GeneralMintion">
-            <h1>Per Min Data</h1>
-            {error && <p className="error">{error}</p>}
-            {perMinData.length > 0 && stackedAreaData && pieChartData && !error && (
+        <div className="HistoricalMin">
+            <h1>Per Minute Data</h1>
+            <select value={timeRange} onChange={handleTimeRangeChange}>
+                <option value="1hour">Last 1 Hour</option>
+                <option value="6hours">Last 6 Hours</option>
+                <option value="24hours">Last 24 Hours</option>
+            </select>
+            {perMinData.length > 0 && stackedAreaData && pieChartData && (
                 <>
                     <StackedArea data={stackedAreaData} />
                     <Bar
@@ -87,11 +101,10 @@ const HistoricalMin = () => {
                         }))}
                     />
                     <PieChart data={pieChartData} />
-                    {perMinData.map((item, index) => (
-                        <StackedBar data={item.LaneVehicleCounts} key={index} />
-                    ))}
+                    <StackedBar data={perMinData[perMinData.length - 1].LaneVehicleCounts} />
                     <Density
                         data={perMinData.map((item) => ({
+                            time: new Date(item.Timestamp * 1000).toLocaleString(),
                             value: item.Density,
                         }))}
                     />

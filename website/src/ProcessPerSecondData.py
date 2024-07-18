@@ -1,10 +1,22 @@
 import psycopg2
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import json
 import os
 
-# Load environment variables from .env file for database credentials
-load_dotenv(dotenv_path='server/database/db.env')
+# Find and load environment variables from .env file for database credentials
+dotenv_path = find_dotenv('website/server/database/db.env')
+if not dotenv_path:
+    print("Error: .env file not found.")
+else:
+    load_dotenv(dotenv_path)
+    print(f"Loaded .env from: {dotenv_path}")
+
+# Print environment variables for debugging
+print("DB_NAME:", os.getenv("DB_NAME"))
+print("DB_USER:", os.getenv("DB_USER"))
+print("DB_PASSWORD:", os.getenv("DB_PASSWORD"))
+print("DB_HOST:", os.getenv("DB_HOST"))
+print("DB_PORT:", os.getenv("DB_PORT"))
 
 # Database credentials
 db_credentials = {
@@ -14,6 +26,9 @@ db_credentials = {
     "host": os.getenv("DB_HOST"),
     "port": os.getenv("DB_PORT")
 }
+
+# Check if the database credentials are correctly loaded
+print("Database credentials:", db_credentials)
 
 # Function to ensure all vehicle types exist in the database
 def ensure_vehicle_types_exist(cur, vehicle_types):

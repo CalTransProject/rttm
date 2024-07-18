@@ -7,7 +7,7 @@ import DensityHist from '../subcomponents/sub-graph/DensityHist';
 import HeatMapHist from '../subcomponents/sub-graph/HeatMapHist';
 
 const HistoricalGeneral = () => {
-  const [dataType, setDataType] = useState('per-second');
+  const [dataType, setDataType] = useState('per-day');
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [showTable, setShowTable] = useState(false);
@@ -20,27 +20,27 @@ const HistoricalGeneral = () => {
         let limit;
 
         switch (dataType) {
-          case 'per-second':
-            url = 'http://localhost:3008/api/per-second-data';
-            limit = 100;
-            break;
-          case 'per-minute':
-            url = 'http://localhost:3008/api/per-minute-data';
-            limit = 8;
-            break;
-          case 'per-5-minute':
-            url = 'http://localhost:3008/api/per-5-minute-data';
-            limit = 3;
-            break;
-          case 'per-hour':
+          case 'per-day':
             url = 'http://localhost:3008/api/per-hour-data';
             limit = 24;
+            break;
+          case 'per-week':
+            url = 'http://localhost:3008/api/per-hour-data';
+            limit = 24 * 7;
+            break;
+          case 'per-month':
+            url = 'http://localhost:3008/api/per-day-data';
+            limit = 30;
+            break;
+          case 'per-year':
+            url = 'http://localhost:3008/api/per-day-data';
+            limit = 365;
             break;
           default:
             throw new Error('Invalid data type');
         }
 
-        const response = await fetch(`${url}?limit=${limit}`, { cache: 'no-cache' }); // Added no-cache
+        const response = await fetch(`${url}?limit=${limit}`, { cache: 'no-cache' });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -54,7 +54,7 @@ const HistoricalGeneral = () => {
     };
 
     fetchData();
-  }, [dataType]); // Dependency array ensures this effect runs when dataType changes
+  }, [dataType]);
 
   const getStackedBarData = () => {
     const processedData = {};
@@ -86,16 +86,12 @@ const HistoricalGeneral = () => {
   };
 
   const getPieChartData = () => {
-    console.log('Raw data:', data);  // Detailed log of raw data
-    
     const vehicleTypeCounts = data.reduce((acc, item) => {
-      // Check if AggregatedVehicleTypeCounts exists and use it if available
       if (item.AggregatedVehicleTypeCounts) {
         Object.entries(item.AggregatedVehicleTypeCounts).forEach(([type, count]) => {
           acc[type] = (acc[type] || 0) + count;
         });
       } else {
-        // Fallback to using VehicleTypeCounts if AggregatedVehicleTypeCounts is not available
         const vehicleTypeCounts = item.VehicleTypeCounts || {};
         Object.entries(vehicleTypeCounts).forEach(([type, count]) => {
           acc[type] = (acc[type] || 0) + count;
@@ -103,8 +99,6 @@ const HistoricalGeneral = () => {
       }
       return acc;
     }, {});
-  
-    console.log('Processed vehicle counts:', vehicleTypeCounts); // Log processed data for comparison
   
     return {
       labels: Object.keys(vehicleTypeCounts),
@@ -129,26 +123,18 @@ const HistoricalGeneral = () => {
       margin: '10px 0',
     };
 
-    let description = '';
-
     switch (dataType) {
-      case 'per-second':
-        description = 'Showing per-second data';
-        break;
-      case 'per-minute':
-        description = 'Showing per-minute data';
-        break;
-      case 'per-5-minute':
-        description = 'Showing per-5-minute data';
-        break;
-      case 'per-hour':
-        description = 'Showing per-hour data';
-        break;
+      case 'per-day':
+        return <div style={descriptionStyle}>Showing data for the past day</div>;
+      case 'per-week':
+        return <div style={descriptionStyle}>Showing data for the past week</div>;
+      case 'per-month':
+        return <div style={descriptionStyle}>Showing data for the past month</div>;
+      case 'per-year':
+        return <div style={descriptionStyle}>Showing data for the past year</div>;
       default:
-        description = '';
+        return null;
     }
-
-    return description ? <div style={descriptionStyle}>{description}</div> : null;
   };
 
   const handleDataTypeClick = (type) => {
@@ -166,28 +152,28 @@ const HistoricalGeneral = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <button
-            className={`button button-per-second ${dataType === 'per-second' ? 'button-active' : ''}`}
-            onClick={() => handleDataTypeClick('per-second')}
+            className={`button ${dataType === 'per-day' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-day')}
           >
-            Per Second
+            Past Day
           </button>
           <button
-            className={`button button-per-minute ${dataType === 'per-minute' ? 'button-active' : ''}`}
-            onClick={() => handleDataTypeClick('per-minute')}
+            className={`button ${dataType === 'per-week' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-week')}
           >
-            Per Minute
+            Past Week
           </button>
           <button
-            className={`button button-per-5-minute ${dataType === 'per-5-minute' ? 'button-active' : ''}`}
-            onClick={() => handleDataTypeClick('per-5-minute')}
+            className={`button ${dataType === 'per-month' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-month')}
           >
-            Per 5 Minutes
+            Past Month
           </button>
           <button
-            className={`button button-per-hour ${dataType === 'per-hour' ? 'button-active' : ''}`}
-            onClick={() => handleDataTypeClick('per-hour')}
+            className={`button ${dataType === 'per-year' ? 'button-active' : ''}`}
+            onClick={() => handleDataTypeClick('per-year')}
           >
-            Per Hour
+            Past Year
           </button>
         </div>
         <button className="button button-table" onClick={handleTableClick}>
@@ -197,30 +183,16 @@ const HistoricalGeneral = () => {
       {error && <p className="error">{error}</p>}
       {data.length > 0 && !error && !showTable && (
         <div className="container-fluid d-flex flex-column align-items-center">
+          {getDataTypeDescription()}
           <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
             {[
-              //Stacked Area Chart: 
               { title: "Vehicle Count & Avg Speed vs. Time", description: "Depicts vehicle counts and average speed over time, highlighting temporal trends.", Component: StackedAreaHist, data: getStackedAreaData() },
-
-              //Pie Chart
-              {
-                title: "Vehicle Type Count",
-                description: "Breaks down vehicle counts by type, useful for spotting congestion.",
-                Component: PieChartHist,
-                data: getPieChartData(),
-                key: `pie-chart-${dataType}-${new Date().getTime()}` // Force re-render by using a unique key
-              },
-
-              //Stacked Bar Chart
-              { title: "Vehicle Count Per Lane", description: "Breaks down vehicle counts by lane, useful for spotting congestion.", Component: StackedBarHist, data: getStackedBarData() },
-
-              //Density Chart
-              { title: "Traffic Density vs Time", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency", Component: DensityHist, data: getDensityData() },
-
-              //Heatmap
-              { title: "Traffic Density", description: "Visualizes vehicle density over time, with color intensity reflecting density levels", Component: HeatMapHist, data: getDensityData() }
+              { title: "Vehicle Type Distribution", description: "Breaks down vehicle counts by type, useful for spotting trends in vehicle composition.", Component: PieChartHist, data: getPieChartData(), key: `pie-chart-${dataType}-${new Date().getTime()}` },
+              { title: "Vehicle Count Per Lane", description: "Breaks down vehicle counts by lane, useful for spotting congestion patterns.", Component: StackedBarHist, data: getStackedBarData() },
+              { title: "Traffic Density vs Time", description: "Tracks the density of vehicles, a key indicator of traffic flow efficiency.", Component: DensityHist, data: getDensityData() },
+              { title: "Traffic Density Heatmap", description: "Visualizes vehicle density over time, with color intensity reflecting density levels.", Component: HeatMapHist, data: getDensityData() }
             ].map(({ title, description, Component, data, key }) => (
-              <div className="col" key={key}>
+              <div className="col" key={key || title}>
                 <div className="box">
                   <h2>{title}</h2>
                   <Component data={data} />
@@ -233,7 +205,7 @@ const HistoricalGeneral = () => {
       )}
       {showTable && (
         <div>
-          <p>{getDataTypeDescription()}</p>
+          {getDataTypeDescription()}
           <table style={{ border: '1px solid black', marginTop: '10px', borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr>
@@ -260,12 +232,4 @@ const HistoricalGeneral = () => {
   );
 };
 
-const CenteredHistoricalGeneral = () => {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <HistoricalGeneral />
-    </div>
-  );
-};
-
-export default CenteredHistoricalGeneral;
+export default HistoricalGeneral;
