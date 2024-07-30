@@ -18,12 +18,18 @@ def gen_frames(video_source='webcam'):
     class_names = list(model.model.names.values())  # List of class names from model
 
     if video_source == 'webcam':
-        camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv")
+        # Using video file for testing purposes
+        #camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv")
+        
+        #Using Webcam
+        camera = cv2.VideoCapture(0)
         assert camera.isOpened(), "Error reading video file"
+        
         # Define region points
-        line_points = [(30, 400), (27, 1300)]  # line or region points
+        line_points = [(30, 400), (27, 1300)]  # line or region points for in and out of region count
+        
         classes_to_count = list(range(len(class_names)))  # Classes for count
-
+        
         counter = solutions.ObjectCounter(
             view_img=True,
             reg_pts=line_points,
@@ -31,13 +37,14 @@ def gen_frames(video_source='webcam'):
             draw_tracks=False,
             line_thickness=1,
         )
+        
         while True:
             success, frame = camera.read()
             if not success:
                 print("Video frame is empty or video processing has been successfully completed.")
                 break
             tracks = model.track(frame, persist=True, show=False, classes=classes_to_count, conf =0.7)
-            tracks[0].plot()
+            frame = tracks[0].plot()
             frame = counter.start_counting(frame, tracks)
             print("In and Out count: ",counter.class_wise_count)
             
