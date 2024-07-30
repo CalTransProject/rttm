@@ -6,25 +6,11 @@ import math
 import os
 
 
-# Object classes
-classNames = [
-    'car',
-    'pickup',
-    'SUV',
-    'van',
-    'truck',
-    'bus',
-    'motorcycle',
-    'pedestrian'
-]
-
-# Dictionary to store class counts
-class_counts = {cls_name: 0 for cls_name in classNames}
-
 #method used to process  each frame of an generate a prediction
 def process_frame(frame):
     PATH_TO_MODEL = "../model/2dModel.pt"
     model = YOLO(PATH_TO_MODEL)
+    class_names = list(model.model.names.values()) # List of class names from model
     results = model(frame, stream=True)
     for r in results:
         boxes = r.boxes
@@ -34,13 +20,12 @@ def process_frame(frame):
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
             confidence = math.ceil((box.conf[0] * 100)) / 100
             cls = int(box.cls[0])
-            class_counts[classNames[cls]] += 1
             org = [x1, y1]
             font = cv2.FONT_HERSHEY_SIMPLEX
             fontScale = 1
             color = (0, 0, 0)
             thickness = 2
-            cv2.putText(frame, classNames[cls] + "  " + str(confidence), org, font, fontScale, color, thickness)
+            cv2.putText(frame, class_names[cls] + "  " + str(confidence), org, font, fontScale, color, thickness)
     return frame
 
 #Method used to return the video frames with the plots from either a webcam source or a video 
