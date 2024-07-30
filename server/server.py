@@ -7,7 +7,6 @@ import os
 from flask_cors import CORS
 
 
-
 # Initializing flask app
 app = Flask(__name__)
 CORS(app)
