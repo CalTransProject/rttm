@@ -70,5 +70,5 @@ def gen_frames(video_source='webcam'):
                 break
             ret, buffer = cv2.imencode('.jpg', frame)
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame.tobytes() + b'\r\n') # return frames from the vide so that they can be displayed on a html page
-            time.sleep(0.1)
+        time.sleep(0.1)
 "/Users/Robin1/Desktop/LIDAR Project/rttm/server/output.mp4"
