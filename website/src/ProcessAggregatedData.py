@@ -5,6 +5,7 @@ import os
 import json
 from datetime import datetime, timedelta
 import logging
+import memcache
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -26,6 +27,11 @@ db_credentials = {
     "port": os.getenv("DB_PORT")
 }
 
+# Memcached configuration
+memcached_host = os.getenv("MEMCACHED_HOST", "localhost")
+memcached_port = os.getenv("MEMCACHED_PORT", "11211")
+mc = memcache.Client([f"{memcached_host}:{memcached_port}"], debug=0)
+
 def clear_tables(cur, tables_to_clear):
     for table in tables_to_clear:
         cur.execute(f'TRUNCATE TABLE "{table}" CASCADE;')
@@ -46,148 +52,101 @@ def create_aggregated_table(cur, table_name):
     """)
     logging.info(f"Table {table_name} created or already exists")
 
-def get_table_columns(cur, table_name):
-    cur.execute(f"""
-        SELECT column_name 
-        FROM information_schema.columns 
-        WHERE table_name = '{table_name}';
-    """)
-    return [row[0] for row in cur.fetchall()]
-
-def update_speed_and_density_calculation(cur, start_time, end_time):
-    columns = get_table_columns(cur, 'PerSecondData')
-    logging.info(f"Columns in PerSecondData: {columns}")
-
-    if "vehicleobjects" in columns:
-        speed_calculation = """
-            (SELECT AVG(CAST(vehicle->>'speed' AS FLOAT))
-             FROM jsonb_array_elements("vehicleobjects") AS vehicle)
-        """
-    elif "VehicleObjects" in columns:
-        speed_calculation = """
-            (SELECT AVG(CAST(vehicle->>'speed' AS FLOAT))
-             FROM jsonb_array_elements("VehicleObjects") AS vehicle)
-        """
-    else:
-        speed_calculation = '"AverageSpeed"' if "AverageSpeed" in columns else "0"
-
-    update_query = f"""
-        UPDATE "PerSecondData"
-        SET 
-            "AverageSpeed" = CASE 
-                WHEN "TotalVehicles" > 0 THEN {speed_calculation}
-                ELSE 0
-            END,
-            "Density" = CASE 
-                WHEN "AverageSpeed" > 0 THEN 
-                    "TotalVehicles" / ("AverageSpeed" * 1)  -- Assuming 1 second interval
-                ELSE 0
-            END
-        WHERE "Timestamp" BETWEEN %s AND %s;
+def calculate_per_second_data(cur, start_time, end_time):
+    query = """
+    WITH frame_data AS (
+        SELECT 
+            ("UnixTimestamp" / 1000)::BIGINT AS second,
+            "VehicleObjects"::jsonb AS vehicle_objects
+        FROM "FramePrediction"
+        WHERE "UnixTimestamp" BETWEEN %s::BIGINT * 1000 AND %s::BIGINT * 1000
+    ),
+    expanded_data AS (
+        SELECT
+            fd.second,
+            v.vehicle,
+            (v.vehicle->>'speed')::float AS speed,
+            (v.vehicle->>'confidence')::float AS confidence,
+            v.vehicle->>'label' AS vehicle_type,
+            v.vehicle->>'lane' AS lane
+        FROM frame_data fd,
+        jsonb_array_elements(fd.vehicle_objects) AS v(vehicle)
+    ),
+    aggregated_data AS (
+        SELECT
+            second,
+            COUNT(DISTINCT vehicle) AS total_vehicles,
+            AVG(speed) AS avg_speed,
+            AVG(confidence) AS avg_confidence
+        FROM expanded_data
+        GROUP BY second
+    ),
+    vehicle_type_counts AS (
+        SELECT
+            second,
+            jsonb_object_agg(vehicle_type, type_count) AS vehicle_type_counts
+        FROM (
+            SELECT second, vehicle_type, COUNT(*) AS type_count
+            FROM expanded_data
+            GROUP BY second, vehicle_type
+        ) subquery
+        GROUP BY second
+    ),
+    lane_vehicle_counts AS (
+        SELECT
+            second,
+            jsonb_object_agg(lane, lane_count) AS lane_vehicle_counts
+        FROM (
+            SELECT second, lane, COUNT(*) AS lane_count
+            FROM expanded_data
+            GROUP BY second, lane
+        ) subquery
+        GROUP BY second
+    )
+    SELECT
+        a.second,
+        a.total_vehicles,
+        a.avg_speed,
+        a.avg_confidence,
+        COALESCE(v.vehicle_type_counts, '{}'::jsonb) AS vehicle_type_counts,
+        COALESCE(l.lane_vehicle_counts, '{}'::jsonb) AS lane_vehicle_counts
+    FROM aggregated_data a
+    LEFT JOIN vehicle_type_counts v ON a.second = v.second
+    LEFT JOIN lane_vehicle_counts l ON a.second = l.second
+    ORDER BY a.second;
     """
-    
-    cur.execute(update_query, (start_time, end_time))
-    logging.info(f"Updated speed and density calculations for {cur.rowcount} rows")
+    cur.execute(query, (start_time, end_time))
+    return cur.fetchall()
 
 def process_aggregated_data(cur, table_name, time_interval, start_time, end_time):
-    columns = get_table_columns(cur, 'PerSecondData')
+    cache_key = f"{table_name}_{start_time}_{end_time}"
+    cached_data = mc.get(cache_key)
     
-    basic_query = f"""
-    SELECT 
-        (FLOOR("Timestamp" / %s) * %s) AS aggregated_timestamp,
-        SUM("TotalVehicles") AS total_vehicles,
-        AVG("AverageSpeed") AS avg_speed,
-        AVG("Density") AS density,
-        AVG("AverageConfidence") AS avg_confidence
-    FROM "PerSecondData"
-    WHERE "Timestamp" BETWEEN %s AND %s
-    GROUP BY aggregated_timestamp
-    """
-    cur.execute(basic_query, (time_interval, time_interval, start_time, end_time))
-    basic_data = cur.fetchall()
-
-    vehicle_type_counts_column = "VehicleTypeCounts" if "VehicleTypeCounts" in columns else "vehicletypecounts"
-    lane_vehicle_counts_column = "LaneVehicleCounts" if "LaneVehicleCounts" in columns else "lanevehiclecounts"
-    lane_type_counts_column = "LaneTypeCounts" if "LaneTypeCounts" in columns else "lanetypecounts"
-
-    vehicle_type_query = f"""
-    SELECT 
-        (FLOOR("Timestamp" / %s) * %s) AS aggregated_timestamp,
-        key,
-        SUM(value::int) AS count_sum
-    FROM "PerSecondData", jsonb_each_text("{vehicle_type_counts_column}")
-    WHERE "Timestamp" BETWEEN %s AND %s
-    GROUP BY aggregated_timestamp, key
-    """
-    cur.execute(vehicle_type_query, (time_interval, time_interval, start_time, end_time))
-    vehicle_type_data = cur.fetchall()
-
-    lane_vehicle_query = f"""
-    SELECT 
-        (FLOOR("Timestamp" / %s) * %s) AS aggregated_timestamp,
-        key,
-        SUM(value::int) AS count_sum
-    FROM "PerSecondData", jsonb_each_text("{lane_vehicle_counts_column}")
-    WHERE "Timestamp" BETWEEN %s AND %s
-    GROUP BY aggregated_timestamp, key
-    """
-    cur.execute(lane_vehicle_query, (time_interval, time_interval, start_time, end_time))
-    lane_vehicle_data = cur.fetchall()
-
-    lane_type_query = f"""
-    SELECT 
-        (FLOOR("Timestamp" / %s) * %s) AS aggregated_timestamp,
-        lane_key,
-        type_key,
-        SUM(type_value::int) AS type_count_sum
-    FROM "PerSecondData",
-         jsonb_each("{lane_type_counts_column}") AS lane_types(lane_key, lane_value),
-         jsonb_each_text(lane_value) AS type_counts(type_key, type_value)
-    WHERE "Timestamp" BETWEEN %s AND %s
-    GROUP BY aggregated_timestamp, lane_key, type_key
-    """
-    cur.execute(lane_type_query, (time_interval, time_interval, start_time, end_time))
-    lane_type_data = cur.fetchall()
-
-    # Reconstruct JSONB objects from the aggregated data
-    vehicle_type_counts = {}
-    for row in vehicle_type_data:
-        timestamp, key, count_sum = row
-        if timestamp not in vehicle_type_counts:
-            vehicle_type_counts[timestamp] = {}
-        vehicle_type_counts[timestamp][key] = count_sum
-
-    lane_vehicle_counts = {}
-    for row in lane_vehicle_data:
-        timestamp, key, count_sum = row
-        if timestamp not in lane_vehicle_counts:
-            lane_vehicle_counts[timestamp] = {}
-        lane_vehicle_counts[timestamp][key] = count_sum
-
-    lane_type_counts = {}
-    for row in lane_type_data:
-        timestamp, lane_key, type_key, type_count_sum = row
-        if timestamp not in lane_type_counts:
-            lane_type_counts[timestamp] = {}
-        if lane_key not in lane_type_counts[timestamp]:
-            lane_type_counts[timestamp][lane_key] = {}
-        lane_type_counts[timestamp][lane_key][type_key] = type_count_sum
-
-    # Combine all data
+    if cached_data:
+        logging.info(f"Retrieved data from cache for {table_name}")
+        return json.loads(cached_data)
+    
+    per_second_data = calculate_per_second_data(cur, start_time, end_time)
+    
     aggregated_data = []
-    for row in basic_data:
-        timestamp = row[0]
+    for row in per_second_data:
+        second, total_vehicles, avg_speed, avg_confidence, vehicle_type_counts, lane_vehicle_counts = row
+        
+        # Calculate density (vehicles per unit length, assuming 100m road segment)
+        road_length = 100  # meters
+        density = total_vehicles / road_length if avg_speed > 0 else 0
+        
         aggregated_data.append((
-            timestamp,
-            row[1],  # total_vehicles
-            row[2],  # avg_speed
-            row[3],  # density
-            row[4],  # avg_confidence
-            json.dumps(vehicle_type_counts.get(timestamp, {})),
-            json.dumps(lane_vehicle_counts.get(timestamp, {})),
-            json.dumps(lane_type_counts.get(timestamp, {}))
+            int(second * 1000),  # Convert back to milliseconds for consistency
+            int(total_vehicles),
+            float(avg_speed),
+            float(density),
+            float(avg_confidence),
+            json.dumps(vehicle_type_counts),
+            json.dumps(lane_vehicle_counts),
+            json.dumps({})  # Placeholder for LaneTypeCounts
         ))
-
+    
     if aggregated_data:
         insert_query = f"""
             INSERT INTO "{table_name}" (
@@ -205,24 +164,17 @@ def process_aggregated_data(cur, table_name, time_interval, start_time, end_time
         """
         execute_values(cur, insert_query, aggregated_data)
         logging.info(f"Inserted/Updated {len(aggregated_data)} rows in {table_name}")
+        
+        mc.set(cache_key, json.dumps(aggregated_data), time=3600)  # Cache for 1 hour
     else:
         logging.warning(f"No data to aggregate for {table_name}")
-
-def check_data_availability(cur):
-    cur.execute("SELECT MIN(\"Timestamp\"), MAX(\"Timestamp\") FROM \"PerSecondData\";")
-    min_timestamp, max_timestamp = cur.fetchone()
-    if min_timestamp and max_timestamp:
-        logging.info(f"Data available from {datetime.fromtimestamp(min_timestamp)} to {datetime.fromtimestamp(max_timestamp)}")
-        return min_timestamp, max_timestamp
-    else:
-        logging.warning("No data found in PerSecondData table.")
-        return None, None
+        
+    return aggregated_data
 
 def process_data_in_chunks(cur, table_name, time_interval, chunk_size, start_time, end_time):
     chunk_start = start_time
     while chunk_start < end_time:
         chunk_end = min(chunk_start + chunk_size, end_time)
-        update_speed_and_density_calculation(cur, chunk_start, chunk_end)
         process_aggregated_data(cur, table_name, time_interval, chunk_start, chunk_end)
         chunk_start = chunk_end
         logging.info(f"Processed chunk from {datetime.fromtimestamp(chunk_start)} to {datetime.fromtimestamp(chunk_end)}")
@@ -231,17 +183,18 @@ def main():
     try:
         with psycopg2.connect(**db_credentials) as conn:
             with conn.cursor() as cur:
-                columns = get_table_columns(cur, 'PerSecondData')
-                logging.info(f"Columns in PerSecondData: {columns}")
-
-                min_timestamp, max_timestamp = check_data_availability(cur)
+                # Check data availability and process
+                cur.execute("SELECT MIN(\"UnixTimestamp\"), MAX(\"UnixTimestamp\") FROM \"FramePrediction\";")
+                min_timestamp, max_timestamp = cur.fetchone()
                 if not max_timestamp:
                     logging.error("No data available for processing.")
                     return
-
+                
+                min_timestamp = min_timestamp // 1000  # Convert to seconds
+                max_timestamp = max_timestamp // 1000  # Convert to seconds
                 available_seconds = max_timestamp - min_timestamp
                 available_days = available_seconds / 86400  # Convert seconds to days
-
+                
                 # Define time ranges and intervals for all required granularities
                 time_ranges = [
                     ("PerSecondData", 1, timedelta(hours=1)),
@@ -253,19 +206,17 @@ def main():
                     ("PerMonthData", 2592000, timedelta(days=min(365, available_days))),
                     ("PerYearData", 31536000, timedelta(days=min(365, available_days)))
                 ]
-
+                
                 # Clear all aggregated tables before processing
-                tables_to_clear = [table_name for table_name, _, _ in time_ranges if table_name != "PerSecondData"]
+                tables_to_clear = [table_name for table_name, _, _ in time_ranges]
                 clear_tables(cur, tables_to_clear)
-
+                
                 for table_name, interval, chunk_size in time_ranges:
-                    if table_name != "PerSecondData":  # Skip PerSecondData as it's the source table
-                        create_aggregated_table(cur, table_name)
-                        process_data_in_chunks(cur, table_name, interval, int(chunk_size.total_seconds()), min_timestamp, max_timestamp)
-
+                    create_aggregated_table(cur, table_name)
+                    process_data_in_chunks(cur, table_name, interval, int(chunk_size.total_seconds()), min_timestamp, max_timestamp)
+                
                 conn.commit()
                 logging.info("All data processed and committed successfully.")
-
     except psycopg2.Error as e:
         logging.error(f"Database error: {e}")
     except Exception as e:

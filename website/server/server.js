@@ -284,41 +284,41 @@ app.get('/api/historical-data', historicalDataValidationRules, async (req, res, 
 
     const query = `
       WITH time_series AS (
-        SELECT generate_series(
-          $2::timestamp,
-          $3::timestamp,
-          $1::interval
-        ) AS time
-      ),
-      aggregated_data AS (
-        SELECT
-          time_bucket($1::interval, "Timestamp") AS time,
-          SUM("TotalVehicles") AS "TotalVehicles",
-          AVG("AverageSpeed") AS "AverageSpeed",
-          AVG("Density") AS "Density",
-          AVG("AverageConfidence") AS "AverageConfidence",
-          jsonb_object_agg(COALESCE(vt.key, ''), COALESCE(vt.value, '0')::int) AS "VehicleTypeCounts",
-          jsonb_object_agg(COALESCE(lv.key, ''), COALESCE(lv.value, '0')::int) AS "LaneVehicleCounts",
-          jsonb_object_agg(COALESCE(lt.key, ''), COALESCE(lt.value, '0')::int) AS "LaneTypeCounts"
-        FROM "${tableName}",
-          jsonb_each("VehicleTypeCounts") vt,
-          jsonb_each("LaneVehicleCounts") lv,
-          jsonb_each("LaneTypeCounts") lt
-        WHERE "Timestamp" BETWEEN $2 AND $3
-        GROUP BY time
-      )
+      SELECT generate_series(
+        $2::timestamp,
+        $3::timestamp,
+        $1::interval
+      ) AS time
+    ),
+    aggregated_data AS (
       SELECT
-        ts.time AS "Timestamp",
-        COALESCE(ad."TotalVehicles", 0) AS "TotalVehicles",
-        COALESCE(ad."AverageSpeed", 0) AS "AverageSpeed",
-        COALESCE(ad."Density", 0) AS "Density",
-        COALESCE(ad."AverageConfidence", 0) AS "AverageConfidence",
-        COALESCE(ad."VehicleTypeCounts", '{}'::jsonb) AS "VehicleTypeCounts",
-        COALESCE(ad."LaneVehicleCounts", '{}'::jsonb) AS "LaneVehicleCounts",
-        COALESCE(ad."LaneTypeCounts", '{}'::jsonb) AS "LaneTypeCounts"
-      FROM time_series ts
-      LEFT JOIN aggregated_data ad ON ts.time = ad.time
-      ORDER BY ts.time ASC
+        time_bucket($1::interval, "Timestamp") AS time,
+        AVG("TotalVehicles") AS "TotalVehicles",
+        AVG("AverageSpeed") AS "AverageSpeed",
+        AVG("Density") AS "Density",
+        AVG("AverageConfidence") AS "AverageConfidence",
+        jsonb_object_agg(COALESCE(vt.key, ''), COALESCE(vt.value, '0')::float) AS "VehicleTypeCounts",
+        jsonb_object_agg(COALESCE(lv.key, ''), COALESCE(lv.value, '0')::float) AS "LaneVehicleCounts",
+        jsonb_object_agg(COALESCE(lt.key, ''), COALESCE(lt.value, '0')::float) AS "LaneTypeCounts"
+      FROM "${tableName}",
+        jsonb_each_text("VehicleTypeCounts") vt,
+        jsonb_each_text("LaneVehicleCounts") lv,
+        jsonb_each_text("LaneTypeCounts") lt
+      WHERE "Timestamp" BETWEEN $2 AND $3
+      GROUP BY time
+    )
+    SELECT
+      ts.time AS "Timestamp",
+      COALESCE(ad."TotalVehicles", 0) AS "TotalVehicles",
+      COALESCE(ad."AverageSpeed", 0) AS "AverageSpeed",
+      COALESCE(ad."Density", 0) AS "Density",
+      COALESCE(ad."AverageConfidence", 0) AS "AverageConfidence",
+      COALESCE(ad."VehicleTypeCounts", '{}'::jsonb) AS "VehicleTypeCounts",
+      COALESCE(ad."LaneVehicleCounts", '{}'::jsonb) AS "LaneVehicleCounts",
+      COALESCE(ad."LaneTypeCounts", '{}'::jsonb) AS "LaneTypeCounts"
+    FROM time_series ts
+    LEFT JOIN aggregated_data ad ON ts.time = ad.time
+    ORDER BY ts.time ASC
     `;
 
     const result = await pool.query(query, [timeInterval, start, end]);
@@ -343,7 +343,20 @@ const createDataEndpoint = (route, tableName, defaultLimit) => {
   app.get(route, async (req, res, next) => {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : defaultLimit;
     try {
-      const result = await pool.query(`SELECT * FROM "${tableName}" ORDER BY "Timestamp" DESC LIMIT $1`, [limit]);
+      const result = await pool.query(`
+        SELECT 
+          "Timestamp", 
+          "TotalVehicles"::float, 
+          "AverageSpeed"::float, 
+          "Density"::float, 
+          "AverageConfidence"::float, 
+          "VehicleTypeCounts", 
+          "LaneVehicleCounts", 
+          "LaneTypeCounts"
+        FROM "${tableName}" 
+        ORDER BY "Timestamp" DESC 
+        LIMIT $1
+      `, [limit]);
 
       if (result.rows.length === 0) {
         return res.status(404).json({ error: `No ${tableName} found` });

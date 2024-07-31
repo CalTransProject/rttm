@@ -2,10 +2,14 @@ import ReactEcharts from "echarts-for-react";
 import React from "react";
 
 const HeatMapHist = ({ data }) => {
-  const xAxisData = data.map((_, index) => `${index}:00`);
+  const sortedData = [...data].sort((a, b) => a.time - b.time);
+  const processedData = sortedData.map((item) => {
+    const date = new Date(item.time);
+    return [date.getHours(), 0, item.value];
+  });
+  const xAxisData = Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`);
   const yAxisData = ['Density'];
-  const seriesData = data.map((item, index) => [index, 0, item.value]);
-  const densityValues = seriesData.map(item => item[2]);
+  const densityValues = processedData.map(item => item[2]);
   const minDensity = Math.min(...densityValues);
   const maxDensity = Math.max(...densityValues);
   const meanDensity = densityValues.reduce((a, b) => a + b, 0) / densityValues.length;
@@ -13,30 +17,41 @@ const HeatMapHist = ({ data }) => {
   const option = {
     title: {
       text: 'Traffic Density Heatmap',
-      left: 'center'
+      left: 'center',
+      top: 0,
+      textStyle: { color: 'white', fontSize: 16 }
     },
     tooltip: {
       position: 'top',
       formatter: function (params) {
-        return `Time: ${params.name}<br>Density: ${params.data[2].toFixed(2)} vehicles/m²`;
+        return `Time: ${params.name}<br>Density: ${params.data[2].toFixed(4)} vehicles/m²`;
       }
     },
     grid: {
       height: '50%',
-      top: '15%'
+      top: '15%',
+      bottom: '35%',  // Increased to make room for x-axis labels and visualMap
+      left: '10%',
+      right: '5%'
     },
     xAxis: {
       type: 'category',
       data: xAxisData,
       splitArea: { show: true },
-      name: 'Hour of Day',
-      nameLocation: 'middle',
-      nameGap: 30
+      axisLabel: { 
+        color: 'white', 
+        rotate: 45, 
+        fontSize: 10,
+        margin: 8  // Increased margin to push labels further from axis
+      },
+      axisLine: { lineStyle: { color: 'white' } }
     },
     yAxis: {
       type: 'category',
       data: yAxisData,
-      splitArea: { show: true }
+      splitArea: { show: true },
+      axisLabel: { color: 'white' },
+      axisLine: { lineStyle: { color: 'white' } }
     },
     visualMap: {
       min: minDensity,
@@ -44,22 +59,18 @@ const HeatMapHist = ({ data }) => {
       calculable: true,
       orient: 'horizontal',
       left: 'center',
-      bottom: '5%',
+      bottom: '2%',  // Moved up to avoid overlap with x-axis labels
       inRange: {
         color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
       },
-      formatter: (value) => value.toFixed(2)
+      formatter: (value) => value.toFixed(4),
+      textStyle: { color: 'white', fontSize: 10 }
     },
     series: [{
       name: 'Density',
       type: 'heatmap',
-      data: seriesData,
-      label: {
-        show: true,
-        formatter: function(params) {
-          return params.data[2].toFixed(2);
-        }
-      },
+      data: processedData,
+      label: { show: false },
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -70,13 +81,12 @@ const HeatMapHist = ({ data }) => {
   };
 
   return (
-    <div>
-      <ReactEcharts option={option} style={{ height: '400px', width: '100%' }} />
-      <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        <p>Density Categories: Very Low (0-0.1), Low (0.1-0.3), Medium (0.3-0.5), High (>0.5) vehicles/m²</p>
-        <p>Data Range: {minDensity.toFixed(2)} - {maxDensity.toFixed(2)} vehicles/m² (Mean: {meanDensity.toFixed(2)})</p>
-        <p>Visualizes vehicle density over time, with color intensity reflecting density levels.</p>
-        <p>Note: All values fall within the "Very Low" density category. Colors are scaled to show relative differences within this range.</p>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <ReactEcharts option={option} style={{ flex: 1 }} />
+      <div style={{ textAlign: 'center', fontSize: '9px', color: 'white', marginTop: '5px', lineHeight: '1.2' }}>
+        <p>Density Categories: Very Low (0-0.1), Low (0.1-0.3), Medium (0.3-0.5), High (&gt;0.5) vehicles/m²</p>
+        <p>Range: {minDensity.toFixed(4)} - {maxDensity.toFixed(4)} vehicles/m² (Mean: {meanDensity.toFixed(4)})</p>
+        <p>Note: All values in "Very Low" category. Colors show relative differences.</p>
       </div>
     </div>
   );

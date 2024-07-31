@@ -3,6 +3,7 @@ import json
 import os
 import random
 import time
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 # Load environment variables from .env file for database credentials
@@ -51,14 +52,15 @@ veh_label = ["sedan", "suv", "truck", "bus", "pickup", "van"]
 
 # Function to generate fake data and insert it into the database
 def insert_fake_data(num_hours=1, frames_per_second=24):
-    start_timestamp = int(time.time() * 1000)  # Current time in milliseconds
+    start_time = datetime.now().replace(microsecond=0, second=0, minute=0)  # Start from the current hour
+    start_timestamp = int(start_time.timestamp() * 1000)  # Convert to milliseconds
     
     total_frames = num_hours * 3600 * frames_per_second
     records_inserted = 0
-
     for frame in range(total_frames):
         # Calculate timestamp for this frame
-        timestamp = start_timestamp + (frame * (1000 // frames_per_second))
+        current_time = start_time + timedelta(seconds=frame / frames_per_second)
+        timestamp = int(current_time.timestamp() * 1000)  # Convert to milliseconds
         
         generate_lane = lambda: random.choice([1, 2, 3])
         pred = [{
@@ -83,7 +85,7 @@ def insert_fake_data(num_hours=1, frames_per_second=24):
         
         if frame % (frames_per_second * 60) == 0:  # Commit every minute to avoid large transactions
             conn.commit()
-            print(f"Inserted {records_inserted} records...")
+            print(f"Inserted {records_inserted} records... Current time: {current_time}")
     
     conn.commit()  # Final commit
     print(f"Total records inserted: {records_inserted}")

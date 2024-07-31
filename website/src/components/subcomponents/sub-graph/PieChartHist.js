@@ -1,18 +1,18 @@
 import ReactEcharts from "echarts-for-react";
-import React, { useEffect } from "react";
+import React from "react";
 
 const PieChartHist = ({ data }) => {
   const formattedData = data.datasets[0].data.map((value, index) => ({
     value: value,
     name: data.labels[index]
   }));
-
   const total = formattedData.reduce((sum, curr) => sum + curr.value, 0);
 
   const option = {
     title: {
       text: 'Percentage of Vehicles by Type',
       left: 'center',
+      top: 0,
       textStyle: {
         color: 'white',
         fontSize: 16,
@@ -28,16 +28,18 @@ const PieChartHist = ({ data }) => {
       }
     },
     legend: {
-      orient: 'vertical',
-      left: 'left',
+      orient: 'horizontal',
+      bottom: 0,
+      left: 'center',
       textStyle: {
-        color: 'white'
+        color: 'white',
+        fontSize: 10
       },
       formatter: function (name) {
         const item = formattedData.find(item => item.name === name);
         if (item) {
-          const percentage = ((item.value / total) * 100).toFixed(2); // Calculate percentage and fix to 2 decimal places
-          return `${name} - ${percentage}%`;
+          const percentage = ((item.value / total) * 100).toFixed(2);
+          return `${name}: ${percentage}%`;
         }
         return name;
       }
@@ -46,8 +48,8 @@ const PieChartHist = ({ data }) => {
       {
         name: 'Vehicle Type',
         type: 'pie',
-        radius: '55%',
-        center: ['50%', '60%'],
+        radius: ['30%', '70%'],
+        center: ['50%', '50%'],
         data: formattedData,
         emphasis: {
           itemStyle: {
@@ -57,25 +59,17 @@ const PieChartHist = ({ data }) => {
           }
         },
         label: {
-          color: 'white',
-          formatter: '{b}: {d}%'
+          show: false
         },
         labelLine: {
-          lineStyle: {
-            color: 'white'
-          }
+          show: false
         }
       }
     ],
-    color: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513', '#32c5e9', '#7bd3f6', '#90ed7d', '#f7a35c', '#8085e9'] // Custom color palette
+    color: ['#FF6384', '#36A2EB', '#FFCE56', '#8B4513', '#32c5e9', '#7bd3f6', '#90ed7d', '#f7a35c', '#8085e9']
   };
 
-  const chartStyle = {
-    height: '400px', // Increased height for better visibility
-    width: '100%'
-  };
-
-  return <ReactEcharts option={option} style={chartStyle} />;
+  return <ReactEcharts option={option} style={{ height: '100%', width: '100%' }} />;
 };
 
 export default PieChartHist;
