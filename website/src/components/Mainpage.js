@@ -59,11 +59,7 @@ const Mainpage = () => {
           <div className="col">
             <h4 className="camText gradient-label">Camera 2 (2D)</h4>
             <div className="video-box">
-              <img
-                src="http://127.0.0.1:5000/webcam"
-                alt="webcam"
-                className="webcam-image"
-              />
+              <img src="http://127.0.0.1:5000/webcam" alt="webcam" />
             </div>
           </div>
         </div>

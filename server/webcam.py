@@ -22,20 +22,20 @@ def gen_frames(video_source='webcam'):
         #camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv")
         
         #Using Webcam
-        camera = cv2.VideoCapture(0)
+        camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv") # * Using File Path for testing
+        #camera = cv2.VideoCapture(0) # * Using Webcam 
         assert camera.isOpened(), "Error reading video file"
         
         # Define region points
-        line_points = [(30, 400), (27, 1300)]  # line or region points for in and out of region count
-        
+        region_points = [(20, 1050), (700, 1050), (700, 500), (20, 500)]  # line or region points for in and out of region count
         classes_to_count = list(range(len(class_names)))  # Classes for count
         
         counter = solutions.ObjectCounter(
             view_img=True,
-            reg_pts=line_points,
+            reg_pts=region_points,
             names=model.names,
-            draw_tracks=False,
-            line_thickness=1,
+            draw_tracks=True,
+            line_thickness=4,
         )
         
         while True:
@@ -43,13 +43,14 @@ def gen_frames(video_source='webcam'):
             if not success:
                 print("Video frame is empty or video processing has been successfully completed.")
                 break
+            
             tracks = model.track(frame, persist=True, show=False, classes=classes_to_count, conf =0.7)
-            frame = tracks[0].plot()
-            frame = counter.start_counting(frame, tracks)
+            frame = tracks[0].plot() #Plotinh the Tracking
+            frame = counter.start_counting(frame, tracks) # Using Counter Object to Trak and count, in and out of range
             print("In and Out count: ",counter.class_wise_count)
             
+            #Adding current date and time to the frame
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
             cv2.putText(frame, current_time, (frame.shape[1] - 350, 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
             
