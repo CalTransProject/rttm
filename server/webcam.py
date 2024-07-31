@@ -19,11 +19,10 @@ def gen_frames(video_source='webcam'):
 
     if video_source == 'webcam':
         # Using video file for testing purposes
-        #camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv")
+        #camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv") # * Using File Path for testing
         
         #Using Webcam
-        camera = cv2.VideoCapture("/Users/Robin1/Desktop/LIDAR Project/data/Dataset 1/Zelzah and Plummer 1 2023-03-20 11-48-13.mkv") # * Using File Path for testing
-        #camera = cv2.VideoCapture(0) # * Using Webcam 
+        camera = cv2.VideoCapture(0) # * Using Webcam 
         assert camera.isOpened(), "Error reading video file"
         
         # Define region points
