@@ -6,9 +6,13 @@ import json
 from datetime import datetime, timedelta
 import logging
 import memcache
+from tqdm import tqdm
+import hashlib
+from multiprocessing import Pool, cpu_count
+import time
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load environment variables
 dotenv_path = find_dotenv('website/server/database/db.env')
@@ -32,116 +36,156 @@ memcached_host = os.getenv("MEMCACHED_HOST", "localhost")
 memcached_port = os.getenv("MEMCACHED_PORT", "11211")
 mc = memcache.Client([f"{memcached_host}:{memcached_port}"], debug=0)
 
-def clear_tables(cur, tables_to_clear):
-    for table in tables_to_clear:
-        cur.execute(f'TRUNCATE TABLE "{table}" CASCADE;')
+# Road length configuration
+ROAD_LENGTH = float(os.getenv("ROAD_LENGTH", 100))  # Default to 100 meters if not specified
+
+def get_cache_key(prefix, *args):
+    """Generate a unique cache key based on the prefix and arguments."""
+    key = f"{prefix}_{'_'.join(map(str, args))}"
+    return hashlib.md5(key.encode()).hexdigest()
+
+def clear_tables(tables_to_clear):
+    with psycopg2.connect(**db_credentials) as conn:
+        with conn.cursor() as cur:
+            for table in tables_to_clear:
+                cur.execute(f'TRUNCATE TABLE "{table}" CASCADE;')
+            conn.commit()
     logging.info(f"Cleared tables: {', '.join(tables_to_clear)}")
 
-def create_aggregated_table(cur, table_name):
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS "{table_name}" (
-            "Timestamp" BIGINT PRIMARY KEY,
-            "TotalVehicles" INTEGER NOT NULL,
-            "AverageSpeed" REAL NOT NULL,
-            "Density" REAL NOT NULL,
-            "AverageConfidence" REAL NOT NULL,
-            "VehicleTypeCounts" JSONB NOT NULL,
-            "LaneVehicleCounts" JSONB NOT NULL,
-            "LaneTypeCounts" JSONB NOT NULL
-        );
-    """)
+def create_aggregated_table(table_name):
+    with psycopg2.connect(**db_credentials) as conn:
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                CREATE TABLE IF NOT EXISTS "{table_name}" (
+                    "Timestamp" BIGINT PRIMARY KEY,
+                    "TotalVehicles" INTEGER NOT NULL,
+                    "AverageSpeed" REAL NOT NULL,
+                    "Density" REAL NOT NULL,
+                    "AverageConfidence" REAL NOT NULL,
+                    "VehicleTypeCounts" JSONB NOT NULL,
+                    "LaneVehicleCounts" JSONB NOT NULL,
+                    "LaneTypeCounts" JSONB NOT NULL
+                );
+            """)
+            conn.commit()
     logging.info(f"Table {table_name} created or already exists")
 
-def calculate_per_second_data(cur, start_time, end_time):
+def calculate_vehicle_speed(x1, y1, x2, y2, delta_t):
+    """Calculate the speed of a vehicle based on its positions in two consecutive frames."""
+    distance = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
+    return distance / delta_t
+
+def preprocess_frame_data(cur, start_time, end_time):
+    """Preprocess frame data to calculate individual vehicle speeds."""
     query = """
-    WITH frame_data AS (
+    WITH consecutive_frames AS (
         SELECT 
-            ("UnixTimestamp" / 1000)::BIGINT AS second,
-            "VehicleObjects"::jsonb AS vehicle_objects
+            "UnixTimestamp" AS timestamp,
+            "VehicleObjects"::jsonb AS vehicle_objects,
+            LAG("UnixTimestamp") OVER (ORDER BY "UnixTimestamp") AS prev_timestamp,
+            LAG("VehicleObjects"::jsonb) OVER (ORDER BY "UnixTimestamp") AS prev_vehicle_objects
         FROM "FramePrediction"
-        WHERE "UnixTimestamp" BETWEEN %s::BIGINT * 1000 AND %s::BIGINT * 1000
-    ),
-    expanded_data AS (
-        SELECT
-            fd.second,
-            v.vehicle,
-            (v.vehicle->>'speed')::float AS speed,
-            (v.vehicle->>'confidence')::float AS confidence,
-            v.vehicle->>'label' AS vehicle_type,
-            v.vehicle->>'lane' AS lane
-        FROM frame_data fd,
-        jsonb_array_elements(fd.vehicle_objects) AS v(vehicle)
-    ),
-    aggregated_data AS (
-        SELECT
-            second,
-            COUNT(DISTINCT vehicle) AS total_vehicles,
-            AVG(speed) AS avg_speed,
-            AVG(confidence) AS avg_confidence
-        FROM expanded_data
-        GROUP BY second
-    ),
-    vehicle_type_counts AS (
-        SELECT
-            second,
-            jsonb_object_agg(vehicle_type, type_count) AS vehicle_type_counts
-        FROM (
-            SELECT second, vehicle_type, COUNT(*) AS type_count
-            FROM expanded_data
-            GROUP BY second, vehicle_type
-        ) subquery
-        GROUP BY second
-    ),
-    lane_vehicle_counts AS (
-        SELECT
-            second,
-            jsonb_object_agg(lane, lane_count) AS lane_vehicle_counts
-        FROM (
-            SELECT second, lane, COUNT(*) AS lane_count
-            FROM expanded_data
-            GROUP BY second, lane
-        ) subquery
-        GROUP BY second
+        WHERE "UnixTimestamp" BETWEEN %s AND %s
     )
-    SELECT
-        a.second,
-        a.total_vehicles,
-        a.avg_speed,
-        a.avg_confidence,
-        COALESCE(v.vehicle_type_counts, '{}'::jsonb) AS vehicle_type_counts,
-        COALESCE(l.lane_vehicle_counts, '{}'::jsonb) AS lane_vehicle_counts
-    FROM aggregated_data a
-    LEFT JOIN vehicle_type_counts v ON a.second = v.second
-    LEFT JOIN lane_vehicle_counts l ON a.second = l.second
-    ORDER BY a.second;
+    SELECT * FROM consecutive_frames WHERE prev_timestamp IS NOT NULL
     """
     cur.execute(query, (start_time, end_time))
-    return cur.fetchall()
+    
+    processed_data = []
+    for row in cur.fetchall():
+        current_timestamp, current_vehicles, prev_timestamp, prev_vehicles = row
+        delta_t = (current_timestamp - prev_timestamp) / 1000  # Convert to seconds
+        
+        for current_vehicle in current_vehicles:
+            vehicle_id = current_vehicle['id']
+            prev_vehicle = next((v for v in prev_vehicles if v['id'] == vehicle_id), None)
+            
+            if prev_vehicle:
+                speed = calculate_vehicle_speed(
+                    prev_vehicle['x'], prev_vehicle['y'],
+                    current_vehicle['x'], current_vehicle['y'],
+                    delta_t
+                )
+                current_vehicle['speed'] = speed
+        
+        processed_data.append((current_timestamp, current_vehicles))
+    
+    return processed_data
+
+def calculate_per_second_data(cur, start_time, end_time):
+    logging.debug(f"Calculating per-second data from {start_time} to {end_time}")
+    cache_key = get_cache_key("per_second_data", start_time, end_time)
+    cached_data = mc.get(cache_key)
+    if cached_data:
+        logging.info(f"Retrieved per-second data from cache for {start_time} to {end_time}")
+        return cached_data
+
+    processed_data = preprocess_frame_data(cur, start_time, end_time)
+    
+    result = []
+    for timestamp, vehicles in processed_data:
+        total_vehicles = len(vehicles)
+        avg_speed = sum(v['speed'] for v in vehicles) / total_vehicles if total_vehicles > 0 else 0
+        avg_confidence = sum(float(v['confidence']) for v in vehicles) / total_vehicles if total_vehicles > 0 else 0
+        
+        vehicle_type_counts = {}
+        lane_vehicle_counts = {}
+        for v in vehicles:
+            vehicle_type_counts[v['label']] = vehicle_type_counts.get(v['label'], 0) + 1
+            lane_vehicle_counts[v['lane']] = lane_vehicle_counts.get(v['lane'], 0) + 1
+        
+        result.append((
+            timestamp,
+            total_vehicles,
+            avg_speed,
+            avg_confidence,
+            json.dumps(vehicle_type_counts),
+            json.dumps(lane_vehicle_counts)
+        ))
+
+    logging.debug(f"Calculated {len(result)} rows of per-second data")
+    mc.set(cache_key, result, time=3600)  # Cache for 1 hour
+    logging.info(f"Cached per-second data for {start_time} to {end_time}")
+    return result
 
 def process_aggregated_data(cur, table_name, time_interval, start_time, end_time):
-    cache_key = f"{table_name}_{start_time}_{end_time}"
+    logging.debug(f"Processing aggregated data for {table_name} from {start_time} to {end_time}")
+    cache_key = get_cache_key("aggregated_data", table_name, start_time, end_time)
     cached_data = mc.get(cache_key)
     
     if cached_data:
-        logging.info(f"Retrieved data from cache for {table_name}")
+        logging.info(f"Retrieved aggregated data from cache for {table_name}")
         return json.loads(cached_data)
     
     per_second_data = calculate_per_second_data(cur, start_time, end_time)
     
     aggregated_data = []
-    for row in per_second_data:
-        second, total_vehicles, avg_speed, avg_confidence, vehicle_type_counts, lane_vehicle_counts = row
+    for i in range(0, len(per_second_data), time_interval):
+        chunk = per_second_data[i:i+time_interval]
+        if not chunk:
+            continue
         
-        # Calculate density (vehicles per unit length, assuming 100m road segment)
-        road_length = 100  # meters
-        density = total_vehicles / road_length if avg_speed > 0 else 0
+        timestamp = chunk[0][0]
+        total_vehicles = sum(row[1] for row in chunk)
+        avg_speed = sum(row[2] * row[1] for row in chunk) / total_vehicles if total_vehicles > 0 else 0
+        avg_confidence = sum(row[3] * row[1] for row in chunk) / total_vehicles if total_vehicles > 0 else 0
+        
+        vehicle_type_counts = {}
+        lane_vehicle_counts = {}
+        for row in chunk:
+            for vtype, count in json.loads(row[4]).items():
+                vehicle_type_counts[vtype] = vehicle_type_counts.get(vtype, 0) + count
+            for lane, count in json.loads(row[5]).items():
+                lane_vehicle_counts[lane] = lane_vehicle_counts.get(lane, 0) + count
+        
+        density = total_vehicles / ROAD_LENGTH if avg_speed > 0 else 0
         
         aggregated_data.append((
-            int(second * 1000),  # Convert back to milliseconds for consistency
-            int(total_vehicles),
-            float(avg_speed),
-            float(density),
-            float(avg_confidence),
+            timestamp,
+            total_vehicles,
+            avg_speed,
+            density,
+            avg_confidence,
             json.dumps(vehicle_type_counts),
             json.dumps(lane_vehicle_counts),
             json.dumps({})  # Placeholder for LaneTypeCounts
@@ -171,56 +215,78 @@ def process_aggregated_data(cur, table_name, time_interval, start_time, end_time
         
     return aggregated_data
 
-def process_data_in_chunks(cur, table_name, time_interval, chunk_size, start_time, end_time):
-    chunk_start = start_time
-    while chunk_start < end_time:
-        chunk_end = min(chunk_start + chunk_size, end_time)
-        process_aggregated_data(cur, table_name, time_interval, chunk_start, chunk_end)
-        chunk_start = chunk_end
-        logging.info(f"Processed chunk from {datetime.fromtimestamp(chunk_start)} to {datetime.fromtimestamp(chunk_end)}")
+def process_chunk(args):
+    table_name, time_interval, start_time, end_time = args
+    logging.debug(f"Processing chunk for {table_name} from {start_time} to {end_time}")
+    try:
+        with psycopg2.connect(**db_credentials) as conn:
+            conn.set_session(autocommit=True)
+            with conn.cursor() as cur:
+                data = process_aggregated_data(cur, table_name, time_interval, start_time, end_time)
+        return len(data)
+    except Exception as e:
+        logging.error(f"Error processing chunk: {e}")
+        return 0
+
+def process_data_in_parallel(table_name, time_interval, chunk_size, start_time, end_time):
+    chunks = []
+    current_start = start_time
+    while current_start < end_time:
+        chunk_end = min(current_start + chunk_size, end_time)
+        chunks.append((table_name, time_interval, current_start, chunk_end))
+        current_start = chunk_end
+
+    total_chunks = len(chunks)
+    with Pool(processes=cpu_count()) as pool:
+        with tqdm(total=total_chunks, desc=f"Processing {table_name}", unit="chunk") as pbar:
+            for result in pool.imap_unordered(process_chunk, chunks):
+                pbar.update(1)
+                pbar.set_postfix({"Rows": result})
 
 def main():
     try:
         with psycopg2.connect(**db_credentials) as conn:
+            conn.set_session(autocommit=True)
             with conn.cursor() as cur:
-                # Check data availability and process
                 cur.execute("SELECT MIN(\"UnixTimestamp\"), MAX(\"UnixTimestamp\") FROM \"FramePrediction\";")
                 min_timestamp, max_timestamp = cur.fetchone()
                 if not max_timestamp:
                     logging.error("No data available for processing.")
                     return
                 
-                min_timestamp = min_timestamp // 1000  # Convert to seconds
-                max_timestamp = max_timestamp // 1000  # Convert to seconds
-                available_seconds = max_timestamp - min_timestamp
-                available_days = available_seconds / 86400  # Convert seconds to days
+                # Ensure we're only processing one day of data
+                min_datetime = datetime.fromtimestamp(min_timestamp / 1000)
+                max_datetime = min(datetime.fromtimestamp(max_timestamp / 1000), min_datetime + timedelta(days=1))
                 
-                # Define time ranges and intervals for all required granularities
+                min_timestamp = int(min_datetime.timestamp() * 1000)
+                max_timestamp = int(max_datetime.timestamp() * 1000)
+                
+                available_seconds = (max_timestamp - min_timestamp) // 1000
+                available_hours = available_seconds / 3600
+                
+                logging.info(f"Processing data from {min_datetime} to {max_datetime}")
+                logging.info(f"Total available hours: {available_hours:.2f}")
+                
                 time_ranges = [
-                    ("PerSecondData", 1, timedelta(hours=1)),
-                    ("PerMinuteData", 60, timedelta(hours=6)),
-                    ("Per5MinuteData", 300, timedelta(hours=12)),
-                    ("PerHourData", 3600, timedelta(days=min(1, available_days))),
-                    ("PerDayData", 86400, timedelta(days=min(7, available_days))),
-                    ("PerWeekData", 604800, timedelta(days=min(30, available_days))),
-                    ("PerMonthData", 2592000, timedelta(days=min(365, available_days))),
-                    ("PerYearData", 31536000, timedelta(days=min(365, available_days)))
+                    ("PerSecondData", 1, timedelta(minutes=5).total_seconds()),
+                    ("PerMinuteData", 60, timedelta(minutes=30).total_seconds()),
+                    ("Per5MinuteData", 300, timedelta(hours=1).total_seconds()),
+                    ("PerHourData", 3600, timedelta(hours=4).total_seconds()),
                 ]
                 
-                # Clear all aggregated tables before processing
                 tables_to_clear = [table_name for table_name, _, _ in time_ranges]
-                clear_tables(cur, tables_to_clear)
+                clear_tables(tables_to_clear)
                 
                 for table_name, interval, chunk_size in time_ranges:
-                    create_aggregated_table(cur, table_name)
-                    process_data_in_chunks(cur, table_name, interval, int(chunk_size.total_seconds()), min_timestamp, max_timestamp)
+                    create_aggregated_table(table_name)
+                    process_data_in_parallel(table_name, interval, int(chunk_size * 1000), min_timestamp, max_timestamp)
                 
-                conn.commit()
                 logging.info("All data processed and committed successfully.")
     except psycopg2.Error as e:
         logging.error(f"Database error: {e}")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
+        logging.exception("Exception details:")
 
 if __name__ == "__main__":
     main()

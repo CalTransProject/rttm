@@ -202,7 +202,7 @@ const useHistoricalData = (dataType) => {
         let limit;
         switch (dataType) {
           case 'per-day':
-            url = 'http://localhost:3008/api/per-minute-data';
+            url = 'http://localhost:3008/api/per-second-data';
             limit = 1440; // 24 hours * 60 minutes  
             break;
           case 'per-week':
