@@ -10,6 +10,12 @@ from datetime import datetime
 import logging
 from tqdm import tqdm
 
+# Real-world data consideration 1:
+# If you need to interface directly with the VLP-32C sensor for any reason,
+# import the necessary libraries here. For example:
+# from velodyne_decoder import VLP32CDecoder
+# from your_data_acquisition_module import acquire_vlp32c_data, process_vlp32c_data
+
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -32,6 +38,11 @@ db_credentials = {
 
 # Road length configuration
 ROAD_LENGTH = float(os.getenv("ROAD_LENGTH", 100))  # Default to 100 meters if not specified
+
+# Real-world data consideration 2:
+# If your VLP-32C sensor setup has a different road length or field of view,
+# you might want to adjust the ROAD_LENGTH variable or add additional
+# configuration parameters here.
 
 def create_perminutedata_table():
     with psycopg2.connect(**db_credentials) as conn:
@@ -143,6 +154,11 @@ def main():
         with psycopg2.connect(**db_credentials) as conn:
             conn.set_session(autocommit=True)
             with conn.cursor() as cur:
+                # Real-world data consideration 3:
+                # If you need to get the time range directly from the VLP-32C sensor,
+                # you could replace this database query with a function call to your sensor interface.
+                # For example:
+                # start_time, end_time = get_vlp32c_time_range(sensor)
                 cur.execute("SELECT MIN(\"Timestamp\"), MAX(\"Timestamp\") FROM \"PerSecondData\";")
                 min_timestamp, max_timestamp = cur.fetchone()
                 if not max_timestamp:
