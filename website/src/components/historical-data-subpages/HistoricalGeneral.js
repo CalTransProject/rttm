@@ -81,17 +81,33 @@ const getPieChartData = (data) => {
   };
 };
 
-const getStackedBarData = (data) => {
+const getStackedBarData = (data, dataType) => {
   const processedData = {};
   
-  data.forEach((item) => {
-    const hour = new Date(item.Timestamp * 1000).getHours();
+  data.forEach((item, index) => {
+    let key;
+    switch(dataType) {
+      case 'per-day':
+        key = `Day ${index + 1}`;
+        break;
+      case 'per-week':
+        key = `Week ${index + 1}`;
+        break;
+      case 'per-month':
+        key = `Day ${index + 1}`;
+        break;
+      case 'per-year':
+        key = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][index];
+        break;
+      default:
+        key = `Day ${index + 1}`;
+    }
     
     Object.entries(item.LaneVehicleCounts).forEach(([lane, count]) => {
       if (!processedData[lane]) {
-        processedData[lane] = Array(24).fill().map(() => ({ Total: 0 }));
+        processedData[lane] = {};
       }
-      processedData[lane][hour].Total = count;
+      processedData[lane][key] = count;
     });
   });
   
@@ -99,17 +115,18 @@ const getStackedBarData = (data) => {
 };
 
 const getDensityData = (data) =>
-  data.map((item) => ({
+  data.map((item, index) => ({
     value: item.Density,
     time: new Date(item.Timestamp * 1000).toLocaleString(),
+    index: index
   }));
 
-const ChartBox = ({ title, description, Component, data, key }) => (
+const ChartBox = ({ title, description, Component, data, dataType, key }) => (
   <div className="col" key={key || title}>
     <div className="box" style={{ height: '450px', display: 'flex', flexDirection: 'column', padding: '15px' }}>
       <h2 style={{ marginTop: 0, marginBottom: '10px', fontSize: '18px' }}>{title}</h2>
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <Component data={data} />
+        <Component data={data} dataType={dataType} />
       </div>
       <p className="small-text" style={{ marginTop: '10px', fontSize: '12px' }}>{description}</p> 
     </div>
@@ -202,20 +219,20 @@ const useHistoricalData = (dataType) => {
         let limit;
         switch (dataType) {
           case 'per-day':
-            url = 'http://localhost:3008/api/per-second-data';
-            limit = 1440; // 24 hours * 60 minutes  
+            url = 'http://localhost:3008/api/per-day-data';
+            limit = 30; // 30 days
             break;
           case 'per-week':
-            url = 'http://localhost:3008/api/per-hour-data';
-            limit = 24 * 7;
+            url = 'http://localhost:3008/api/per-week-data';
+            limit = 52; // 52 weeks
             break;
           case 'per-month':
-            url = 'http://localhost:3008/api/per-day-data';  
-            limit = 30;
+            url = 'http://localhost:3008/api/per-month-data';  
+            limit = 30; // 30 days in a month
             break;
           case 'per-year':
-            url = 'http://localhost:3008/api/per-day-data';
-            limit = 365;  
+            url = 'http://localhost:3008/api/per-year-data';
+            limit = 12; // 12 months in a year
             break;
           default:
             throw new Error('Invalid data type');
@@ -227,8 +244,6 @@ const useHistoricalData = (dataType) => {
         }
 
         let fetchedData = await response.json();
-        
-        // Use the data as is, without adding random fluctuations
         setData(fetchedData);
       } catch (err) {
         console.error('Fetch error:', err);
@@ -244,7 +259,32 @@ const useHistoricalData = (dataType) => {
   return { data, error, loading };
 };
 
-const StackedAreaHist = ({ data }) => {
+const StackedAreaHist = ({ data, dataType }) => {
+  const getXAxisFormatter = (dataType) => {
+    switch(dataType) {
+      case 'per-day':
+        return (value) => `Day ${new Date(value).getDate()}`;
+      case 'per-week':
+        return (value) => `Week ${Math.ceil((new Date(value).getDate()) / 7)}`;
+      case 'per-month':
+        return (value) => new Date(value).toLocaleDateString([], { month: 'short', day: 'numeric' });
+      case 'per-year':
+        return (value) => new Date(value).toLocaleDateString([], { month: 'short' });
+      default:
+        return (value) => new Date(value).toLocaleString();
+    }
+  };
+
+  const getXAxisInterval = (dataType) => {
+    switch(dataType) {
+      case 'per-day': return 1;
+      case 'per-week': return 1;
+      case 'per-month': return 3;
+      case 'per-year': return 1;
+      default: return 'auto';
+    }
+  };
+
   const option = {
     title: {
       text: data.datasets[0].label === 'Vehicle Count' ? 'Vehicle Count Over Time' : 'Average Speed Over Time',
@@ -296,15 +336,12 @@ const StackedAreaHist = ({ data }) => {
         },
       },
       axisLabel: {
-        formatter: function (value) {
-          const date = new Date(value);
-          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        },
+        formatter: getXAxisFormatter(dataType),
         rotate: 45,
         textStyle: {
-          fontSize: 8,
+          fontSize: 10,
         },
-        interval: 'auto',
+        interval: getXAxisInterval(dataType),
         showMaxLabel: true,
       },
     },
@@ -363,8 +400,7 @@ const PieChartHist = ({ data }) => {
   const total = formattedData.reduce((sum, curr) => sum + curr.value, 0);
   const option = {
     title: {
-      text: 'Percentage of Vehicles by Type',
-      left: 'center',
+      text: 'Percentage of Vehicles by Type',left: 'center',
       top: 0,
       textStyle: {
         color: 'white',
@@ -424,19 +460,34 @@ const PieChartHist = ({ data }) => {
   return <ReactEcharts option={option} style={{ height: '100%', width: '100%' }} />;
 };
 
-const StackedBarHist = ({ data }) => {
+const StackedBarHist = ({ data, dataType }) => {
   const lanes = Object.keys(data);
-  const hours = [...Array(24).keys()];
+  const xAxisData = (() => {
+    switch(dataType) {
+      case 'per-day':
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+      case 'per-week':
+        return Array.from({length: 52}, (_, i) => `Week ${i + 1}`);
+      case 'per-month':
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+      case 'per-year':
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      default:
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+    }
+  })();
+
   const series = lanes.map(lane => ({
     name: `Lane ${lane}`,
     type: 'bar',
     stack: 'total',
     emphasis: { focus: 'series' },
-    data: hours.map(hour => data[lane][hour].Total || 0)
+    data: xAxisData.map(key => data[lane][key] || 0)
   }));
+
   const option = {
     title: {
-      text: 'Hourly Vehicle Counts by Lane',
+      text: 'Vehicle Counts by Lane',
       textStyle: {
         color: 'white',
         fontSize: 18,
@@ -449,7 +500,7 @@ const StackedBarHist = ({ data }) => {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
       formatter: function(params) {
-        let tooltip = `<strong>Hour: ${params[0].axisValue}</strong><br/>`;
+        let tooltip = `<strong>${params[0].axisValue}</strong><br/>`;
         let total = 0;
         params.forEach(param => {
           tooltip += `${param.seriesName}: ${param.value}<br/>`;
@@ -473,7 +524,7 @@ const StackedBarHist = ({ data }) => {
     },
     xAxis: {
       type: 'category',
-      data: hours.map(hour => `${hour.toString().padStart(2, '0')}:00`),
+      data: xAxisData,
       axisLabel: {
         color: "white",
         rotate: 45,
@@ -500,18 +551,31 @@ const StackedBarHist = ({ data }) => {
   return <ReactEcharts option={option} style={{ height: '100%', width: '100%' }} />;
 };
 
-const HeatMapHist = ({ data }) => {
-  const sortedData = [...data].sort((a, b) => a.time - b.time);
-  const processedData = sortedData.map((item) => {
-    const date = new Date(item.time);
-    return [date.getHours(), 0, item.value];
-  });
-  const xAxisData = Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+const HeatMapHist = ({ data, dataType }) => {
+  const getXAxisData = () => {
+    switch(dataType) {
+      case 'per-day':
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+      case 'per-week':
+        return Array.from({length: 52}, (_, i) => `Week ${i + 1}`);
+      case 'per-month':
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+      case 'per-year':
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      default:
+        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
+    }
+  };
+
+  const xAxisData = getXAxisData();
   const yAxisData = ['Density'];
-  const densityValues = processedData.map(item => item[2]);
+  const processedData = data.map((item, index) => [index, 0, item.value]);
+  
+  const densityValues = data.map(item => item.value);
   const minDensity = Math.min(...densityValues);
   const maxDensity = Math.max(...densityValues);
   const meanDensity = densityValues.reduce((a, b) => a + b, 0) / densityValues.length;
+
   const option = {
     title: {
       text: 'Traffic Density Heatmap',
@@ -522,7 +586,7 @@ const HeatMapHist = ({ data }) => {
     tooltip: {
       position: 'top',
       formatter: function (params) {
-        return `Time: ${params.name}<br>Density: ${params.data[2].toFixed(4)} vehicles/m²`;
+        return `${xAxisData[params.data[0]]}<br>Density: ${params.data[2].toFixed(4)} vehicles/m²`;
       }
     },
     grid: {
@@ -625,30 +689,35 @@ const HistoricalGeneral = () => {
                 description="Depicts vehicle counts over time, highlighting temporal trends. Use mouse wheel to zoom."
                 Component={StackedAreaHist}
                 data={getStackedAreaData(data, 'TotalVehicles')}
+                dataType={dataType}
               />
               <ChartBox 
                 title="Average Speed vs. Time"
                 description="Shows average speed over time, useful for identifying traffic flow patterns. Use mouse wheel to zoom."
                 Component={StackedAreaHist}
                 data={getStackedAreaData(data, 'AverageSpeed')}
+                dataType={dataType}
               />
               <ChartBox
                 title="Vehicle Type Distribution"  
                 description="Breaks down vehicle counts by type, useful for spotting trends in vehicle composition."
                 Component={PieChartHist} 
                 data={getPieChartData(data)}
+                dataType={dataType}
               />
               <ChartBox
                 title="Vehicle Count Per Lane"
                 description="Breaks down vehicle counts by lane, useful for spotting congestion patterns." 
                 Component={StackedBarHist}
-                data={getStackedBarData(data)}
+                data={getStackedBarData(data, dataType)}
+                dataType={dataType}
               />
               <ChartBox 
                 title="Traffic Density Heatmap"
                 description="Visualizes vehicle density over time and space, with color intensity reflecting density levels."
                 Component={HeatMapHist} 
                 data={getDensityData(data)}  
+                dataType={dataType}
               />
             </div>
           </div>

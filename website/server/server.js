@@ -342,6 +342,7 @@ app.get('/api/historical-data', historicalDataValidationRules, async (req, res, 
 const createDataEndpoint = (route, tableName, defaultLimit) => {
   app.get(route, async (req, res, next) => {
     const limit = req.query.limit ? parseInt(req.query.limit, 10) : defaultLimit;
+    console.log(`Fetching data from ${tableName} with limit: ${limit}`);
     try {
       const result = await pool.query(`
         SELECT 
@@ -359,13 +360,18 @@ const createDataEndpoint = (route, tableName, defaultLimit) => {
       `, [limit]);
 
       if (result.rows.length === 0) {
+        console.log(`No data found in ${tableName}`);
         return res.status(404).json({ error: `No ${tableName} found` });
       }
 
+      console.log(`Successfully fetched ${result.rows.length} rows from ${tableName}`);
       res.json(result.rows);
     } catch (error) {
       console.error(`Error fetching ${tableName}:`, error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      if (error.code === '42P01') {
+        return res.status(404).json({ error: `Table ${tableName} does not exist` });
+      }
+      res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
   });
 };
@@ -376,6 +382,7 @@ createDataEndpoint('/api/per-minute-data', 'PerMinuteData', 60);
 createDataEndpoint('/api/per-5-minute-data', 'Per5MinuteData', 12);
 createDataEndpoint('/api/per-hour-data', 'PerHourData', 24);
 createDataEndpoint('/api/per-day-data', 'PerDayData', 30);
+createDataEndpoint('/api/per-week-data', 'PerWeekData', 52);  // 52 weeks for a year
 createDataEndpoint('/api/per-month-data', 'PerMonthData', 12);
 createDataEndpoint('/api/per-year-data', 'PerYearData', 5);
 
@@ -412,8 +419,14 @@ app.get('/api/lane-type-count', async (req, res, next) => {
 
 // Error handler middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'An error occurred', message: err.message });
+  console.error('Error:', err);
+  const statusCode = err.statusCode || 500;
+  const errorMessage = err.message || 'An unexpected error occurred';
+  res.status(statusCode).json({
+    error: 'An error occurred',
+    message: errorMessage,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
 });
 
 // Start the server
