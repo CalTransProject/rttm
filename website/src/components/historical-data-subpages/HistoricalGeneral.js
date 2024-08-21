@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './styling/general.css';
 import ReactEcharts from "echarts-for-react";
 import { saveAs } from 'file-saver';
@@ -6,71 +6,104 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-const DataTypeSelector = ({ dataType, onDataTypeClick, onTableClick, showTable }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-    <div>
-      {['per-day', 'per-week', 'per-month', 'per-year'].map((type) => (
-        <button
-          key={type}
-          className={`button ${dataType === type ? 'button-active' : ''}`}
-          onClick={() => onDataTypeClick(type)}
-          style={{
-            backgroundColor: getButtonColor(type),
-            color: 'white',
-            fontSize: '16px',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginRight: '10px',
-            transition: 'background-color 0.3s',
-          }}
-        >
-          Past {type.split('-')[1].charAt(0).toUpperCase() + type.split('-')[1].slice(1)}
-        </button>
-      ))}
-    </div>
-    <button
-      className={`button button-table ${showTable ? 'button-active' : ''}`}
-      onClick={onTableClick}
-      style={{
-        backgroundColor: showTable ? '#888' : '#555',
-        color: '#fff',
-        fontSize: '16px',
-        padding: '10px 20px',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s',
-      }}
-    >
-      {showTable ? 'Hide Table' : 'Show Table'}
-    </button>
-  </div>
-);
+const DataTypeSelector = ({ dataType, onDataTypeClick, onTableClick, showTable }) => {
+  const getButtonColor = (type) => {
+    switch (type) {
+      case 'per-day': return '#4CAF50';
+      case 'per-week': return '#2196F3';
+      case 'per-month': return '#FFC107';
+      case 'per-year': return '#F44336';
+      default: return '#4CAF50';
+    }
+  };
 
-const getButtonColor = (type) => {
-  switch (type) {
-    case 'per-day': return '#4CAF50';
-    case 'per-week': return '#2196F3';
-    case 'per-month': return '#FFC107';
-    case 'per-year': return '#F44336';
-    default: return '#4CAF50';
-  }
+  const buttonStyle = (type) => ({
+    backgroundColor: dataType === type ? getButtonColor(type) : '#555',
+    color: 'white',
+    fontSize: '16px',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginRight: '10px',
+    transition: 'all 0.3s',
+    boxShadow: dataType === type ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none',
+    transform: dataType === type ? 'scale(1.05)' : 'scale(1)',
+  });
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div>
+        {['per-day', 'per-week', 'per-month', 'per-year'].map((type) => (
+          <button
+            key={type}
+            onClick={() => onDataTypeClick(type)}
+            style={buttonStyle(type)}
+          >
+            Past {type.split('-')[1].charAt(0).toUpperCase() + type.split('-')[1].slice(1)}
+          </button>
+        ))}
+      </div>
+      <button
+        onClick={onTableClick}
+        style={{
+          backgroundColor: showTable ? '#888' : '#555',
+          color: '#fff',
+          fontSize: '16px',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          transition: 'background-color 0.3s',
+        }}
+      >
+        {showTable ? 'Hide Table' : 'Show Table'}
+      </button>
+    </div>
+  );
 };
 
-const getStackedAreaData = (data, key) => ({
-  labels: data.map((item) => new Date(item.Timestamp * 1000).toLocaleString()),
-  datasets: [{
-    label: key === 'TotalVehicles' ? 'Vehicle Count' : 'Average Speed',
-    data: data.map((item) => item[key]),
-  }], 
-});
+const getStackedAreaData = (data, key, dataType) => {
+  console.log(`Processing ${key} data for ${dataType}:`, data);
+  let labels;
+  let processedData;
+
+  switch(dataType) {
+    case 'per-day':
+      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      processedData = data.slice(0, 24).map(item => parseFloat(item[key]) || 0);
+      break;
+    case 'per-week':
+      labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      processedData = data.slice(0, 7).map(item => parseFloat(item[key]) || 0);
+      break;
+    case 'per-month':
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      processedData = data.slice(0, 4).map(item => parseFloat(item[key]) || 0);
+      break;
+    case 'per-year':
+      labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      processedData = data.slice(0, 12).map(item => parseFloat(item[key]) || 0);
+      break;
+    default:
+      labels = data.map((_, index) => `Data ${index + 1}`);
+      processedData = data.map(item => parseFloat(item[key]) || 0);
+  }
+
+  return {
+    labels: labels,
+    datasets: [{
+      label: key === 'TotalVehicles' ? 'Vehicle Count' : 'Average Speed',
+      data: processedData,
+    }],
+  };
+};
 
 const getPieChartData = (data) => {
+  console.log('Processing pie chart data:', data);
   const vehicleTypeCounts = data.reduce((acc, item) => {
     Object.entries(item.VehicleTypeCounts || {}).forEach(([type, count]) => {
-      acc[type] = (acc[type] || 0) + count;
+      acc[type] = (acc[type] || 0) + parseFloat(count) || 0;
     });
     return acc;
   }, {});
@@ -82,44 +115,68 @@ const getPieChartData = (data) => {
 };
 
 const getStackedBarData = (data, dataType) => {
+  console.log('Processing stacked bar data:', data);
   const processedData = {};
+  let labels;
+
+  switch(dataType) {
+    case 'per-day':
+      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      break;
+    case 'per-week':
+      labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      break;
+    case 'per-month':
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      break;
+    case 'per-year':
+      labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      break;
+    default:
+      labels = data.map((_, index) => `Data ${index + 1}`);
+  }
   
   data.forEach((item, index) => {
-    let key;
-    switch(dataType) {
-      case 'per-day':
-        key = `Day ${index + 1}`;
-        break;
-      case 'per-week':
-        key = `Week ${index + 1}`;
-        break;
-      case 'per-month':
-        key = `Day ${index + 1}`;
-        break;
-      case 'per-year':
-        key = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][index];
-        break;
-      default:
-        key = `Day ${index + 1}`;
-    }
+    if (index >= labels.length) return;
     
-    Object.entries(item.LaneVehicleCounts).forEach(([lane, count]) => {
+    Object.entries(item.LaneVehicleCounts || {}).forEach(([lane, count]) => {
       if (!processedData[lane]) {
         processedData[lane] = {};
       }
-      processedData[lane][key] = count;
+      processedData[lane][labels[index]] = parseFloat(count) || 0;
     });
   });
   
   return processedData;
 };
 
-const getDensityData = (data) =>
-  data.map((item, index) => ({
-    value: item.Density,
-    time: new Date(item.Timestamp * 1000).toLocaleString(),
+const getDensityData = (data, dataType) => {
+  console.log('Processing density data:', data);
+  let labels;
+
+  switch(dataType) {
+    case 'per-day':
+      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      break;
+    case 'per-week':
+      labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      break;
+    case 'per-month':
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      break;
+    case 'per-year':
+      labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      break;
+    default:
+      labels = data.map((_, index) => `Data ${index + 1}`);
+  }
+
+  return data.slice(0, labels.length).map((item, index) => ({
+    value: parseFloat(item.Density) || 0,
+    time: labels[index],
     index: index
   }));
+};
 
 const ChartBox = ({ title, description, Component, data, dataType, key }) => (
   <div className="col" key={key || title}>
@@ -136,11 +193,11 @@ const ChartBox = ({ title, description, Component, data, dataType, key }) => (
 const TableDisplay = ({ data, dataType }) => {
   const downloadData = (format) => {
     const filename = `historical_data_${dataType}.${format}`;
-    const tableData = data.map(item => ({
-      Timestamp: new Date(item.Timestamp * 1000).toLocaleString(),
-      TotalVehicles: item.TotalVehicles.toFixed(2),
-      AverageSpeed: item.AverageSpeed.toFixed(2),
-      Density: item.Density.toFixed(2)
+    const tableData = data.map((item, index) => ({
+      Time: getTimeLabel(index, dataType),
+      TotalVehicles: parseFloat(item.TotalVehicles).toFixed(2),
+      AverageSpeed: parseFloat(item.AverageSpeed).toFixed(2),
+      Density: parseFloat(item.Density).toFixed(2)
     }));
 
     if (format === 'csv') {
@@ -155,10 +212,25 @@ const TableDisplay = ({ data, dataType }) => {
     } else if (format === 'pdf') {
       const doc = new jsPDF();
       doc.autoTable({
-        head: [['Timestamp', 'Total Vehicles', 'Average Speed', 'Density']],
+        head: [['Time', 'Total Vehicles', 'Average Speed', 'Density']],
         body: tableData.map(Object.values)
       });
       doc.save(filename);
+    }
+  };
+
+  const getTimeLabel = (index, dataType) => {
+    switch(dataType) {
+      case 'per-day':
+        return `${index}:00`;
+      case 'per-week':
+        return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index];
+      case 'per-month':
+        return `Week ${index + 1}`;
+      case 'per-year':
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][index];
+      default:
+        return `Data ${index + 1}`;
     }
   };
 
@@ -173,7 +245,7 @@ const TableDisplay = ({ data, dataType }) => {
         borderRadius: '5px', 
         margin: '10px 0',
       }}>
-        Showing data for the past {dataType.split('-')[1]}
+        Showing data for {dataType.split('-')[1]}
       </div>
       <div style={{ marginBottom: '10px' }}>
         <button onClick={() => downloadData('csv')} style={{ marginRight: '10px' }}>Download CSV</button>
@@ -183,7 +255,7 @@ const TableDisplay = ({ data, dataType }) => {
       <table style={{ border: '1px solid black', marginTop: '10px', borderCollapse: 'collapse', width: '100%' }}>
         <thead>
           <tr>
-            <th style={{ fontSize: '12px', padding: '8px' }}>Timestamp</th>
+            <th style={{ fontSize: '12px', padding: '8px' }}>Time</th>
             <th style={{ fontSize: '12px', padding: '8px' }}>Total Vehicles</th>
             <th style={{ fontSize: '12px', padding: '8px' }}>Average Speed</th>
             <th style={{ fontSize: '12px', padding: '8px' }}>Density</th>
@@ -192,10 +264,10 @@ const TableDisplay = ({ data, dataType }) => {
         <tbody>
           {data.map((item, index) => (
             <tr key={index}>
-              <td style={{ fontSize: '12px', padding: '8px' }}>{new Date(item.Timestamp * 1000).toLocaleString()}</td>
-              <td style={{ fontSize: '12px', padding: '8px' }}>{item.TotalVehicles.toFixed(2)}</td>  
-              <td style={{ fontSize: '12px', padding: '8px' }}>{item.AverageSpeed.toFixed(2)}</td>
-              <td style={{ fontSize: '12px', padding: '8px' }}>{item.Density.toFixed(2)}</td>
+              <td style={{ fontSize: '12px', padding: '8px' }}>{getTimeLabel(index, dataType)}</td>
+              <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.TotalVehicles).toFixed(2)}</td>  
+              <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.AverageSpeed).toFixed(2)}</td>
+              <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.Density).toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
@@ -219,35 +291,43 @@ const useHistoricalData = (dataType) => {
         let limit;
         switch (dataType) {
           case 'per-day':
-            url = 'http://localhost:3008/api/per-day-data';
-            limit = 30; // 30 days
+            url = 'http://localhost:3008/api/per-hour-data';
+            limit = 24;
             break;
           case 'per-week':
-            url = 'http://localhost:3008/api/per-week-data';
-            limit = 52; // 52 weeks
+            url = 'http://localhost:3008/api/per-day-data';
+            limit = 7;
             break;
           case 'per-month':
-            url = 'http://localhost:3008/api/per-month-data';  
-            limit = 30; // 30 days in a month
+            url = 'http://localhost:3008/api/per-week-data';
+            limit = 4;
             break;
           case 'per-year':
-            url = 'http://localhost:3008/api/per-year-data';
-            limit = 12; // 12 months in a year
+            url = 'http://localhost:3008/api/per-month-data';
+            limit = 12;
             break;
           default:
             throw new Error('Invalid data type');
         }
 
+        console.log(`Fetching data from: ${url}`);
         const response = await fetch(`${url}?limit=${limit}`, { cache: 'no-cache' });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         let fetchedData = await response.json();
+        console.log('Fetched data:', fetchedData);
+        
+        if (!Array.isArray(fetchedData) || fetchedData.length === 0) {
+          throw new Error('No data available for the selected period');
+        }
+        
         setData(fetchedData);
       } catch (err) {
         console.error('Fetch error:', err);
-        setError(`Failed to fetch ${dataType} data. Please try again later.`);
+        setError(`Failed to fetch ${dataType} data. ${err.message}`);
+        setData([]);
       } finally {
         setLoading(false);
       }
@@ -260,38 +340,14 @@ const useHistoricalData = (dataType) => {
 };
 
 const StackedAreaHist = ({ data, dataType }) => {
-  const getXAxisFormatter = (dataType) => {
-    switch(dataType) {
-      case 'per-day':
-        return (value) => `Day ${new Date(value).getDate()}`;
-      case 'per-week':
-        return (value) => `Week ${Math.ceil((new Date(value).getDate()) / 7)}`;
-      case 'per-month':
-        return (value) => new Date(value).toLocaleDateString([], { month: 'short', day: 'numeric' });
-      case 'per-year':
-        return (value) => new Date(value).toLocaleDateString([], { month: 'short' });
-      default:
-        return (value) => new Date(value).toLocaleString();
-    }
-  };
-
-  const getXAxisInterval = (dataType) => {
-    switch(dataType) {
-      case 'per-day': return 1;
-      case 'per-week': return 1;
-      case 'per-month': return 3;
-      case 'per-year': return 1;
-      default: return 'auto';
-    }
-  };
+  console.log('StackedAreaHist received data:', data);
 
   const option = {
     title: {
-      text: data.datasets[0].label === 'Vehicle Count' ? 'Vehicle Count Over Time' : 'Average Speed Over Time',
+      text: data.datasets[0].label,
       textStyle: {
         color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 18,fontWeight: 'bold',
       },
       left: 'center',
       top: 20,
@@ -303,20 +359,6 @@ const StackedAreaHist = ({ data, dataType }) => {
         label: {
           backgroundColor: '#6a7985',
         },
-      },
-      formatter: function (params) {
-        const date = new Date(params[0].axisValue);
-        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-        return `
-          <div>
-            <p><strong>Time:</strong> ${formattedDate}</p>
-            ${params.map(param => `
-              <p style="color: ${param.color};">
-                <strong>${param.seriesName}:</strong> ${param.value}
-              </p>
-            `).join('')}
-          </div>
-        `;
       },
     },
     legend: {
@@ -336,13 +378,11 @@ const StackedAreaHist = ({ data, dataType }) => {
         },
       },
       axisLabel: {
-        formatter: getXAxisFormatter(dataType),
-        rotate: 45,
         textStyle: {
-          fontSize: 10,
+          fontSize: 12,
         },
-        interval: getXAxisInterval(dataType),
-        showMaxLabel: true,
+        interval: 0,
+        rotate: dataType === 'per-day' ? 45 : 0,
       },
     },
     yAxis: {
@@ -376,31 +416,18 @@ const StackedAreaHist = ({ data, dataType }) => {
       bottom: '15%',
       containLabel: true,
     },
-    dataZoom: [
-      {
-        type: 'inside',
-        start: 0,
-        end: 100
-      },
-      {
-        start: 0,
-        end: 100
-      }
-    ],
   };
 
   return <ReactEcharts option={option} style={{ height: '400px', width: '100%' }} />;
 };
 
 const PieChartHist = ({ data }) => {
-  const formattedData = data.datasets[0].data.map((value, index) => ({
-    value: value,
-    name: data.labels[index]
-  }));
-  const total = formattedData.reduce((sum, curr) => sum + curr.value, 0);
+  console.log('PieChartHist received data:', data);
+
   const option = {
     title: {
-      text: 'Percentage of Vehicles by Type',left: 'center',
+      text: 'Percentage of Vehicles by Type',
+      left: 'center',
       top: 0,
       textStyle: {
         color: 'white',
@@ -424,14 +451,6 @@ const PieChartHist = ({ data }) => {
         color: 'white',
         fontSize: 10
       },
-      formatter: function (name) {
-        const item = formattedData.find(item => item.name === name);
-        if (item) {
-          const percentage = ((item.value / total) * 100).toFixed(2);
-          return `${name}: ${percentage}%`;
-        }
-        return name;
-      }
     },
     series: [
       {
@@ -439,7 +458,10 @@ const PieChartHist = ({ data }) => {
         type: 'pie',
         radius: ['30%', '70%'],
         center: ['50%', '50%'],
-        data: formattedData,
+        data: data.labels.map((label, index) => ({
+          value: data.datasets[0].data[index],
+          name: label
+        })),
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -461,21 +483,10 @@ const PieChartHist = ({ data }) => {
 };
 
 const StackedBarHist = ({ data, dataType }) => {
+  console.log('StackedBarHist received data:', data);
+
   const lanes = Object.keys(data);
-  const xAxisData = (() => {
-    switch(dataType) {
-      case 'per-day':
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-      case 'per-week':
-        return Array.from({length: 52}, (_, i) => `Week ${i + 1}`);
-      case 'per-month':
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-      case 'per-year':
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      default:
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-    }
-  })();
+  const xAxisData = Object.keys(data[lanes[0]]);
 
   const series = lanes.map(lane => ({
     name: `Lane ${lane}`,
@@ -527,9 +538,8 @@ const StackedBarHist = ({ data, dataType }) => {
       data: xAxisData,
       axisLabel: {
         color: "white",
-        rotate: 45,
-        interval: 0,
-        fontSize: 10,
+        fontSize: 12,
+        rotate: dataType === 'per-day' ? 45 : 0,
       },
     },
     yAxis: {
@@ -552,22 +562,9 @@ const StackedBarHist = ({ data, dataType }) => {
 };
 
 const HeatMapHist = ({ data, dataType }) => {
-  const getXAxisData = () => {
-    switch(dataType) {
-      case 'per-day':
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-      case 'per-week':
-        return Array.from({length: 52}, (_, i) => `Week ${i + 1}`);
-      case 'per-month':
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-      case 'per-year':
-        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      default:
-        return Array.from({length: 30}, (_, i) => `Day ${i + 1}`);
-    }
-  };
+  console.log('HeatMapHist received data:', data);
 
-  const xAxisData = getXAxisData();
+  const xAxisData = data.map(item => item.time);
   const yAxisData = ['Density'];
   const processedData = data.map((item, index) => [index, 0, item.value]);
   
@@ -602,9 +599,9 @@ const HeatMapHist = ({ data, dataType }) => {
       splitArea: { show: true },
       axisLabel: { 
         color: 'white', 
-        rotate: 45, 
-        fontSize: 10,
-        margin: 8
+        fontSize: 12,
+        margin: 8,
+        rotate: dataType === 'per-day' ? 45 : 0,
       },
       axisLine: { lineStyle: { color: 'white' } }
     },
@@ -653,10 +650,110 @@ const HeatMapHist = ({ data, dataType }) => {
   );
 };
 
+const MemoryUsageChart = ({ data }) => {
+  const option = {
+    title: {
+      text: 'ML Model Memory Usage',
+      textStyle: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+      },
+      left: 'center',
+      top: 20,
+    },
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        let tooltip = `Time: ${params[0].axisValue}<br/>`;
+        params.forEach(param => {
+          tooltip += `${param.seriesName}: ${param.value.toFixed(2)} MB<br/>`;
+        });
+        return tooltip;
+      }
+    },
+    legend: {
+      data: ['Peak Memory', 'Average Memory', 'Current Memory'],
+      textStyle: { color: 'white' },
+      bottom: 0,
+    },
+    xAxis: {
+      type: 'category',
+      data: data.map(item => item.time),
+      axisLabel: { color: 'white', rotate: 45, fontSize: 10 },
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Memory (MB)',
+      nameTextStyle: { color: 'white' },
+      axisLabel: { color: 'white' },
+    },
+    series: [
+      {
+        name: 'Peak Memory',
+        data: data.map(item => item.peakMemory),
+        type: 'line',
+        smooth: true,
+      },
+      {
+        name: 'Average Memory',
+        data: data.map(item => item.averageMemory),
+        type: 'line',
+        smooth: true,
+      },
+      {
+        name: 'Current Memory',
+        data: data.map(item => item.currentMemory),
+        type: 'line',
+        smooth: true,
+      }
+    ],
+    color: ['#FF6384', '#36A2EB', '#FFCE56'],
+  };
+
+  return <ReactEcharts option={option} style={{ height: '100%', width: '100%' }} />;
+};
+
+const PerformanceMetricsDisplay = ({ performanceMetrics }) => (
+  <div style={{ color: 'white', fontSize: '14px', marginTop: '10px' }}>
+    <p>Real-time Performance Metrics:</p>
+    <ul>
+      <li>Processing Time per Frame: {performanceMetrics.processingTimePerFrame.toFixed(2)} ms</li>
+      <li>Latency: {performanceMetrics.latency.toFixed(2)} ms</li>
+      <li>Frames Processed per Second: {performanceMetrics.framesPerSecond.toFixed(2)}</li>
+      <li>Model Inference Time: {performanceMetrics.modelInferenceTime.toFixed(2)} ms</li>
+    </ul>
+  </div>
+);
+
 const HistoricalGeneral = () => {
   const [dataType, setDataType] = useState('per-day');
   const [showTable, setShowTable] = useState(false);
   const { data, error, loading } = useHistoricalData(dataType);
+  const [mlMemoryUsage, setMlMemoryUsage] = useState([]);
+  const [performanceMetrics, setPerformanceMetrics] = useState({
+    processingTimePerFrame: 0,
+    latency: 0,
+    framesPerSecond: 0,
+    modelInferenceTime: 0
+  });
+
+  const updateMlMemoryUsage = useCallback(() => {
+    // This is a placeholder. In a real scenario, you would get this data from your ML model.
+    const newMemoryData = {
+      time: new Date().toLocaleTimeString(),
+      peakMemory: Math.random() * 1000,
+      averageMemory: Math.random() * 800,
+      currentMemory: Math.random() * 600
+    };
+
+    setMlMemoryUsage(prevData => [...prevData, newMemoryData].slice(-60)); // Keep last 60 data points
+  }, []);
+
+  useEffect(() => {
+    const memoryUpdateInterval = setInterval(updateMlMemoryUsage, 1000);
+    return () => clearInterval(memoryUpdateInterval);
+  }, [updateMlMemoryUsage]);
 
   const handleDataTypeClick = (type) => {
     setDataType(type);
@@ -676,7 +773,7 @@ const HistoricalGeneral = () => {
         onTableClick={handleTableClick} 
         showTable={showTable}
       />
-      {error && <p className="error">{error}</p>}
+{error && <p className="error">{error}</p>}
       {loading && <p>Loading...</p>}
       {!loading && data.length > 0 && !error && (
         showTable ? (
@@ -686,16 +783,16 @@ const HistoricalGeneral = () => {
             <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
               <ChartBox
                 title="Vehicle Count vs. Time"  
-                description="Depicts vehicle counts over time, highlighting temporal trends. Use mouse wheel to zoom."
+                description="Depicts vehicle counts over time, highlighting temporal trends."
                 Component={StackedAreaHist}
-                data={getStackedAreaData(data, 'TotalVehicles')}
+                data={getStackedAreaData(data, 'TotalVehicles', dataType)}
                 dataType={dataType}
               />
               <ChartBox 
                 title="Average Speed vs. Time"
-                description="Shows average speed over time, useful for identifying traffic flow patterns. Use mouse wheel to zoom."
+                description="Shows average speed over time, useful for identifying traffic flow patterns."
                 Component={StackedAreaHist}
-                data={getStackedAreaData(data, 'AverageSpeed')}
+                data={getStackedAreaData(data, 'AverageSpeed', dataType)}
                 dataType={dataType}
               />
               <ChartBox
@@ -716,10 +813,17 @@ const HistoricalGeneral = () => {
                 title="Traffic Density Heatmap"
                 description="Visualizes vehicle density over time and space, with color intensity reflecting density levels."
                 Component={HeatMapHist} 
-                data={getDensityData(data)}  
+                data={getDensityData(data, dataType)}  
                 dataType={dataType}
               />
+              <ChartBox
+                title="ML Model Memory Usage"
+                description="Shows the memory usage of the ML model over time."
+                Component={MemoryUsageChart}
+                data={mlMemoryUsage}
+              />
             </div>
+            <PerformanceMetricsDisplay performanceMetrics={performanceMetrics} />
           </div>
         )  
       )}

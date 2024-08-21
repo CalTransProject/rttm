@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
-import './styling/trafficstream.css';
+import './styling/trafficstream.css'; // We'll create this CSS file
 
 const API_BASE_URL = 'http://localhost:5001';
 const socket = io(API_BASE_URL);
@@ -16,27 +16,40 @@ function UploadTrafficStream() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState(null);
   const [videoLoading, setVideoLoading] = useState(false);
+  const [memoryUsage, setMemoryUsage] = useState(null);
+
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
   const processedVideoRef = useRef(null);
+
+  const updateMemoryUsage = useCallback(() => {
+    if (window.performance && window.performance.memory) {
+      const { usedJSHeapSize, jsHeapSizeLimit } = window.performance.memory;
+      setMemoryUsage({
+        used: formatBytes(usedJSHeapSize),
+        total: formatBytes(jsHeapSizeLimit),
+        percentage: ((usedJSHeapSize / jsHeapSizeLimit) * 100).toFixed(2)
+      });
+    }
+  }, []);
 
   useEffect(() => {
     socket.on('processing_progress', (data) => {
       setProcessingProgress(data.progress);
     });
 
+    const memoryUpdateInterval = setInterval(updateMemoryUsage, 1000);
+
     return () => {
       socket.off('processing_progress');
+      clearInterval(memoryUpdateInterval);
     };
-  }, []);
+  }, [updateMemoryUsage]);
 
   useEffect(() => {
     if (previewUrl && videoRef.current) {
       videoRef.current.src = previewUrl;
     }
-  }, [previewUrl]);
-
-  useEffect(() => {
     return () => {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
@@ -46,16 +59,14 @@ function UploadTrafficStream() {
 
   const handleStreamFileUpload = (event) => {
     const file = event.target.files[0];
-    setStreamFile(file);
-    setStreamUrl('');
-    setError(null);
-    setProcessedVideoUrl(null);
-    setUploadProgress(0);
-    setProcessingProgress(0);
-    
     if (file && file.type.startsWith('video/')) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
+      setStreamFile(file);
+      setStreamUrl('');
+      setError(null);
+      setProcessedVideoUrl(null);
+      setUploadProgress(0);
+      setProcessingProgress(0);
+      setPreviewUrl(URL.createObjectURL(file));
     } else if (file) {
       setError('Please select a valid video file.');
       setPreviewUrl(null);
@@ -112,7 +123,6 @@ function UploadTrafficStream() {
       } else {
         throw new Error('Please provide a video file or URL.');
       }
-      console.log('Server response:', response);
       
       const videoUrl = `${API_BASE_URL}${response.data.processed_video_url}`;
       const videoExists = await checkVideoExists(response.data.processed_video_url);
@@ -123,18 +133,7 @@ function UploadTrafficStream() {
       setProcessedVideoUrl(videoUrl);
     } catch (error) {
       console.error('Error processing video:', error);
-      if (error.response) {
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-        console.error('Response data:', error.response.data);
-        setError(`Server error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-        setError('No response received from server. Please check if the server is running and accessible.');
-      } else {
-        console.error('Error message:', error.message);
-        setError(`Error: ${error.message}`);
-      }
+      setError(error.response?.data?.message || error.message || 'An unknown error occurred');
     } finally {
       setProcessing(false);
     }
@@ -155,35 +154,35 @@ function UploadTrafficStream() {
 
   const handleVideoError = (e) => {
     console.error('Error playing processed video:', e);
-    console.error('Video element:', processedVideoRef.current);
-    console.error('Video source:', processedVideoRef.current?.src);
-    console.error('Video error code:', processedVideoRef.current?.error?.code);
-    console.error('Video error message:', processedVideoRef.current?.error?.message);
-    setError(`Error playing processed video: ${processedVideoRef.current?.error?.message || 'Unknown error'}. Please try again.`);
+    setError(`Error playing processed video: ${e.target.error?.message || 'Unknown error'}. Please try again.`);
+  };
+
+  const formatBytes = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (
-    <div className='upload-container'>
+    <div className="upload-container">
       <h2>Upload Traffic Stream</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="file-input-container">
-          <input 
-            type="file" 
-            onChange={handleStreamFileUpload} 
-            accept="video/*"
-            disabled={processing}
-            ref={fileInputRef}
-          />
-        </div>
-        <div className="url-input-container">
-          <input 
-            type="text" 
-            placeholder="Or enter stream URL" 
-            value={streamUrl} 
-            onChange={handleStreamUrlChange}
-            disabled={processing}
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="upload-form">
+        <input 
+          type="file" 
+          onChange={handleStreamFileUpload} 
+          accept="video/*"
+          disabled={processing}
+          ref={fileInputRef}
+        />
+        <input 
+          type="text" 
+          placeholder="Or enter stream URL" 
+          value={streamUrl} 
+          onChange={handleStreamUrlChange}
+          disabled={processing}
+        />
         <div className="button-container">
           <button type="submit" disabled={processing || (!streamFile && !streamUrl)}>
             {processing ? 'Processing...' : 'Upload and Process Stream'}
@@ -197,15 +196,19 @@ function UploadTrafficStream() {
       {(processing || uploadProgress > 0 || processingProgress > 0) && (
         <div className="progress-container">
           {uploadProgress > 0 && (
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${uploadProgress}%` }}></div>
-              <span className="progress-text">{`Upload: ${uploadProgress}%`}</span>
+            <div>
+              <p>Upload Progress</p>
+              <div className="progress-bar">
+                <div className="progress" style={{width: `${uploadProgress}%`}}></div>
+              </div>
             </div>
           )}
           {processingProgress > 0 && (
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${processingProgress}%` }}></div>
-              <span className="progress-text">{`Processing: ${processingProgress}%`}</span>
+            <div>
+              <p>Processing Progress</p>
+              <div className="progress-bar">
+                <div className="progress" style={{width: `${processingProgress}%`}}></div>
+              </div>
             </div>
           )}
         </div>
@@ -220,7 +223,7 @@ function UploadTrafficStream() {
       {previewUrl && (
         <div className="video-preview">
           <h3>Original Video Preview</h3>
-          <video ref={videoRef} width="320" height="240" controls>
+          <video ref={videoRef} controls>
             Your browser does not support the video tag.
           </video>
         </div>
@@ -231,8 +234,6 @@ function UploadTrafficStream() {
           <h3>Processed Video</h3>
           <video 
             ref={processedVideoRef}
-            width="320" 
-            height="240" 
             controls 
             src={processedVideoUrl}
             onError={handleVideoError}
@@ -242,6 +243,18 @@ function UploadTrafficStream() {
             Your browser does not support the video tag.
           </video>
           {videoLoading && <p>Loading processed video...</p>}
+        </div>
+      )}
+
+      {memoryUsage && (
+        <div className="memory-usage">
+          <h3>Memory Usage</h3>
+          <p>Used: {memoryUsage.used}</p>
+          <p>Total: {memoryUsage.total}</p>
+          <p>Percentage: {memoryUsage.percentage}%</p>
+          <div className="progress-bar">
+            <div className="progress" style={{width: `${memoryUsage.percentage}%`}}></div>
+          </div>
         </div>
       )}
     </div>
