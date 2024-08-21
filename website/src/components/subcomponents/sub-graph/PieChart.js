@@ -1,59 +1,53 @@
-import ReactEcharts from "echarts-for-react"; 
-import initialPercentageData from "./PieChartData";
-import React, { useState, useEffect } from "react";
-import mockPercentageData from "./PieChartDataDy";
-// import { color } from "echarts";
+import React from "react";
+import ReactEcharts from "echarts-for-react";
 
-const PieChart = () =>{
-  const [percentageData, setPercentageData] = useState(initialPercentageData);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newData = mockPercentageData(percentageData);
-      setPercentageData([...newData]);
-    },1000);
-    return () => clearInterval(interval);
-  }, [percentageData]);
-
+const PieChart = ({ data }) => {
   const option = {
     title: {
-      text: 'Percentage of vehicles',
+      text: 'Current Vehicle and Pedestrian Distribution',
       left: 'center',
-      textStyle:{
+      textStyle: {
         color: 'white'
       }
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{b}: {d}%'
+      formatter: '{b}: {c} ({d}%)'
     },
     legend: {
       orient: 'vertical',
       left: 'left',
-      textStyle:{
+      textStyle: {
         color: 'white'
       }
     },
     series: [
       {
-        name: 'Vehicle Type',
+        name: 'Type',
         type: 'pie',
         radius: '50%',
-        data: percentageData,
-          //name: percentageData.labels[index]),
-        label: {
-          formatter: '{b}: {d}%',
-          color: "white",
-          borderWidth: 0,
+        data: [
+          { value: data.car, name: 'Car' },
+          { value: data.SUV, name: 'SUV' },
+          { value: data.pickup, name: 'Pickup' },
+          { value: data.truck, name: 'Truck' },
+          { value: data.van, name: 'Van' },
+          { value: data.bus, name: 'Bus' },
+          { value: data.motorcycle, name: 'Motorcycle' },
+          { value: data.pedestrian, name: 'Pedestrian' }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
         }
       }
     ]
   };
-  const chartStyle = {
-    height: '225px', // Set the desired height
-    width: '100%',   // Set the desired width
-  };
 
-  return <ReactEcharts option={option} style={chartStyle} />;
-} 
+  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
+};
+
 export default PieChart;

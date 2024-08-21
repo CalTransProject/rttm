@@ -1,99 +1,61 @@
-import ReactEcharts from "echarts-for-react"; 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import ReactEcharts from "echarts-for-react";
 
-const Density = () => {
-  const [data, setData] = useState([]);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newData = Math.floor(Math.random() * 10) + 1;
-      setData(data => {
-        const updatedData = [...data, newData];
-        if (updatedData.length > 60) {
-          updatedData.shift();
-        }
-        return updatedData;
-      });
-    }, 1000);
-  
-    return () => clearInterval(interval);
-  }, []);
-
+const Density = ({ data }) => {
   const option = {
     title: {
-      text: 'Density Chart',
+      text: 'Vehicle and Pedestrian Density Over Time',
+      textStyle: {
+        color: 'white'
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      }
+    },
+    legend: {
+      data: ['Vehicles', 'Pedestrians'],
       textStyle: {
         color: 'white'
       }
     },
     xAxis: {
-      type: 'value',
-      name: 'Time (Seconds)',
-      nameLocation:'middle',
-      nameGap:30,
-      nameTextStyle:{
-        fontSize:18,
-        fontWeight:'bold'
-      },
-      min: 0,
-      max: 60,
-      axisLine: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisTick: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
+      type: 'category',
+      boundaryGap: false,
+      data: data.map(item => item.time),
       axisLabel: {
-        textStyle: {
-          color: 'white'
-        }
-      },
+        color: 'white'
+      }
     },
     yAxis: {
-      name: 'Density',
       type: 'value',
-      nameLocation:'middle',
-      nameGap:30,
-      nameTextStyle:{
-        fontSize:18,
-        fontWeight:'bold'
-      },
-      axisLine: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisTick: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
+      name: 'Count per km',
       axisLabel: {
-        interval: 1,
-        minInterval: 0,
-        textStyle: {
         color: 'white'
-        }
-    }
+      }
     },
     series: [
-    {
-        data: data.map((d , i) => [i, d]),
-        type: 'line'
-    }
+      {
+        name: 'Vehicles',
+        type: 'line',
+        areaStyle: {},
+        data: data.map(item => item.car + item.SUV + item.pickup + item.truck + item.van + item.bus + item.motorcycle)
+      },
+      {
+        name: 'Pedestrians',
+        type: 'line',
+        areaStyle: {},
+        data: data.map(item => item.pedestrian)
+      }
     ]
-};
-const chartStyle = {
-  height: '225px', // Set the desired height
-  width: '100%',   // Set the desired width
-};
+  };
 
-
-return <ReactEcharts option={option} style={chartStyle} />;
+  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
 };
 
 export default Density;

@@ -1,142 +1,95 @@
+import React from "react";
 import ReactEcharts from "echarts-for-react";
-import React, { useState, useEffect } from "react";
 
-const StackedBar = () => {
-  const [data, setData] = useState({
-    car: [],
-    suv: [],
-    pickup: [],
-    truck: [],
-    sedan: [],
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setData({
-        car: generateRandomValues(),
-        suv: generateRandomValues(),
-        pickup: generateRandomValues(),
-        truck: generateRandomValues(),
-        sedan: generateRandomValues(),
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const generateRandomValues = () => {
-    return [
-      Math.floor(Math.random() * 5),
-      Math.floor(Math.random() * 5),
-      Math.floor(Math.random() * 5),
-      Math.floor(Math.random() * 5),
-      Math.floor(Math.random() * 5),
-      Math.floor(Math.random() * 5),
-    ];
-  };
-
+const StackedBar = ({ data }) => {
+  // Assuming data includes lane information
+  const lanes = ['Lane 1', 'Lane 2', 'Lane 3', 'Lane 4', 'Lane 5', 'Lane 6'];
+  
   const option = {
+    title: {
+      text: 'Vehicle and Pedestrian Distribution by Lane',
+      textStyle: {
+        color: 'white'
+      }
+    },
     tooltip: {
-      trigger: "axis",
+      trigger: 'axis',
       axisPointer: {
-        type: "shadow",
-      },
+        type: 'shadow'
+      }
     },
     legend: {
+      data: ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'],
       textStyle: {
-        color: "#fff",
-      },
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
+        color: 'white'
+      }
     },
     xAxis: {
-      type: "value",
+      type: 'value',
       axisLabel: {
-        color: "white",
-      },
+        color: 'white'
+      }
     },
     yAxis: {
-      type: "category",
-      data: ["Lane 1", "Lane 2", "Lane 3", "Lane 4", "Lane 5", "Lane 6"],
+      type: 'category',
+      data: lanes,
       axisLabel: {
-        color: "white",
-      },
+        color: 'white'
+      }
     },
     series: [
       {
-        name: "Car",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-          color: "#fff",
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: data.car,
+        name: 'Car',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_car`] || 0)
       },
       {
-        name: "SUV",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: data.suv,
+        name: 'SUV',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_SUV`] || 0)
       },
       {
-        name: "Pickup",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: data.pickup,
+        name: 'Pickup',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_pickup`] || 0)
       },
       {
-        name: "Truck",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: data.truck,
+        name: 'Truck',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_truck`] || 0)
       },
       {
-        name: "Sedan",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: data.sedan,
+        name: 'Van',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_van`] || 0)
       },
-    ],
+      {
+        name: 'Bus',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_bus`] || 0)
+      },
+      {
+        name: 'Motorcycle',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_motorcycle`] || 0)
+      },
+      {
+        name: 'Pedestrian',
+        type: 'bar',
+        stack: 'total',
+        data: lanes.map(lane => data[`${lane}_pedestrian`] || 0)
+      }
+    ]
   };
 
-  const chartStyle = {
-    height: "225px",
-    width: "100%",
-  };
-
-  return <ReactEcharts option={option} style={chartStyle} />;
+  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
 };
 
 export default StackedBar;

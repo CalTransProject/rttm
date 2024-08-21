@@ -1,37 +1,63 @@
-//import Chart from "react-apexcharts";
+import React, { useState, useEffect, useRef } from "react";
+import { 
+  MemoizedStackedArea, 
+  MemoizedBar, 
+  MemoizedPieChart, 
+  MemoizedStackedBar, 
+  MemoizedDensity 
+} from "./MemoizedChartComponents";
 
-import React, { useEffect, useRef } from "react";
 import StackedArea from "./subcomponents/sub-graph/StackedArea";
 import Bar from "./subcomponents/sub-graph/Bar";
 import PieChart from "./subcomponents/sub-graph/PieChart";
-import "./subcomponents/sub-graph/charts.css";
-import "./subcomponents/sub-s3-components/videoPlayer.css";
 import StackedBar from "./subcomponents/sub-graph/StackedBar";
 import Density from "./subcomponents/sub-graph/Density";
+import "./subcomponents/sub-graph/charts.css";
+import "./subcomponents/sub-s3-components/videoPlayer.css";
 import "../index.css";
-// testhomepage
+
 const Mainpage = () => {
+  const [vehicleData, setVehicleData] = useState([]);
+  const [currentCounts, setCurrentCounts] = useState({});
   const videoRef = useRef(null);
+
   useEffect(() => {
-    const fetchWebcamStream = async () => {
+    const fetchData = async () => {
       try {
-        const videoElement = videoRef.current;
+        const response = await fetch('http://127.0.0.1:5000/webcam');
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-        });
-
-        if (videoElement && stream) {
-          videoElement.srcObject = stream;
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value);
+          const parts = chunk.split('\r\n\r\n');
+          
+          for (let i = 0; i < parts.length; i++) {
+            if (parts[i].startsWith('Content-Type: application/json')) {
+              const jsonData = JSON.parse(parts[i + 1]);
+              console.log("Received data:", jsonData);  // Add this line for logging
+              setCurrentCounts(jsonData.counts);
+              setVehicleData(prevData => {
+                const newData = [...prevData, { time: jsonData.timestamp, ...jsonData.counts }];
+                return newData.slice(-60);  // Keep only the last 60 data points
+              });
+            }
+          }
         }
       } catch (error) {
-        console.error("Error accessing webcam stream:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchWebcamStream();
+    fetchData();
   }, []);
-  // Page Layout
+
+  console.log("Current vehicleData:", vehicleData);  // Add this line for logging
+  console.log("Current currentCounts:", currentCounts);  // Add this line for logging
+
   return (
     <section>
       <div className="container-fluid">
@@ -48,11 +74,10 @@ const Mainpage = () => {
                 preload="auto"
                 width="100%"
                 height="100%"
-                poster="YOUR_CAMERA1_POSTER.jpg" // Change to your Camera 1 poster image path
+                poster="YOUR_CAMERA1_POSTER.jpg"
                 data-setup="{}"
               >
-                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />{" "}
-                {/* Change to your Camera 1 video path */}
+                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
               </video>
             </div>
           </div>
@@ -68,39 +93,38 @@ const Mainpage = () => {
           </div>
         </div>
         <div className="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
-          {/* Other content */}
           <div className="col">
             <div className="box">
               <div className="chart">
-                <StackedArea />
+                <MemoizedStackedArea data={vehicleData} />
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <Bar />
+                <MemoizedBar data={vehicleData} />
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <PieChart />
+                <MemoizedPieChart data={currentCounts} />
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <StackedBar />
+                <MemoizedStackedBar data={vehicleData} />
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <Density />
+                <MemoizedDensity data={vehicleData} />
               </div>
             </div>
           </div>
