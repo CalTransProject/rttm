@@ -1,149 +1,73 @@
-import ReactEcharts from "echarts-for-react"; 
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
+import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const StackedBar = () => {
-    const [data, setData] = useState({
-        car: [],
-        suv:[],
-        pickup: [],
-        truck: [],
-        sedan: [],
-    });
+const StackedBar = React.memo(({ data }) => {
+  console.log("StackedBar received data:", data);
+  const option = useMemo(() => ({
+    title: {
+      text: 'Vehicle and Pedestrian Count Over Time (Stacked)',
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' }
+    },
+    legend: {
+      data: ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'],
+      textStyle: { color: "#fff" },
+      top: 25
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '10%',
+      top: '20%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: data.map(item => item.time),
+      axisLabel: {
+        color: 'white',
+        rotate: 45,
+        interval: Math.floor(data.length / 10)
+      }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: 'white' },
+    },
+    series: [
+      'Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'
+    ].map(vehicle => ({
+      name: vehicle,
+      type: 'bar',
+      stack: 'total',
+      emphasis: { focus: 'series' },
+      data: data.map(item => item[vehicle.toLowerCase()])
+    }))
+  }), [data]);
 
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setData({
-            car: generateRandomValues(),
-            suv: generateRandomValues(),
-            pickup: generateRandomValues(),
-            truck: generateRandomValues(),
-            sedan: generateRandomValues(),
-        });
-      }, 1000);
-  
-      return () => clearInterval(interval);
-    }, []);
-    const generateRandomValues = () => {
-        return [      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5),      Math.floor(Math.random() * 5)    ];
-      };
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
 
+StackedBar.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
+};
 
+StackedBar.defaultProps = { data: [] };
 
-    const option = {
-        tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            // Use axis to trigger tooltip
-            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
-        },
-        },
-        legend: {      
-            textStyle: {
-                color: "#fff"
-          }
-        },
-        grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-        },
-        xAxis: {
-        type: 'value',
-        axisLabel: {
-            color: 'white' // add this line to set the color of the y-axis labels to white
-          }
-        },
-        yAxis: {
-        type: 'category',
-        data: ['Lane 1', 'Lane 2', 'Lane 3', 'Lane 4', 'Lane 5', 'Lane 6'],
-        axisLabel: {
-            color: 'white' // add this line to set the color of the y-axis labels to white
-          }
-        },
-        series: [
-        {
-            name: 'Car',
-            type: 'bar',
-            stack: 'total',
-            label: {
-            show: true,  
-            color: '#fff',
-            },
-            textStyle: {
-                color: 'white',
-            },
-            emphasis: {
-            focus: 'series'
-            },
-            data: data.car
-        },
-        {
-            name: 'SUV',
-            type: 'bar',
-            stack: 'total',
-            label: {
-            show: true
-            },
-            textStyle: {
-                color: 'white'
-            },
-            emphasis: {
-            focus: 'series'
-            },
-            data: data.suv
-        },
-        {
-            name: 'Pickup',
-            type: 'bar',
-            stack: 'total',
-            label: {
-            show: true
-            },
-            textStyle: {
-                color: 'white',
-            },
-            emphasis: {
-            focus: 'series'
-            },
-            data: data.pickup
-        },
-        {
-            name: 'Truck',
-            type: 'bar',
-            stack: 'total',
-            label: {
-            show: true
-            },
-            textStyle: {
-                color: 'white',
-            },
-            emphasis: {
-            focus: 'series'
-            },
-            data: data.truck
-        },
-        {
-            name: 'Sedan',
-            type: 'bar',
-            stack: 'total',
-            label: {
-            show: true
-            },
-            textStyle: {
-                color: 'white',
-            },
-            emphasis: {
-            focus: 'series'
-            },
-            data: data.sedan
-        }
-        ]
-    };
-    const chartStyle = {
-        height: '225px', // Set the desired height
-        width: '100%',   // Set the desired width
-      };
-      return <ReactEcharts option={option} style={chartStyle} />;
-}
 export default StackedBar;

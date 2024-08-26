@@ -1,50 +1,32 @@
 .footer {
-    position: relative;
-    height: 100px;
-    clear:both;
-    padding-top:20px;
-}
-
-button{
-    color: black;
-    text-decoration: none;
-    cursor: auto;
-    font:500;
-    
-    
+  background-color: #565264; /* Same as your requirement */
+  text-align: center;
+  padding: 20px 0;
+  position: relative; /* Changed from absolute to relative if you don't want it always at the bottom */
+  width: 100%;
 }
 
 .footer-link {
-  color: black;
+  color: white;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
-  white-space: nowrap;
-  width: 100%;
-  margin-right: 20px; 
-
-  position: sticky  
+  padding: 0 10px;
+  font-size: 16px;
 }
 
 .footer-link:hover {
-    color: rgb(255, 15, 15);
-  }
+  color: rgb(255, 15, 15); /* Red on hover */
+}
 
-.footer-all {
-  width: 100%;
-  margin: 0;
-  padding: 0;
+.footer-content {
   display: flex;
-  flex-direction: row;
-  justify-content: center; /* Center the elements horizontally */
-  align-items: center;
+  justify-content: center; /* Center the links horizontally */
+  align-items: center; /* Center the links vertically */
+  flex-wrap: wrap; /* Ensures responsiveness */
 }
 
 .footer-line {
-height: .8px;
-background-color: black;
-width: calc(100% - 5%);
-margin: 0 auto;
-margin-top: 20px;
+  height: 1px;
+  background-color: white; /* White line for contrast */
+  width: 30%; /* Adjust the width as needed */
+  margin: 10px auto; /* Center the line and provide spacing */
 }
-

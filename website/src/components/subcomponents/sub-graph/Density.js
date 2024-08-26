@@ -1,99 +1,83 @@
-import ReactEcharts from "echarts-for-react"; 
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
+import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const Density = () => {
-  const [data, setData] = useState([]);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newData = Math.floor(Math.random() * 10) + 1;
-      setData(data => {
-        const updatedData = [...data, newData];
-        if (updatedData.length > 60) {
-          updatedData.shift();
+const Density = React.memo(({ data }) => {
+  console.log("Density received data:", data);
+  const option = useMemo(() => {
+    const categories = ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'];
+    const seriesData = categories.map(category => ({
+      name: category,
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      areaStyle: {},
+      data: data.map(item => item[category.toLowerCase()])
+    }));
+    return {
+      title: {
+        text: 'Vehicle and Pedestrian Density Over Time',
+        textStyle: { color: 'white' },
+        top: 0,
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          label: { backgroundColor: '#6a7985' }
         }
-        return updatedData;
-      });
-    }, 1000);
-  
-    return () => clearInterval(interval);
-  }, []);
+      },
+      legend: {
+        data: categories,
+        textStyle: { color: "#fff" },
+        top: 25
+      },
+      toolbox: {
+        feature: { saveAsImage: {} }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        top: '20%',
+        containLabel: true
+      },
+      xAxis: [{
+        type: 'category',
+        boundaryGap: false,
+        data: data.map(item => item.time),
+        axisLabel: {
+          color: 'white',
+          rotate: 45,
+          interval: Math.floor(data.length / 10)
+        }
+      }],
+      yAxis: [{
+        type: 'value',
+        axisLabel: { color: 'white' },
+      }],
+      series: seriesData
+    };
+  }, [data]);
 
-  const option = {
-    title: {
-      text: 'Density Chart',
-      textStyle: {
-        color: 'white'
-      }
-    },
-    xAxis: {
-      type: 'value',
-      name: 'Time (Seconds)',
-      nameLocation:'middle',
-      nameGap:30,
-      nameTextStyle:{
-        fontSize:18,
-        fontWeight:'bold'
-      },
-      min: 0,
-      max: 60,
-      axisLine: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisTick: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisLabel: {
-        textStyle: {
-          color: 'white'
-        }
-      },
-    },
-    yAxis: {
-      name: 'Density',
-      type: 'value',
-      nameLocation:'middle',
-      nameGap:30,
-      nameTextStyle:{
-        fontSize:18,
-        fontWeight:'bold'
-      },
-      axisLine: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisTick: {
-        lineStyle: {
-          color: 'white'
-        }
-      },
-      axisLabel: {
-        interval: 1,
-        minInterval: 0,
-        textStyle: {
-        color: 'white'
-        }
-    }
-    },
-    series: [
-    {
-        data: data.map((d , i) => [i, d]),
-        type: 'line'
-    }
-    ]
-};
-const chartStyle = {
-  height: '225px', // Set the desired height
-  width: '100%',   // Set the desired width
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+Density.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
 };
 
-
-return <ReactEcharts option={option} style={chartStyle} />;
-};
+Density.defaultProps = { data: [] };
 
 export default Density;

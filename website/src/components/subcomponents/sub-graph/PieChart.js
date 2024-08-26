@@ -1,59 +1,74 @@
-import ReactEcharts from "echarts-for-react"; 
-import initialPercentageData from "./PieChartData";
-import React, { useState, useEffect } from "react";
-import mockPercentageData from "./PieChartDataDy";
-// import { color } from "echarts";
+import React, { useMemo } from "react";
+import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const PieChart = () =>{
-  const [percentageData, setPercentageData] = useState(initialPercentageData);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newData = mockPercentageData(percentageData);
-      setPercentageData([...newData]);
-    },1000);
-    return () => clearInterval(interval);
-  }, [percentageData]);
-
-  const option = {
+const PieChart = React.memo(({ data }) => {
+  console.log("PieChart received data:", data);
+  const option = useMemo(() => ({
     title: {
-      text: 'Percentage of vehicles',
-      left: 'center',
-      textStyle:{
-        color: 'white'
-      }
+      text: 'Current Vehicle and Pedestrian Distribution',
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{b}: {d}%'
+      formatter: '{a} <br/>{b}: {c} ({d}%)'
     },
     legend: {
       orient: 'vertical',
-      left: 'left',
-      textStyle:{
-        color: 'white'
-      }
+      left: 10,
+      top: 'center',
+      data: ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'],
+      textStyle: { color: "#fff" },
     },
-    series: [
-      {
-        name: 'Vehicle Type',
-        type: 'pie',
-        radius: '50%',
-        data: percentageData,
-          //name: percentageData.labels[index]),
+    series: [{
+      name: 'Distribution',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center: ['60%', '50%'],
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
         label: {
-          formatter: '{b}: {d}%',
-          color: "white",
-          borderWidth: 0,
+          show: true,
+          fontSize: '18',
+          fontWeight: 'bold'
         }
-      }
-    ]
-  };
-  const chartStyle = {
-    height: '225px', // Set the desired height
-    width: '100%',   // Set the desired width
-  };
+      },
+      labelLine: { show: false },
+      data: [
+        { value: data.car || 0, name: 'Car' },
+        { value: data.SUV || 0, name: 'SUV' },
+        { value: data.pickup || 0, name: 'Pickup' },
+        { value: data.truck || 0, name: 'Truck' },
+        { value: data.van || 0, name: 'Van' },
+        { value: data.bus || 0, name: 'Bus' },
+        { value: data.motorcycle || 0, name: 'Motorcycle' },
+        { value: data.pedestrian || 0, name: 'Pedestrian' }
+      ]
+    }]
+  }), [data]);
 
-  return <ReactEcharts option={option} style={chartStyle} />;
-} 
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+PieChart.propTypes = {
+  data: PropTypes.shape({
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  }).isRequired,
+};
+
+PieChart.defaultProps = { data: {} };
+
 export default PieChart;

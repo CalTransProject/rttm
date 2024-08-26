@@ -2,6 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  
+}
+
+.success{
+  color:green;
 }
 
 .NewCamera h1 {
@@ -11,12 +16,13 @@
 form {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 70%;
+  max-height: 90vh;
+  width: 100%;
   color: rgb(255, 255, 255);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 5px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  overflow-y: scroll;
 }
 
 label {
@@ -31,18 +37,18 @@ textarea {
   border: none;
   border-radius: 5px;
   margin-bottom: 20px;
-  font-size: 16px;
+  font-size: 12px;
   width: 100%;
   box-sizing: border-box;
 }
 
-input[name="address"],
+/* input[name="address"],
 input[name="city"],
 input[name="state"],
 input[name="country"],
 input[name="postcode"] {
   width: 100%;
-}
+} */
 
 button {
   padding: 10px 20px;
@@ -56,6 +62,15 @@ button {
 
 button:hover {
   background-color: #ff00005b;
+}
+
+.error{
+  color:red;
+}
+
+.submit-button{
+  height:55px;
+  width:100%;
 }
 
 @media only screen and (min-width: 768px) {

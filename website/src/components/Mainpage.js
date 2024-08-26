@@ -1,16 +1,84 @@
-//import Chart from "react-apexcharts";
-import React from "react";
-import StackedArea from './subcomponents/sub-graph/StackedArea';
-import Bar from './subcomponents/sub-graph/Bar';
-import PieChart from './subcomponents/sub-graph/PieChart';
-import './subcomponents/sub-graph/charts.css';
-import './subcomponents/sub-s3-components/videoPlayer.css';
-import StackedBar from "./subcomponents/sub-graph/StackedBar";
-import Density from "./subcomponents/sub-graph/Density";
-import '../index.css';
-// testhomepage
+import React, { useReducer, useEffect, useRef, useCallback } from "react";
+import { MemoizedStackedArea, MemoizedBar, MemoizedPieChart, MemoizedStackedBar, MemoizedDensity } from "./MemoizedChartComponents";
+import ErrorBoundary from "./ErrorBoundary";
+import { io } from "socket.io-client";
+import { debounce } from 'lodash';
+import "./subcomponents/sub-graph/charts.css";
+import "./subcomponents/sub-s3-components/videoPlayer.css";
+import "../index.css";
+
+const initialState = {
+  vehicleData: [],
+  currentCounts: {},
+  frameUrl: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'UPDATE_DATA':
+      return {
+        ...state,
+        vehicleData: [...state.vehicleData, action.payload].slice(-60),
+        currentCounts: action.payload.counts,
+      };
+    case 'UPDATE_FRAME':
+      return {
+        ...state,
+        frameUrl: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
+const transformData = (rawData) => {
+  return rawData.map(item => ({
+    time: item.timestamp,
+    ...item.counts
+  }));
+};
+
 const Mainpage = () => {
-  // Page Layout
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const socketRef = useRef(null);
+
+  const debouncedDispatch = useCallback(
+    debounce((action) => dispatch(action), 100),
+    []
+  );
+
+  useEffect(() => {
+    socketRef.current = io('http://localhost:5000');
+
+    socketRef.current.on('connect', () => {
+      console.log('Connected to WebSocket');
+    });
+
+    socketRef.current.on('update', (data) => {
+      console.log('Received data:', data);
+      const parsedData = JSON.parse(data);
+      debouncedDispatch({ type: 'UPDATE_DATA', payload: parsedData });
+    });
+
+    socketRef.current.on('frame', (frameData) => {
+      const blob = new Blob([frameData], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      dispatch({ type: 'UPDATE_FRAME', payload: url });
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Disconnected from WebSocket');
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [debouncedDispatch]);
+
+  const transformedData = transformData(state.vehicleData);
+
+  console.log('Transformed data:', transformedData);  // Add this line for debugging
+
   return (
     <section>
       <div className="container-fluid">
@@ -18,7 +86,7 @@ const Mainpage = () => {
           <div className="col">
             <h4 className="camText gradient-label">Camera 1</h4>
             <div className="video-box">
-              <video
+              {/* <video
                 id="camera1-video"
                 className="video-js"
                 autoPlay
@@ -27,67 +95,78 @@ const Mainpage = () => {
                 preload="auto"
                 width="100%"
                 height="100%"
-                poster="YOUR_CAMERA1_POSTER.jpg" // Change to your Camera 1 poster image path
-                data-setup="{}"
-              >
-                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" /> {/* Change to your Camera 1 video path */}
-              </video>
-            </div>
-          </div>
-          <div className="col">
-            <h4 className="camText gradient-label">Camera 2</h4>
-            <div className="video-box">
-              <video
-                id="camera2-video"
-                className="video-js"
-                autoPlay
-                muted
-                loop
-                preload="auto"
-                width="100%"
-                height="100%"
-                poster="MY_VIDEO_POSTER.jpg"
+                poster="YOUR_CAMERA1_POSTER.jpg"
                 data-setup="{}"
               >
                 <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
-              </video>
+              </video> */}
+            </div>
+          </div>
+          <div className="col">
+            <h4 className="camText gradient-label">Camera 2 (2D)</h4>
+            <div className="video-box" style={{ position: 'relative', overflow: 'hidden' }}>
+              {state.frameUrl && (
+                <img
+                  src={state.frameUrl}
+                  alt="webcam"
+                  className="webcam-image"
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
         <div className="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
-          {/* Other content */}
           <div className="col">
             <div className="box">
               <div className="chart">
-                <StackedArea />
+                <ErrorBoundary>
+                  <MemoizedStackedArea data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <Bar />
+                <ErrorBoundary>
+                  <MemoizedBar data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <PieChart />
+                <ErrorBoundary>
+                  <MemoizedPieChart data={state.currentCounts} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <StackedBar />
+                <ErrorBoundary>
+                  <MemoizedStackedBar data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <Density />
+                <ErrorBoundary>
+                  <MemoizedDensity data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>

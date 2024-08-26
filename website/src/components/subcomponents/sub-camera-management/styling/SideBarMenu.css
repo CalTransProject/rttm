@@ -1,3 +1,4 @@
+/* Styling for sidebar container */
 .sidebar-container {
   display: flex;
   height: 100vh;
@@ -5,6 +6,13 @@
   margin-left: -15px;
   margin-bottom: -9px;
 }
+
+/* Additional styling for the sidebar itself to include a border */
+.CDBSidebar {
+  border-right: 10px solid white; 
+}
+
+/* Styling for links without decoration */
 .text-decoration-none {
   color: rgb(255, 0, 0);
   padding-right: 10px;
@@ -22,10 +30,35 @@
   color: red;
 }
 
+/* Footer styling corrected */
 .sidebar-footer {
-  padding: "20px 5px";
+  padding: 20px 5px;
 }
+
+/* Styling for the bars icon */
 .fa-fa-bars-fa-large {
   color: red;
 }
 
+/* Styling for sidebar content */
+.sidebar-content {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* Removed the .border-sidebar class as it is now redundant with the .CDBSidebar rule above */
+/* Ensuring link text color changes on hover */
+.text-decoration-none:hover,
+.menu-item:hover {
+  color: red; /* This will apply red color on hover to both classes */
+}
+
+/* Style for when the link is active */
+.activeClicked {
+  color: white; /* Or any other color you want for the active state */
+}
+
+/* Hover style for the active state to show a different color */
+.activeClicked:hover {
+  color: rgb(255, 95, 95); /* This will apply the special hover color */
+}

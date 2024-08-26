@@ -1,6 +1,7 @@
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./header.css";
-import { NavLink } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -9,24 +10,24 @@ const Header = () => {
         <div className="container-fluid">
           <h1 className="logo col-2">RTTM</h1>
           <div className="navbar-nav col-8 justify-content-center">
-            <NavLink exact to="/" className="nav-link" activeClassName="active">
+            <NavLink to="/" className="nav-link">
               Home
             </NavLink>
-            <NavLink exact to="/camera-management/general" className="nav-link" activeClassName="active">
+            <NavLink to="/camera-management/general" className="nav-link">
               Camera Management
             </NavLink>
-            <NavLink exact to="/historical-data/general" className="nav-link" activeClassName="active">
+            <NavLink to="/historical-data/general" className="nav-link">
               Historical Data
             </NavLink>
-            <NavLink exact to="/technologies" className="nav-link" activeClassName="active">
-              Technologies
-            </NavLink>
-            <NavLink exact to="/about-us" className="nav-link" activeClassName="active">
+            <NavLink to="/about-us" className="nav-link">
               About Us
+            </NavLink>
+            <NavLink to="/research-and-resources" className="nav-link">
+              Research And Resources
             </NavLink>
           </div>
           <div className="col-2 text-right">
-            <NavLink exact to="/my-account" className="btn btn-primary">
+            <NavLink to="/my-account" className="btn btn-primary">
               My Account
             </NavLink>
           </div>

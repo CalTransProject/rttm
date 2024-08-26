@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "file-saver": "^2.0.5",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.3",
+    "postgresql": "0.0.1",
+    "recharts": "^2.12.7",
+    "xlsx": "^0.18.5"
+  }
+}

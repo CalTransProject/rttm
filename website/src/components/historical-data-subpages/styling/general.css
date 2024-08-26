@@ -1,39 +1,105 @@
-h1{
+/* General Heading Styles */
+h1 {
     color: aliceblue;
-}
-.tableWrapper {
-    width: 100%;
-    height: 500px; /* or any other fixed height */
-    overflow: auto;
-  }
-.tableHead{
-    font-size: medium;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.tableCell{
-    font-size: medium;
-    
-}
-.file-select {
-    width: 400px; /* Set the desired width */
+    text-align: center; /* Center the title text */
+    margin-top: 20px; /* Add space above the title */
+    margin-bottom: 20px; /* Add space below the title */
   }
   
-label{
-    color: aliceblue;
-}
-.GeneralSection{
+  /* General Section Styles */
+  .GeneralSection {
     padding: 20pt;
-}
-.averageSpeedTable{
-    width: 800pt;
-    max-height: 100pt;
-    overflow-x: scroll;
-}
-.fileInput{
-    background-color: snow;
-}
-.output {
-    overflow: scroll;
+    height: 100vh;
+    overflow-y: auto; /* Allows vertical scrolling within the General Section if content overflows */
+  }
+  
+  /* Table Styles */
+  .tableWrapper {
+    width: 100%;
+    max-height: 500px; /* Allows vertical scrolling */
+    overflow: auto;
+  }
+  
+  .tableHead,
+  .tableCell {
+    font-size: medium;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .averageSpeedTable {
+    width: 100%;
+    max-height: 200pt;
+    overflow-x: auto; /* Horizontal scrolling only when needed */
+  }
+  
+  /* Input and Label Styles */
+  .file-select,
+  .fileInput {
+    width: 400px; /* Standard width for file input */
+    background-color: snow; /* Background color for file input */
+  }
+  
+  label {
+    color: aliceblue;
+  }
+  
+  /* Output Styles */
+  .output {
+    overflow: auto; /* Only adds scrolling when necessary */
     margin: 1rem 0;
-    height: 200px;
+    max-height: 200px;
+  }
+  
+  /* Chart Container Styles */
+  .chart-container {
+    height: 300px; /* Set height for chart containers */
+    overflow-y: auto; /* Enable vertical scrolling within chart containers */
+  }
+  
+  /* Box Styles */
+  .box {
+    border: 1px solid #ccc; /* Standard border style */
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 4px; /* Rounded corners for aesthetic */
+  }
+  
+  /* Small Text Styles for Description Below Charts */
+  .small-text {
+    font-size: 0.8rem; /* Smaller font size */
+    text-align: center; /* Center alignment */
+    margin-top: 10px; /* Space above the text for clear separation */
+  }
+  
+  .button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  /* Color-coded buttons for data types */
+  .button-per-second { background-color: #4CAF50; }
+  .button-per-minute { background-color: #2196F3; }
+  .button-per-5-minute { background-color: #FFC107; color: black; } /* Adjust text color for better contrast */
+  .button-per-hour { background-color: #F44336; }
+  
+  /* Style for the table toggle button */
+  .button-table {
+    background-color: #555; /* Dark grey background */
+    color: #fff; /* White text for visibility */
+  }
+  
+  .button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Active button style */
+  .button-active {
+    background-color: #888;
+    cursor: default;
   }
