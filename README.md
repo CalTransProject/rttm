@@ -38,19 +38,87 @@ This guide is designed to help developers quickly set up their project environme
 - PostgreSQL
 - Command line access
 
-##### Database Setup
+## Database Setup
 
-1. **Start PostgreSQL**: Ensure your PostgreSQL server is running. If not, start it using your system's service management tool.
+This section provides a detailed guide for setting up the PostgreSQL database for the RTTM system.
 
-2. **Connect to PostgreSQL**: Open your terminal and connect to your PostgreSQL database using the command:
+### Prerequisites
+- PostgreSQL 14.12 or higher (installed via Homebrew on macOS)
+- Command line access
+- User account with sudo privileges
 
-psql -U jim2 -h localhost -d RTTM
+### Steps
 
-Enter the password for `jim2` when prompted.
+1. **Start PostgreSQL**
+   Ensure your PostgreSQL server is running. On macOS with Homebrew installation, use:
+   ```
+   brew services start postgresql@14
+   ```
+   If it's already running and you need to restart:
+   ```
+   brew services restart postgresql@14
+   ```
 
-3. **Initialize Database**: At the PostgreSQL prompt, initialize the database schema with:
+2. **Create the RTTM Database**
+   Connect to PostgreSQL as the superuser. On macOS, this is typically your system username:
+   ```
+   psql postgres
+   ```
+   
+   Once connected, create the RTTM database:
+   ```sql
+   CREATE DATABASE "RTTM";
+   ```
 
-\i website/server/init-db.sql
+3. **Create and Configure User**
+   Still in the PostgreSQL prompt, create the 'jim2' user if it doesn't exist and grant necessary privileges:
+   ```sql
+   CREATE USER jim2 WITH PASSWORD 'rttm';
+   ALTER USER jim2 WITH CREATEDB;
+   GRANT ALL PRIVILEGES ON DATABASE "RTTM" TO jim2;
+   ```
+
+4. **Connect to the RTTM Database**
+   Exit the current session and connect to the RTTM database as jim2:
+   ```
+   \q
+   psql -U jim2 -h localhost -d RTTM
+   ```
+   Enter the password ('rttm') when prompted.
+
+5. **Initialize Database Schema**
+   Once connected to the RTTM database, run the initialization script:
+   ```
+   \i website/scriptsServer/init-db.sql
+   ```
+   Note: Ensure you're in the correct directory where the init-db.sql file is located, or provide the full path to the file.
+
+6. **Verify Database Creation**
+   After running the initialization script, you can verify the table creation:
+   ```
+   \dt
+   ```
+   This should display a list of tables including:
+   - FramePrediction
+   - HistoricalData
+   - HistoricalData_LaneVehicleCount
+   - HistoricalData_VehicleTypeCount
+   - Lane
+   - ModifiedVehicle
+   - Real_Time_Traffic_Data
+   - User
+   - VehicleDetectionEvent
+   - VehicleHistory
+   - VehicleType
+   - Weather
+
+### Troubleshooting
+
+- If you encounter permission issues, ensure the 'jim2' user has been created and granted appropriate permissions.
+- If the init-db.sql file is not found, check your current directory and file path.
+- For any connection issues, verify that PostgreSQL is running and that you're using the correct host, port, and credentials.
+
+Remember to keep your database credentials secure and never commit them to version control.
 
 ##### Environment Preparation
 
