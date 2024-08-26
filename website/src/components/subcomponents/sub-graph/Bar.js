@@ -1,56 +1,66 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const Bar = ({ data }) => {
-  // Calculate average speed for each vehicle type
-  const averageSpeeds = {
-    car: data.reduce((sum, item) => sum + item.car_speed, 0) / data.length,
-    SUV: data.reduce((sum, item) => sum + item.SUV_speed, 0) / data.length,
-    pickup: data.reduce((sum, item) => sum + item.pickup_speed, 0) / data.length,
-    truck: data.reduce((sum, item) => sum + item.truck_speed, 0) / data.length,
-    sedan: data.reduce((sum, item) => sum + item.sedan_speed, 0) / data.length,
-  };
-
-  const option = {
+const Bar = React.memo(({ data }) => {
+  console.log("Bar received data:", data);
+  
+  const categories = ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'];
+  
+  const option = useMemo(() => ({
     title: {
-      text: 'Average Speed by Vehicle Type',
-      textStyle: {
-        color: 'white'
-      }
+      text: 'Current Vehicle and Pedestrian Count',
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
     },
     tooltip: {
       trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
+      axisPointer: { type: 'shadow' }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      top: '15%',
+      containLabel: true
     },
     xAxis: {
-      type: 'category',
-      data: ['Car', 'SUV', 'Pickup', 'Truck', 'Sedan'],
-      axisLabel: {
-        color: 'white',
-      },
+      type: 'value',
+      axisLabel: { color: 'white' },
     },
     yAxis: {
-      type: 'value',
-      name: 'Speed (km/h)',
-      axisLabel: {
-        color: 'white',
-      },
+      type: 'category',
+      data: categories,
+      axisLabel: { color: 'white' },
     },
     series: [{
-      data: [
-        averageSpeeds.car,
-        averageSpeeds.SUV,
-        averageSpeeds.pickup,
-        averageSpeeds.truck,
-        averageSpeeds.sedan
-      ],
-      type: 'bar'
+      name: 'Count',
+      type: 'bar',
+      data: categories.map(category => data[data.length - 1]?.[category.toLowerCase()] || 0),
+      itemStyle: {
+        color: '#3398DB'  // You can change this color to match your design
+      }
     }]
-  };
+  }), [data]);
 
-  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+Bar.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
 };
+
+Bar.defaultProps = { data: [] };
 
 export default Bar;

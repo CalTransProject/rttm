@@ -1,62 +1,83 @@
-import React, { useState, useEffect, useRef } from "react";
-import { 
-  MemoizedStackedArea, 
-  MemoizedBar, 
-  MemoizedPieChart, 
-  MemoizedStackedBar, 
-  MemoizedDensity 
-} from "./MemoizedChartComponents";
-
-import StackedArea from "./subcomponents/sub-graph/StackedArea";
-import Bar from "./subcomponents/sub-graph/Bar";
-import PieChart from "./subcomponents/sub-graph/PieChart";
-import StackedBar from "./subcomponents/sub-graph/StackedBar";
-import Density from "./subcomponents/sub-graph/Density";
+import React, { useReducer, useEffect, useRef, useCallback } from "react";
+import { MemoizedStackedArea, MemoizedBar, MemoizedPieChart, MemoizedStackedBar, MemoizedDensity } from "./MemoizedChartComponents";
+import ErrorBoundary from "./ErrorBoundary";
+import { io } from "socket.io-client";
+import { debounce } from 'lodash';
 import "./subcomponents/sub-graph/charts.css";
 import "./subcomponents/sub-s3-components/videoPlayer.css";
 import "../index.css";
 
+const initialState = {
+  vehicleData: [],
+  currentCounts: {},
+  frameUrl: null,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'UPDATE_DATA':
+      return {
+        ...state,
+        vehicleData: [...state.vehicleData, action.payload].slice(-60),
+        currentCounts: action.payload.counts,
+      };
+    case 'UPDATE_FRAME':
+      return {
+        ...state,
+        frameUrl: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
+const transformData = (rawData) => {
+  return rawData.map(item => ({
+    time: item.timestamp,
+    ...item.counts
+  }));
+};
+
 const Mainpage = () => {
-  const [vehicleData, setVehicleData] = useState([]);
-  const [currentCounts, setCurrentCounts] = useState({});
-  const videoRef = useRef(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const socketRef = useRef(null);
+
+  const debouncedDispatch = useCallback(
+    debounce((action) => dispatch(action), 100),
+    []
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/webcam');
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+    socketRef.current = io('http://localhost:5000');
 
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          
-          const chunk = decoder.decode(value);
-          const parts = chunk.split('\r\n\r\n');
-          
-          for (let i = 0; i < parts.length; i++) {
-            if (parts[i].startsWith('Content-Type: application/json')) {
-              const jsonData = JSON.parse(parts[i + 1]);
-              console.log("Received data:", jsonData);  // Add this line for logging
-              setCurrentCounts(jsonData.counts);
-              setVehicleData(prevData => {
-                const newData = [...prevData, { time: jsonData.timestamp, ...jsonData.counts }];
-                return newData.slice(-60);  // Keep only the last 60 data points
-              });
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+    socketRef.current.on('connect', () => {
+      console.log('Connected to WebSocket');
+    });
+
+    socketRef.current.on('update', (data) => {
+      console.log('Received data:', data);
+      const parsedData = JSON.parse(data);
+      debouncedDispatch({ type: 'UPDATE_DATA', payload: parsedData });
+    });
+
+    socketRef.current.on('frame', (frameData) => {
+      const blob = new Blob([frameData], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      dispatch({ type: 'UPDATE_FRAME', payload: url });
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Disconnected from WebSocket');
+    });
+
+    return () => {
+      socketRef.current.disconnect();
     };
+  }, [debouncedDispatch]);
 
-    fetchData();
-  }, []);
+  const transformedData = transformData(state.vehicleData);
 
-  console.log("Current vehicleData:", vehicleData);  // Add this line for logging
-  console.log("Current currentCounts:", currentCounts);  // Add this line for logging
+  console.log('Transformed data:', transformedData);  // Add this line for debugging
 
   return (
     <section>
@@ -65,7 +86,7 @@ const Mainpage = () => {
           <div className="col">
             <h4 className="camText gradient-label">Camera 1</h4>
             <div className="video-box">
-              <video
+              {/* <video
                 id="camera1-video"
                 className="video-js"
                 autoPlay
@@ -78,17 +99,28 @@ const Mainpage = () => {
                 data-setup="{}"
               >
                 <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
-              </video>
+              </video> */}
             </div>
           </div>
           <div className="col">
             <h4 className="camText gradient-label">Camera 2 (2D)</h4>
-            <div className="video-box">
-              <img
-                src="http://127.0.0.1:5000/webcam"
-                alt="webcam"
-                className="webcam-image"
-              />
+            <div className="video-box" style={{ position: 'relative', overflow: 'hidden' }}>
+              {state.frameUrl && (
+                <img
+                  src={state.frameUrl}
+                  alt="webcam"
+                  className="webcam-image"
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -96,35 +128,45 @@ const Mainpage = () => {
           <div className="col">
             <div className="box">
               <div className="chart">
-                <MemoizedStackedArea data={vehicleData} />
+                <ErrorBoundary>
+                  <MemoizedStackedArea data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <MemoizedBar data={vehicleData} />
+                <ErrorBoundary>
+                  <MemoizedBar data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <MemoizedPieChart data={currentCounts} />
+                <ErrorBoundary>
+                  <MemoizedPieChart data={state.currentCounts} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <MemoizedStackedBar data={vehicleData} />
+                <ErrorBoundary>
+                  <MemoizedStackedBar data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>
           <div className="col">
             <div className="box">
               <div className="chart">
-                <MemoizedDensity data={vehicleData} />
+                <ErrorBoundary>
+                  <MemoizedDensity data={transformedData} />
+                </ErrorBoundary>
               </div>
             </div>
           </div>

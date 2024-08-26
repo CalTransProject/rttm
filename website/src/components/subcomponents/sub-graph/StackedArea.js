@@ -1,145 +1,77 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const StackedArea = ({ data }) => {
-  console.log("StackedArea received data:", data);  // Add this line for logging
-
-  const option = {
+const StackedArea = React.memo(({ data }) => {
+  console.log("StackedArea received data:", data);
+  const option = useMemo(() => ({
     title: {
       text: 'Vehicle and Pedestrian Count Over Time',
-      textStyle: {
-        color: 'white'
-      }
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
     },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'cross',
-        label: {
-          backgroundColor: '#6a7985'
-        }
+        label: { backgroundColor: '#6a7985' }
       }
     },
     legend: {
       data: ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'],
-      textStyle: {
-        color: "#fff",
-      },
+      textStyle: { color: "#fff" },
+      top: 25
     },
     toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
+      feature: { saveAsImage: {} }
     },
     grid: {
       left: '3%',
       right: '4%',
       bottom: '3%',
+      top: '20%',
       containLabel: true
     },
-    xAxis: [
-      {
-        type: 'category',
-        boundaryGap: false,
-        data: data.map(item => item.time),
-        axisLabel: {
-          color: 'white',
-        },
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        axisLabel: {
-          color: 'white',
-        },
-      }
-    ],
+    xAxis: [{
+      type: 'category',
+      boundaryGap: false,
+      data: data.map(item => item.time),
+      axisLabel: { color: 'white' },
+    }],
+    yAxis: [{
+      type: 'value',
+      axisLabel: { color: 'white' },
+    }],
     series: [
-      {
-        name: 'Car',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.car)
-      },
-      {
-        name: 'SUV',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.SUV)
-      },
-      {
-        name: 'Pickup',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.pickup)
-      },
-      {
-        name: 'Truck',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.truck)
-      },
-      {
-        name: 'Van',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.van)
-      },
-      {
-        name: 'Bus',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.bus)
-      },
-      {
-        name: 'Motorcycle',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.motorcycle)
-      },
-      {
-        name: 'Pedestrian',
-        type: 'line',
-        stack: 'Total',
-        areaStyle: {},
-        emphasis: {
-          focus: 'series'
-        },
-        data: data.map(item => item.pedestrian)
-      }
-    ]
-  };
+      'Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'
+    ].map(vehicle => ({
+      name: vehicle,
+      type: 'line',
+      stack: 'Total',
+      areaStyle: {},
+      emphasis: { focus: 'series' },
+      data: data.map(item => item[vehicle.toLowerCase()])
+    }))
+  }), [data]);
 
-  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+StackedArea.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
 };
+
+StackedArea.defaultProps = { data: [] };
 
 export default StackedArea;

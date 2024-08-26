@@ -1,95 +1,73 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const StackedBar = ({ data }) => {
-  // Assuming data includes lane information
-  const lanes = ['Lane 1', 'Lane 2', 'Lane 3', 'Lane 4', 'Lane 5', 'Lane 6'];
-  
-  const option = {
+const StackedBar = React.memo(({ data }) => {
+  console.log("StackedBar received data:", data);
+  const option = useMemo(() => ({
     title: {
-      text: 'Vehicle and Pedestrian Distribution by Lane',
-      textStyle: {
-        color: 'white'
-      }
+      text: 'Vehicle and Pedestrian Count Over Time (Stacked)',
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
     },
     tooltip: {
       trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
+      axisPointer: { type: 'shadow' }
     },
     legend: {
       data: ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'],
-      textStyle: {
-        color: 'white'
-      }
+      textStyle: { color: "#fff" },
+      top: 25
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '10%',
+      top: '20%',
+      containLabel: true
     },
     xAxis: {
-      type: 'value',
+      type: 'category',
+      data: data.map(item => item.time),
       axisLabel: {
-        color: 'white'
+        color: 'white',
+        rotate: 45,
+        interval: Math.floor(data.length / 10)
       }
     },
     yAxis: {
-      type: 'category',
-      data: lanes,
-      axisLabel: {
-        color: 'white'
-      }
+      type: 'value',
+      axisLabel: { color: 'white' },
     },
     series: [
-      {
-        name: 'Car',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_car`] || 0)
-      },
-      {
-        name: 'SUV',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_SUV`] || 0)
-      },
-      {
-        name: 'Pickup',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_pickup`] || 0)
-      },
-      {
-        name: 'Truck',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_truck`] || 0)
-      },
-      {
-        name: 'Van',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_van`] || 0)
-      },
-      {
-        name: 'Bus',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_bus`] || 0)
-      },
-      {
-        name: 'Motorcycle',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_motorcycle`] || 0)
-      },
-      {
-        name: 'Pedestrian',
-        type: 'bar',
-        stack: 'total',
-        data: lanes.map(lane => data[`${lane}_pedestrian`] || 0)
-      }
-    ]
-  };
+      'Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'
+    ].map(vehicle => ({
+      name: vehicle,
+      type: 'bar',
+      stack: 'total',
+      emphasis: { focus: 'series' },
+      data: data.map(item => item[vehicle.toLowerCase()])
+    }))
+  }), [data]);
 
-  return <ReactEcharts option={option} style={{ height: '225px', width: '100%' }} />;
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+StackedBar.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
 };
+
+StackedBar.defaultProps = { data: [] };
 
 export default StackedBar;
