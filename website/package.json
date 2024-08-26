@@ -8,20 +8,30 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.11.10",
+    "@popperjs/core": "^2.11.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "amazon-cognito-identity-js": "^6.3.12",
     "apexcharts": "^3.37.0",
     "aws-sdk": "^2.1369.0",
     "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
     "cdbreact": "^1.5.10",
     "chart.js": "^4.2.1",
+    "dotenv": "^16.4.5",
     "echarts": "^5.4.2",
     "echarts-for-react": "^3.0.2",
+    "express-validator": "^7.0.1",
     "file-saver": "^2.0.5",
+    "firebase": "^10.11.0",
     "fs": "^0.0.1-security",
+    "json-server": "^1.0.0-alpha.23",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.1",
+    "morgan": "^1.10.0",
     "ng2-charts": "^4.1.1",
+    "pg": "^8.11.5",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
     "react-bootstrap": "^2.6.0",
@@ -29,9 +39,11 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-hls-player": "^3.0.7",
+    "react-icons": "^5.1.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5.0.1",
     "save": "^2.9.0",
+    "socket.io-client": "^4.7.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -62,6 +74,20 @@
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
+  },
+  "overrides": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-bootstrap": "^2.6.0",
+    "focus-trap-react": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0"
+    },
+    "react-bootstrap-range-slider": {
+      "react-bootstrap": "^2.6.0"
+    },
+    "react-hls-player": {
+      "react": "^18.2.0"
+    }
   }
-  
 }

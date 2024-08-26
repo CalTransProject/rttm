@@ -1,0 +1,56 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-around; /* Better distribution */
+  align-items: center;
+  padding: 20px;
+  background-color: #565264; /* Example background color for the navbar */
+}
+
+.flex-item {
+  flex: 1;
+  font-size: 1.3rem;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.flex-item:hover {
+  background-color: #43404f; /* Hover effect */
+  color: #fff;
+}
+
+.info-container {
+  margin-top: 20px;
+  padding: 20px;
+  color: white;
+  background-color: #43404f /* Example background color for content */
+}
+
+/* Styling for sections and content */
+.techH, .techHR {
+  color: red; /* Highlight color for headers */
+}
+
+.techP, .techPR {
+  color: aliceblue;
+  font-size: larger;
+}
+
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+  }
+
+  .flex-item {
+    margin-bottom: 5px; /* Spacing between items on smaller screens */
+  }
+}

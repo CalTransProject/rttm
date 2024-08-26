@@ -1,97 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import ReactEcharts from "echarts-for-react";
+import PropTypes from 'prop-types';
 
-const generateData = (lastItem, speedData) => {
-  const num = Math.floor(Math.random() * 10);
-  const newTime = lastItem.time + 1;
-  const item = { time: newTime, speed: lastItem.speed };
-  if (num < 6) {
-    const num1 = Math.floor(Math.random() * 10);
-    if (num1 % 2 === 0) {
-      item.speed += 1;
-    } else if (item.speed > 0) {
-      item.speed -= 1;
-    }
-  }
-  if (speedData.length === 60) {
-    return [...speedData.slice(1), item];
-  }
-  return [...speedData, item];
-};
-
-const Bar = () => {
-  const [speedData, setSpeedData] = useState([]);
-
-  useEffect(() => {
-    const initialData = {
-      time: 0,
-      speed: Math.floor(Math.random() * 90) + 10,
-    };
-    setSpeedData([initialData]);
-    const interval = setInterval(() => {
-      setSpeedData((speedData) => {
-        const newData = generateData(speedData[speedData.length - 1], speedData);
-        return newData;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  var option = {
+const Bar = React.memo(({ data }) => {
+  console.log("Bar received data:", data);
+  
+  const categories = ['Car', 'SUV', 'Pickup', 'Truck', 'Van', 'Bus', 'Motorcycle', 'Pedestrian'];
+  
+  const option = useMemo(() => ({
     title: {
-      text: "Average Speed Per Second",
-      textStyle: {
-        color: "white",
-      },
+      text: 'Current Vehicle and Pedestrian Count',
+      textStyle: { color: 'white' },
+      top: 0,
+      left: 'center'
     },
-    tooltip: {},
-    legend: {
-      data: [""],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      top: '15%',
+      containLabel: true
     },
     xAxis: {
-      name: "Time (Seconds)",
-      nameLocation: "middle",
-      nameGap: 30,
-      nameTextStyle: {
-        color: "#fff",
-        fontSize: 18,
-        fontWeight: "bold",
-      },
-      axisLine: {
-        lineStyle: {
-          color: "white",
-        },
-      },
-      data: Array.from({ length: 61 }, (_, i) => i.toString()),
+      type: 'value',
+      axisLabel: { color: 'white' },
     },
     yAxis: {
-      type: "value",
-      name: "Speed",
-      nameLocation: "middle",
-      nameGap: 30,
-      nameTextStyle: {
-        fontSize: 18,
-        fontWeight: "bold",
-      },
+      type: 'category',
+      data: categories,
+      axisLabel: { color: 'white' },
     },
-    series: [
-      {
-        name: "",
-        data: speedData.map((item) => item.speed),
-        type: "bar",
-      },
-    ],
-    textStyle: {
-      color: "#fff",
-    },
-    
-  };
-  const chartStyle = {
-    height: '225px', // Set the desired height
-    width: '100%',   // Set the desired width
-  };
+    series: [{
+      name: 'Count',
+      type: 'bar',
+      data: categories.map(category => data[data.length - 1]?.[category.toLowerCase()] || 0),
+      itemStyle: {
+        color: '#3398DB'  // You can change this color to match your design
+      }
+    }]
+  }), [data]);
 
-  return <ReactEcharts option={option} style={chartStyle} />;
+  return <ReactEcharts option={option} style={{ height: '300px', width: '100%' }} />;
+}, (prevProps, nextProps) => JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data));
+
+Bar.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    time: PropTypes.string,
+    car: PropTypes.number,
+    SUV: PropTypes.number,
+    pickup: PropTypes.number,
+    truck: PropTypes.number,
+    van: PropTypes.number,
+    bus: PropTypes.number,
+    motorcycle: PropTypes.number,
+    pedestrian: PropTypes.number
+  })).isRequired,
 };
+
+Bar.defaultProps = { data: [] };
 
 export default Bar;

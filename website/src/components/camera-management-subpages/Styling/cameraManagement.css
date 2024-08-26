@@ -1,0 +1,13 @@
+.camera-management {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 250px;
+    /* Add any additional styles for the sidebar */
+  }
+  
+  .content {
+    flex: 1;
+    /* Add any additional styles for the content section */
+  }

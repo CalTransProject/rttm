@@ -1,3 +1,4 @@
+/* Styling for sidebar container */
 .sidebar-container {
   display: flex;
   height: 100vh;
@@ -5,28 +6,46 @@
   margin-left: -15px;
   margin-bottom: -9px;
 }
+
+/* Styling for links without decoration and their hover states */
 .text-decoration-none {
   color: rgb(255, 0, 0);
   padding-right: 10px;
 }
 
-.text-decoration-none:hover {
+.text-decoration-none:hover,
+.menu-item:hover,
+.activeClicked:hover {
   color: white;
 }
 
-.activeClicked:hover {
+.activeClicked {
   color: rgb(255, 95, 95);
 }
 
-.menu-item:hover {
-  color: red;
-}
-
+/* Footer styling corrected */
 .sidebar-footer {
-  padding: "20px 5px";
+  padding: 20px 5px;
 }
 
+/* Styling for the bars icon */
 .fa-fa-bars-fa-large {
   color: red;
 }
 
+/* Styling for sidebar content */
+.sidebar-content {
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* Styling for the sidebar with the border included */
+.border-sidebar {
+  border-right: 1px solid white; /* Adds a white border */
+}
+
+/* Additional styles for the CDBSidebar component */
+.CDBSidebar {
+  background-color: #565264; /* Set the background color */
+  border-right: 10px solid white; /* Set a white border on the right */
+}

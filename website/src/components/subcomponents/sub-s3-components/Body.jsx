@@ -46,7 +46,7 @@ const Body = () => {
   }, [])
 
   return (
-      <div class="video-box">
+      <div className="video-box">
         {Number(streamId) ? <Video sid={streamId}/> : <Skeleton variant="rectangular" maxWidth={false} height={413}/>}
         
         {/* Graph that correlates with the video above */}
