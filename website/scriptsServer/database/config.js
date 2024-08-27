@@ -1,4 +1,4 @@
-// server/database/config.js
+// scriptsServer/database/config.js
 require('dotenv').config({ path: './database/db.env' });
 
 
