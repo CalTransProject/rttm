@@ -22,7 +22,7 @@ import sys
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load environment variables
-load_dotenv(dotenv_path='website/server/database/db.env')
+load_dotenv(dotenv_path='website/scriptsServer/database/db.env')
 
 # Database credentials
 db_credentials = {
