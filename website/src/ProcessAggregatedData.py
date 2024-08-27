@@ -16,7 +16,7 @@ from functools import partial
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load environment variables
-dotenv_path = find_dotenv('website/server/database/db.env')
+dotenv_path = find_dotenv('website/scriptsServer/database/db.env')
 if not dotenv_path:
     logging.error("Error: .env file not found.")
     exit(1)

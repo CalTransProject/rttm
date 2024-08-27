@@ -122,6 +122,7 @@ Remember to keep your database credentials secure and never commit them to versi
 
 ##### Environment Preparation
 
+
 1. Navigate to the website directory:
 
 cd website
@@ -130,13 +131,45 @@ cd website
 
 - Generate the initial data frame:
 
-python 3DGenerateDataFrameMod.py
+TO RUN IT use:
+DB_NAME=RTTM DB_USER=jim2 DB_PASSWORD=rttm DB_HOST=localhost DB_PORT=5432 python3 "website/src/3DGenerateDataFrameMod.py"
 
 - Populate the database:
 
-python ProcessHistoricalData.py
+Run python ProcessAggregatedData.py, then kill the terminal after 10 seconds
 
-Note: `3DGenerateDataFrameMod.py` must be run before `ProcessHistoricalData.py`.
+then ProcessPerSecondData.py when it's all done etc then ProcessPerMinuteData.py then ProcessPerHourData.py ProcessPerDayData.py then ProcessPerWeekData.py then ProcessPerMonthData.py then lastly ProcessPerYearData.py
+
+After this is all done.
+
+Go ahead and 'cd' to scriptsServer and run the server.js by using the command 'node server.js'
+
+This will start the server to connect the database to the frontend.
+
+And when you this is all done, go ahead and add another terminal and cd to website and run npm start. This will run the website. 
+
+Note: `3DGenerateDataFrameMod.py` must be run before `ProcessAggregatedData.py`.
+
+#### Running the Scripts/Datapoints Server
+To start the scripts server which is to be done after running all the simulated data scripts do this:
+
+1. Navigate to the server directory:
+   ```
+   cd website/scriptsServer
+   ```
+
+2. Install dependencies using Yarn:
+   ```
+   yarn add express dotenv bcrypt cors express-validator jsonwebtoken pg
+   ```
+
+3. Then do this:
+
+```
+   node server.js
+
+```
+Note: After running the scripts/datapoints server run the application
 
 #### Running the Application
 
@@ -145,7 +178,7 @@ Note: `3DGenerateDataFrameMod.py` must be run before `ProcessHistoricalData.py`.
 git clone https://github.com/CalTransProject/rttm.git
 
 2. Install packages:
-
+Make sure to run this command at the root
 npm install
 
 3. Navigate into the website directory:
@@ -164,7 +197,7 @@ npm start
 - Historical Data Visualization
 - User-friendly Interface and Responsive Design
 - User Management
-- Real-Time Traffic Notifications
+
 
 ## Contributing
 

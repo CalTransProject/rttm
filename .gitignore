@@ -42333,3 +42333,10 @@ server/.venv/lib/python3.11/site-packages/PyYAML-6.0.1.dist-info/METADATA
 server/.venv/lib/python3.11/site-packages/PyYAML-6.0.1.dist-info/RECORD
 server/.venv/lib/python3.11/site-packages/PyYAML-6.0.1.dist-info/top_level.txt
 server/.venv/lib/python3.11/site-packages/PyYAML-6.0.1.dist-info/WHEEL
+website/scriptsServer/yarn.lock
+website/scriptsServer/test.js
+website/scriptsServer/package.json.bak
+website/scriptsServer/package.json
+website/scriptsServer/package.json
+website/package-lock.json
+package-lock.json
