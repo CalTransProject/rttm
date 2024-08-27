@@ -38,21 +38,90 @@ This guide is designed to help developers quickly set up their project environme
 - PostgreSQL
 - Command line access
 
-##### Database Setup
+## Database Setup
 
-1. **Start PostgreSQL**: Ensure your PostgreSQL server is running. If not, start it using your system's service management tool.
+This section provides a detailed guide for setting up the PostgreSQL database for the RTTM system.
 
-2. **Connect to PostgreSQL**: Open your terminal and connect to your PostgreSQL database using the command:
+### Prerequisites
+- PostgreSQL 14.12 or higher (installed via Homebrew on macOS)
+- Command line access
+- User account with sudo privileges
 
-psql -U jim2 -h localhost -d RTTM
+### Steps
 
-Enter the password for `jim2` when prompted.
+1. **Start PostgreSQL**
+   Ensure your PostgreSQL server is running. On macOS with Homebrew installation, use:
+   ```
+   brew services start postgresql@14
+   ```
+   If it's already running and you need to restart:
+   ```
+   brew services restart postgresql@14
+   ```
 
-3. **Initialize Database**: At the PostgreSQL prompt, initialize the database schema with:
+2. **Create the RTTM Database**
+   Connect to PostgreSQL as the superuser. On macOS, this is typically your system username:
+   ```
+   psql postgres
+   ```
+   
+   Once connected, create the RTTM database:
+   ```sql
+   CREATE DATABASE "RTTM";
+   ```
 
-\i website/server/init-db.sql
+3. **Create and Configure User**
+   Still in the PostgreSQL prompt, create the 'jim2' user if it doesn't exist and grant necessary privileges:
+   ```sql
+   CREATE USER jim2 WITH PASSWORD 'rttm';
+   ALTER USER jim2 WITH CREATEDB;
+   GRANT ALL PRIVILEGES ON DATABASE "RTTM" TO jim2;
+   ```
+
+4. **Connect to the RTTM Database**
+   Exit the current session and connect to the RTTM database as jim2:
+   ```
+   \q
+   psql -U jim2 -h localhost -d RTTM
+   ```
+   Enter the password ('rttm') when prompted.
+
+5. **Initialize Database Schema**
+   Once connected to the RTTM database, run the initialization script:
+   ```
+   \i website/scriptsServer/init-db.sql
+   ```
+   Note: Ensure you're in the correct directory where the init-db.sql file is located, or provide the full path to the file.
+
+6. **Verify Database Creation**
+   After running the initialization script, you can verify the table creation:
+   ```
+   \dt
+   ```
+   This should display a list of tables including:
+   - FramePrediction
+   - HistoricalData
+   - HistoricalData_LaneVehicleCount
+   - HistoricalData_VehicleTypeCount
+   - Lane
+   - ModifiedVehicle
+   - Real_Time_Traffic_Data
+   - User
+   - VehicleDetectionEvent
+   - VehicleHistory
+   - VehicleType
+   - Weather
+
+### Troubleshooting
+
+- If you encounter permission issues, ensure the 'jim2' user has been created and granted appropriate permissions.
+- If the init-db.sql file is not found, check your current directory and file path.
+- For any connection issues, verify that PostgreSQL is running and that you're using the correct host, port, and credentials.
+
+Remember to keep your database credentials secure and never commit them to version control.
 
 ##### Environment Preparation
+
 
 1. Navigate to the website directory:
 
@@ -62,13 +131,57 @@ cd website
 
 - Generate the initial data frame:
 
-python 3DGenerateDataFrameMod.py
+TO RUN IT use:
+DB_NAME=RTTM DB_USER=jim2 DB_PASSWORD=rttm DB_HOST=localhost DB_PORT=5432 python3 "website/src/3DGenerateDataFrameMod.py"
 
 - Populate the database:
 
-python ProcessHistoricalData.py
+Run python ProcessAggregatedData.py, then kill the terminal after 10 seconds
 
-Note: `3DGenerateDataFrameMod.py` must be run before `ProcessHistoricalData.py`.
+then ProcessPerSecondData.py when it's all done etc then ProcessPerMinuteData.py then ProcessPerHourData.py ProcessPerDayData.py then ProcessPerWeekData.py then ProcessPerMonthData.py then lastly ProcessPerYearData.py
+
+After this is all done.
+
+Go ahead and 'cd' to scriptsServer and run the server.js by using the command 'node server.js'
+
+This will start the server to connect the database to the frontend.
+
+And when you this is all done, go ahead and add another terminal and cd to website and run npm start. This will run the website. 
+
+Note: `3DGenerateDataFrameMod.py` must be run before `ProcessAggregatedData.py`.
+
+#### Running the Scripts/Datapoints Server
+To start the scripts server which is to be done after running all the simulated data scripts do this:
+
+1. Navigate to the server directory:
+   ```
+   cd website/scriptsServer
+   ```
+
+2. Install dependencies using Yarn:
+   ```
+   yarn add express dotenv bcrypt cors express-validator jsonwebtoken pg
+   ```
+
+3. Then do this:
+
+```
+   node server.js
+
+```
+Note: After running the scripts/datapoints server run the application
+
+#### Running the 2D Camera Server
+
+1. Navigate to the server directory:
+
+   ```
+   cd website/scriptsServer
+   ```
+2. Then run the camera server(make sure camera is attached before running):
+   ```
+   python server2DCamera.py
+   ```
 
 #### Running the Application
 
@@ -77,7 +190,7 @@ Note: `3DGenerateDataFrameMod.py` must be run before `ProcessHistoricalData.py`.
 git clone https://github.com/CalTransProject/rttm.git
 
 2. Install packages:
-
+Make sure to run this command at the root
 npm install
 
 3. Navigate into the website directory:
@@ -96,7 +209,7 @@ npm start
 - Historical Data Visualization
 - User-friendly Interface and Responsive Design
 - User Management
-- Real-Time Traffic Notifications
+
 
 ## Contributing
 
