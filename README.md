@@ -1,3 +1,4 @@
+
 # Real-Time Traffic Monitoring (RTTM) System
 
 ## Table of Contents
@@ -5,8 +6,14 @@
 - [About the Project](#about-the-project)
 - [Built With](#built-with)
 - [Getting Started](#getting-started)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+    - [Quick Setup Guide](#quick-setup-guide)
+    - [Database Setup](#database-setup)
+    - [Environment Preparation](#environment-preparation)
+    - [Running the Scripts/Datapoints Server](#running-the-scriptsdatapoints-server)
+    - [Running the 2D Camera Server](#running-the-2d-camera-server)
+    - [Running the Application](#running-the-application)
 - [Features](#features)
 - [Contributing](#contributing)
 
@@ -14,7 +21,7 @@
 
 Vehicle detection is crucial for analyzing traffic flow data to enhance planning in intelligent transportation systems. Machine Learning technology has increasingly been utilized for vehicle detection in both 2D real-time traffic flow videos and 3D point clouds. However, adverse weather conditions such as fog, rain, snow, extreme wind, and others pose challenges for 2D vehicle detection. 3D LiDAR point clouds offer more resistance to these conditions. While much research on 3D vehicle detection has focused on autonomous driving with LiDAR cameras on vehicles, there is a research gap in real-time vehicle detection for intelligent transportation with stationary LiDAR cameras on highways/freeways. This project aims to develop a system that collects real-time traffic flow data through 3D LiDAR cameras, processes the data for vehicle detection and classification, and provides a web-based service that enables real-time vehicle tracking, classification, and statistical traffic flow data visualization.
 
-### Built With
+## Built With
 
 - React
 - Bootstrap
@@ -120,86 +127,125 @@ This section provides a detailed guide for setting up the PostgreSQL database fo
 
 Remember to keep your database credentials secure and never commit them to version control.
 
-##### Environment Preparation
-
+#### Environment Preparation
 
 1. Navigate to the website directory:
 
+```bash
 cd website
+```
 
 2. Execute scripts to set up the environment:
 
 - Generate the initial data frame:
 
-TO RUN IT use:
-DB_NAME=RTTM DB_USER=jim2 DB_PASSWORD=rttm DB_HOST=localhost DB_PORT=5432 python3 "website/src/3DGenerateDataFrameMod.py"
+```bash
+python 3DGenerateDataFrameMod.py
+```
 
 - Populate the database:
 
-Run python ProcessAggregatedData.py, then kill the terminal after 10 seconds
+Run the following scripts in sequence:
 
-then ProcessPerSecondData.py when it's all done etc then ProcessPerMinuteData.py then ProcessPerHourData.py ProcessPerDayData.py then ProcessPerWeekData.py then ProcessPerMonthData.py then lastly ProcessPerYearData.py
+```bash
+python ProcessAggregatedData.py
+python ProcessPerSecondData.py
+python ProcessPerMinuteData.py
+python ProcessPerHourData.py
+python ProcessPerDayData.py
+python ProcessPerWeekData.py
+python ProcessPerMonthData.py
+python ProcessPerYearData.py
+```
 
-After this is all done.
+After running these scripts, proceed with the server setup.
 
-Go ahead and 'cd' to scriptsServer and run the server.js by using the command 'node server.js'
+3. Start the server:
 
-This will start the server to connect the database to the frontend.
+Navigate to the `scriptsServer` directory and run the server:
 
-And when you this is all done, go ahead and add another terminal and cd to website and run npm start. This will run the website. 
+```bash
+cd scriptsServer
+node server.js
+```
 
-Note: `3DGenerateDataFrameMod.py` must be run before `ProcessAggregatedData.py`.
+4. Start the frontend:
 
-#### Running the Scripts/Datapoints Server
-To start the scripts server which is to be done after running all the simulated data scripts do this:
+Open a new terminal, navigate to the `website` directory, and run:
+
+```bash
+npm start
+```
+
+### Running the Scripts/Datapoints Server
+
+To start the scripts server, follow these steps:
 
 1. Navigate to the server directory:
-   ```
-   cd website/scriptsServer
-   ```
+
+```bash
+cd website/scriptsServer
+```
 
 2. Install dependencies using Yarn:
-   ```
-   yarn add express dotenv bcrypt cors express-validator jsonwebtoken pg
-   ```
 
-3. Then do this:
-
+```bash
+yarn add express dotenv bcrypt cors express-validator jsonwebtoken pg
 ```
-   node server.js
 
+3. Start the server:
+
+```bash
+node server.js
 ```
-Note: After running the scripts/datapoints server run the application
 
-#### Running the 2D Camera Server
+### Running the 2D Camera Server
 
 1. Navigate to the server directory:
 
-   ```
-   cd website/scriptsServer
-   ```
-2. Then run the camera server(make sure camera is attached before running):
-   ```
-   python server2DCamera.py
-   ```
+```bash
+cd website/scriptsServer
+```
 
-#### Running the Application
+2. Start the camera server (ensure the camera is attached):
 
-1. Clone the repo:
+```bash
+python server2DCamera.py
+```
 
+### Running the Application
+
+1. Clone the repository:
+
+```bash
 git clone https://github.com/CalTransProject/rttm.git
+```
 
 2. Install packages:
-Make sure to run this command at the root
+
+```bash
 npm install
+```
 
 3. Navigate into the website directory:
 
+```bash
 cd website
+```
 
 4. Start the web server:
 
+```bash
 npm start
+```
+
+## Default Login Credentials
+rttm45304@gmail.com
+pass: 1234abcd
+```bash
+username: rttm45304@gmail.com
+password: 1234abcd
+```
 
 ## Features
 
@@ -210,7 +256,6 @@ npm start
 - User-friendly Interface and Responsive Design
 - User Management
 
-
 ## Contributing
 
 Interested in contributing to the RTTM project? Here's how you can help:
@@ -219,14 +264,20 @@ Interested in contributing to the RTTM project? Here's how you can help:
 
 2. Create a feature branch:
 
+```bash
 git checkout -b feature/ANewFeature
+```
 
 3. Commit your changes:
 
+```bash
 git commit -m 'Added ANewFeature'
+```
 
 4. Push to the branch:
 
+```bash
 git push origin feature/ANewFeature
+```
 
 5. Open a Pull Request
