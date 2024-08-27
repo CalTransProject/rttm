@@ -240,8 +240,6 @@ npm start
 ```
 
 ## Default Login Credentials
-rttm45304@gmail.com
-pass: 1234abcd
 ```bash
 username: rttm45304@gmail.com
 password: 1234abcd
