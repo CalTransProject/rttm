@@ -19,15 +19,15 @@ const Header = () => {
             <NavLink to="/historical-data/general" className="nav-link">
               Historical Data
             </NavLink>
-            <NavLink to="/about-us" className="nav-link">
+            {/* <NavLink to="/about-us" className="nav-link">
               About Us
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/research-and-resources" className="nav-link">
               Research And Resources
             </NavLink>
           </div>
           <div className="col-2 text-right">
-            <NavLink to="/my-account" className="btn btn-primary">
+            <NavLink to="/my-account" className="user_button">
               My Account
             </NavLink>
           </div>
