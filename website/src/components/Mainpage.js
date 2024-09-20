@@ -6,11 +6,13 @@ import { debounce } from 'lodash';
 import "./subcomponents/sub-graph/charts.css";
 import "./subcomponents/sub-s3-components/videoPlayer.css";
 import "../index.css";
+import LidarViewer from './LidarViewer';
 
 const initialState = {
   vehicleData: [],
   currentCounts: {},
   frameUrl: null,
+  lidarPoints: [],
 };
 
 function reducer(state, action) {
@@ -25,6 +27,11 @@ function reducer(state, action) {
       return {
         ...state,
         frameUrl: action.payload,
+      };
+    case 'UPDATE_LIDAR':
+      return {
+        ...state,
+        lidarPoints: action.payload,
       };
     default:
       return state;
@@ -66,6 +73,10 @@ const Mainpage = () => {
       dispatch({ type: 'UPDATE_FRAME', payload: url });
     });
 
+    socketRef.current.on('lidar_data', (lidarData) => {
+      dispatch({ type: 'UPDATE_LIDAR', payload: lidarData });
+    });
+
     socketRef.current.on('disconnect', () => {
       console.log('Disconnected from WebSocket');
     });
@@ -77,29 +88,16 @@ const Mainpage = () => {
 
   const transformedData = transformData(state.vehicleData);
 
-  console.log('Transformed data:', transformedData);  // Add this line for debugging
+  console.log('Transformed data:', transformedData);
 
   return (
     <section>
       <div className="container-fluid">
         <div className="row row-cols-2">
           <div className="col">
-            <h4 className="camText gradient-label">Camera 1</h4>
+            <h4 className="camText gradient-label">Camera 1 (3D LiDAR)</h4>
             <div className="video-box">
-              {/* <video
-                id="camera1-video"
-                className="video-js"
-                autoPlay
-                muted
-                loop
-                preload="auto"
-                width="100%"
-                height="100%"
-                poster="YOUR_CAMERA1_POSTER.jpg"
-                data-setup="{}"
-              >
-                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
-              </video> */}
+              <LidarViewer points={state.lidarPoints} />
             </div>
           </div>
           <div className="col">
