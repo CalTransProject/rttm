@@ -29,6 +29,7 @@
     "json-server": "^1.0.0-alpha.23",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.3",
     "morgan": "^1.10.0",
     "ng2-charts": "^4.1.1",
     "pg": "^8.11.5",
@@ -44,7 +45,8 @@
     "react-scripts": "^5.0.1",
     "save": "^2.9.0",
     "socket.io-client": "^4.7.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",

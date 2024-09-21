@@ -1,15 +1,19 @@
 // Required dependencies and library imports
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const { check, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const pool = require('./database/config');
-const cors = require('cors');
+import dotenv from 'dotenv';
+import express from 'express';
+import bodyParser from 'body-parser';
+import { check, validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import cors from 'cors';
+import pool from './database/config.js';
+
+// Load environment variables
+dotenv.config();
 
 // Initialize Express app
 const app = express();
+
 
 // Middleware
 app.use(cors());
@@ -435,4 +439,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;

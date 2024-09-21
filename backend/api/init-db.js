@@ -1,7 +1,8 @@
-// server/init-db.js
+import dotenv from 'dotenv';
+dotenv.config();
 
-const pool = require('./database/config'); // Assuming you've set up your pool
-
+// Import pool from config
+import pool from './database/config.js';
 const createTables = `
 BEGIN;
 
