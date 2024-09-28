@@ -82,7 +82,7 @@ const Mainpage = () => {
   return (
     <section>
       <div className="container-fluid">
-        <div className="row row-cols-2">
+        <div className="row row-cols-1 row-cols-md-2 gy-2 gx-2">
           <div className="col">
             <h4 className="camText gradient-label">Camera 1</h4>
             <div className="video-box">
@@ -124,9 +124,9 @@ const Mainpage = () => {
             </div>
           </div>
         </div>
-        <div className="row row-cols-2 row-cols-xxl-3 gy-2 gx-2">
+        <div className="row row-cols-1 row-cols-md-3 gy-2 gx-2">
           <div className="col">
-            <div className="box">
+            <div className="box gradient-background">
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedStackedArea data={transformedData} />
@@ -135,7 +135,7 @@ const Mainpage = () => {
             </div>
           </div>
           <div className="col">
-            <div className="box">
+            <div className="box gradient-background">
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedBar data={transformedData} />
@@ -144,7 +144,7 @@ const Mainpage = () => {
             </div>
           </div>
           <div className="col">
-            <div className="box">
+            <div className="box gradient-background">
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedPieChart data={state.currentCounts} />
@@ -153,7 +153,7 @@ const Mainpage = () => {
             </div>
           </div>
           <div className="col">
-            <div className="box">
+            <div className="box gradient-background">
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedStackedBar data={transformedData} />
@@ -162,7 +162,7 @@ const Mainpage = () => {
             </div>
           </div>
           <div className="col">
-            <div className="box">
+            <div className="box gradient-background">
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedDensity data={transformedData} />

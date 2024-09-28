@@ -3,14 +3,18 @@
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
+  color: #c6c6c6;
 }
 
 .flex-container {
   display: flex;
   justify-content: space-around; /* Better distribution */
   align-items: center;
-  padding: 20px;
-  background-color: #565264; /* Example background color for the navbar */
+  padding: 5px;
+  background-color: rgba(85, 65, 85, 0.571); /* Example background color for the navbar */
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+  margin-top: 20px; /* Add spacing between header and navbar */
 }
 
 .flex-item {
@@ -24,7 +28,7 @@
 }
 
 .flex-item:hover {
-  background-color: #43404f; /* Hover effect */
+  background-color: rgba(184, 15, 15, 0.764); /* Hover effect */
   color: #fff;
 }
 
@@ -32,7 +36,9 @@
   margin-top: 20px;
   padding: 20px;
   color: white;
-  background-color: #43404f /* Example background color for content */
+  background: linear-gradient(0deg, rgba(85, 65, 85, 0.571) 0%, rgba(130, 119, 138, 0.914) 100%); /* Gradient background for content */
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Styling for sections and content */
@@ -45,6 +51,17 @@
   font-size: larger;
 }
 
+a {
+  color: #00ccff; /* Light blue color for hyperlinks */
+  text-decoration: none; /* Remove underline */
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #ff99cc; /* Light pink color for hover state */
+  text-decoration: underline; /* Underline on hover */
+}
+
 @media (max-width: 768px) {
   .flex-container {
     flex-direction: column;
@@ -53,4 +70,24 @@
   .flex-item {
     margin-bottom: 5px; /* Spacing between items on smaller screens */
   }
+}
+
+/* Add Camera Button Styles */
+.add-camera-button {
+  background: linear-gradient(90deg, rgba(85, 65, 85, 0.571) 0%, rgba(130, 119, 138, 0.914) 100%);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background 0.3s ease;
+}
+
+.add-camera-button:hover {
+  background: linear-gradient(90deg, rgba(184, 15, 15, 0.764) 0%, rgba(252, 5, 5, 1) 100%);
 }

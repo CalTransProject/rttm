@@ -18,22 +18,22 @@ function SidebarMenu() {
         </CDBSidebarHeader>
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
-            <NavLink
+            {/* <NavLink
               to="/camera-management/general"
               className={({ isActive }) => (isActive ? "menu-item activeClicked" : "menu-item")}
             >
               <CDBSidebarMenuItem icon="video">
                 General
               </CDBSidebarMenuItem>
-            </NavLink>
-            <NavLink
+            </NavLink> */}
+            {/* <NavLink
               to="/camera-management/new-camera"
               className={({ isActive }) => (isActive ? "menu-item activeClicked" : "menu-item")}
             >
               <CDBSidebarMenuItem icon="plus">
                 Add New Camera
               </CDBSidebarMenuItem>
-            </NavLink>
+            </NavLink> */}
           </CDBSidebarMenu>
         </CDBSidebarContent>
       </CDBSidebar>
