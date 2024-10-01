@@ -6,6 +6,7 @@ import { debounce } from 'lodash';
 import "./subcomponents/sub-graph/charts.css";
 import "./subcomponents/sub-s3-components/videoPlayer.css";
 import "../index.css";
+import { motion } from 'framer-motion';
 
 const initialState = {
   vehicleData: [],
@@ -77,36 +78,48 @@ const Mainpage = () => {
 
   const transformedData = transformData(state.vehicleData);
 
-  console.log('Transformed data:', transformedData);  // Add this line for debugging
+  console.log('Transformed data:', transformedData);
 
   return (
     <section>
       <div className="container-fluid">
         <div className="row row-cols-1 row-cols-md-2 gy-2 gx-2">
           <div className="col">
-            <h4 className="camText gradient-label">Camera 1</h4>
-            <div className="video-box">
-              {/* <video
-                id="camera1-video"
-                className="video-js"
-                autoPlay
-                muted
-                loop
-                preload="auto"
-                width="100%"
-                height="100%"
-                poster="YOUR_CAMERA1_POSTER.jpg"
-                data-setup="{}"
-              >
-                <source src="../videos/YOLOv7-Tiny Demo.mp4" type="video/mp4" />
-              </video> */}
-            </div>
+            <motion.h4
+              className="camText gradient-label"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Camera 1
+            </motion.h4>
+            <motion.div
+              className="video-box"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Video content for Camera 1 */}
+            </motion.div>
           </div>
           <div className="col">
-            <h4 className="camText gradient-label">Camera 2 (2D)</h4>
-            <div className="video-box" style={{ position: 'relative', overflow: 'hidden' }}>
+            <motion.h4
+              className="camText gradient-label"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Camera 2 (2D)
+            </motion.h4>
+            <motion.div
+              className="video-box"
+              style={{ position: 'relative', overflow: 'hidden' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               {state.frameUrl && (
-                <img
+                <motion.img
                   src={state.frameUrl}
                   alt="webcam"
                   className="webcam-image"
@@ -119,56 +132,84 @@ const Mainpage = () => {
                     top: '50%',
                     transform: 'translate(-50%, -50%)'
                   }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
                 />
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
         <div className="row row-cols-1 row-cols-md-3 gy-2 gx-2">
           <div className="col">
-            <div className="box gradient-background">
+            <motion.div
+              className="box gradient-background"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedStackedArea data={transformedData} />
                 </ErrorBoundary>
               </div>
-            </div>
+            </motion.div>
           </div>
           <div className="col">
-            <div className="box gradient-background">
+            <motion.div
+              className="box gradient-background"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedBar data={transformedData} />
                 </ErrorBoundary>
               </div>
-            </div>
+            </motion.div>
           </div>
           <div className="col">
-            <div className="box gradient-background">
+            <motion.div
+              className="box gradient-background"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedPieChart data={state.currentCounts} />
                 </ErrorBoundary>
               </div>
-            </div>
+            </motion.div>
           </div>
           <div className="col">
-            <div className="box gradient-background">
+            <motion.div
+              className="box gradient-background"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedStackedBar data={transformedData} />
                 </ErrorBoundary>
               </div>
-            </div>
+            </motion.div>
           </div>
           <div className="col">
-            <div className="box gradient-background">
+            <motion.div
+              className="box gradient-background"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               <div className="chart">
                 <ErrorBoundary>
                   <MemoizedDensity data={transformedData} />
                 </ErrorBoundary>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

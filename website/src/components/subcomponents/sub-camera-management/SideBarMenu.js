@@ -13,9 +13,9 @@ function SidebarMenu() {
   return (
     <div className="sidebar-container">
       <CDBSidebar textColor="white" backgroundColor="#565264" className="border-sidebar">
-        <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
+        {/* <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
           Camera Management
-        </CDBSidebarHeader>
+        </CDBSidebarHeader> */}
         <CDBSidebarContent className="sidebar-content">
           <CDBSidebarMenu>
             {/* <NavLink

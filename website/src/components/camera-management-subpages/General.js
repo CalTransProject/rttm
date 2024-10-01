@@ -4,6 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./Styling/General.css";
 import ModalComponent from "../subcomponents/sub-camera-management/Modal.js";
 import { Eye, PencilSquare, Trash } from "react-bootstrap-icons";
+import { motion } from "framer-motion";
+
+const MotionButton = motion.button;
+const MotionTableRow = motion.tr;
+const MotionSpan = motion.span;
 
 const General = () => {
   const [data, setData] = useState(MOCK_DATA);
@@ -61,17 +66,37 @@ const General = () => {
   return (
     <div className="all">
       <h1 className="page-title">View All Cameras</h1>
-      <div className="Table-Wrapper">
+      <motion.div
+        className="Table-Wrapper"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div style={{ textAlign: "center" }}>
-          <button className="add-camera-button" onClick={() => setShowAddModal(true)}>
+          <MotionButton
+            className="add-camera-button"
+            onClick={() => setShowAddModal(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             Add Camera
-          </button>
+          </MotionButton>
           {lastDeleted && (
-            <button className="undo-button" onClick={handleUndoDelete}>
+            <MotionButton
+              className="undo-button"
+              onClick={handleUndoDelete}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Undo Delete
-            </button>
+            </MotionButton>
           )}
-          <table className="table table-bordered">
+          <motion.table
+            className="table table-bordered"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <thead>
               <tr className="header-row">
                 <th>Index</th>
@@ -84,14 +109,44 @@ const General = () => {
             </thead>
             <tbody>
               {data.map((d, i) => (
-                <tr key={i} className="table-row">
+                <MotionTableRow
+                  key={i}
+                  className="table-row"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                >
                   <td>{d.Index}</td>
                   <td>{d.Name}</td>
                   <td>{d.Type}</td>
                   <td>{d.Address}</td>
-                  <td id="edit" onClick={(e) => handleIconClick(e.currentTarget.id, d)}> <PencilSquare size={30} /> </td>
-                  <td id="view" onClick={(e) => handleIconClick(e.currentTarget.id, d)}> <Eye size={30} /> </td>
-                  <td id="del" onClick={() => handleDelete(i)}> <Trash size={30} /> </td>
+                  <td
+                    id="edit"
+                    onClick={(e) => handleIconClick(e.currentTarget.id, d)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <MotionSpan whileHover={{ scale: 1.2 }}>
+                      <PencilSquare size={30} />
+                    </MotionSpan>
+                  </td>
+                  <td
+                    id="view"
+                    onClick={(e) => handleIconClick(e.currentTarget.id, d)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <MotionSpan whileHover={{ scale: 1.2 }}>
+                      <Eye size={30} />
+                    </MotionSpan>
+                  </td>
+                  <td
+                    id="del"
+                    onClick={() => handleDelete(i)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <MotionSpan whileHover={{ scale: 1.2 }}>
+                      <Trash size={30} />
+                    </MotionSpan>
+                  </td>
                   <td>
                     <input
                       type="checkbox"
@@ -100,10 +155,10 @@ const General = () => {
                       onChange={() => handleCheckboxChange(i)}
                     />
                   </td>
-                </tr>
+                </MotionTableRow>
               ))}
             </tbody>
-          </table>
+          </motion.table>
         </div>
         {selectedRow && showModal && (
           <ModalComponent
@@ -121,7 +176,7 @@ const General = () => {
             onAddCamera={handleAddCamera}
           />
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
