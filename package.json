@@ -2,6 +2,7 @@
   "dependencies": {
     "@react-three/fiber": "^8.17.7",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "file-saver": "^2.0.5",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

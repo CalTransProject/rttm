@@ -2,38 +2,81 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./header.css";
+import { motion } from 'framer-motion';
+
+const MotionNavLink = motion(NavLink);
 
 const Header = () => {
   return (
-    <header>
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
-          <h1 className="logo col-2">RTTM</h1>
+          <motion.h1
+            className="logo col-2"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            RTTM
+          </motion.h1>
           <div className="navbar-nav col-8 justify-content-center">
-            <NavLink to="/" className="nav-link">
+            <MotionNavLink
+              to="/"
+              className="nav-link"
+              whileHover={{ scale: 1.1}}
+              whileTap={{ scale: 0.95 }}
+            >
               Home
-            </NavLink>
-            <NavLink to="/camera-management/general" className="nav-link">
+            </MotionNavLink>
+            <MotionNavLink
+              to="/camera-management/general"
+              className="nav-link"
+              whileHover={{ scale: 1.1}}
+              whileTap={{ scale: 0.95 }}
+            >
               Camera Management
-            </NavLink>
-            <NavLink to="/historical-data/general" className="nav-link">
+            </MotionNavLink>
+            <MotionNavLink
+              to="/historical-data/general"
+              className="nav-link"
+              whileHover={{ scale: 1.1}}
+              whileTap={{ scale: 0.95 }}
+            >
               Historical Data
-            </NavLink>
-            {/* <NavLink to="/about-us" className="nav-link">
+            </MotionNavLink>
+            {/* <MotionNavLink
+              to="/about-us"
+              className="nav-link"
+              whileHover={{ scale: 1.1, color: "#f8c102" }}
+              whileTap={{ scale: 0.95 }}
+            >
               About Us
-            </NavLink> */}
-            <NavLink to="/research-and-resources" className="nav-link">
+            </MotionNavLink> */}
+            <MotionNavLink
+              to="/research-and-resources"
+              className="nav-link"
+              whileHover={{ scale: 1.1}}
+              whileTap={{ scale: 0.95 }}
+            >
               Research And Resources
-            </NavLink>
+            </MotionNavLink>
           </div>
           <div className="col-2 text-right">
-            <NavLink to="/my-account" className="user_button">
+            <MotionNavLink
+              to="/my-account"
+              className="user_button"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
               My Account
-            </NavLink>
+            </MotionNavLink>
           </div>
         </div>
       </nav>
-    </header>
+    </motion.header>
   );
 };
 
