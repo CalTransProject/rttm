@@ -158,134 +158,6 @@ def aggregate_data(results):
         ))
     return aggregated_data
 
-def process_data_chunk(start_time, end_time, table_name, time_interval):
-    logging.debug(f"Processing {table_name} chunk from {start_time} to {end_time}")
-    
-    with psycopg2.connect(**db_credentials) as conn:
-        with conn.cursor() as cur:
-            result = {}
-            
-            if table_name == "PerSecondData":
-                data_generator = preprocess_frame_data(start_time, end_time)
-            else:
-                query = f"""
-                SELECT 
-                    "Timestamp",
-                    "TotalVehicles",
-                    "AverageSpeed",
-                    "Density",
-                    "AverageConfidence",
-                    "VehicleTypeCounts",
-                    "LaneVehicleCounts",
-                    "LaneTypeCounts"
-                FROM "{table_name}"
-                WHERE "Timestamp" BETWEEN %s AND %s
-                ORDER BY "Timestamp"
-                """
-                cur.execute(query, (start_time, end_time))
-                data_generator = cur.fetchall()
-            
-            for data in data_generator:
-                timestamp = data[0]
-                interval_timestamp = (timestamp // (time_interval * 1000)) * (time_interval * 1000)
-                
-                if interval_timestamp not in result:
-                    result[interval_timestamp] = {
-                        'total_vehicles': 0,
-                        'speed_sum': 0,
-                        'density_sum': 0,
-                        'confidence_sum': 0,
-                        'vehicle_types': {},
-                        'lane_counts': {},
-                        'lane_types': {},
-                        'count': 0
-                    }
-                
-                interval_data = result[interval_timestamp]
-                
-                if table_name == "PerSecondData":
-                    # For PerSecondData, data[1] is a list of vehicle objects
-                    vehicles = data[1]
-                    interval_data['total_vehicles'] += len(vehicles)
-                    for vehicle in vehicles:
-                        interval_data['speed_sum'] += vehicle.get('speed', 0)
-                        interval_data['confidence_sum'] += vehicle.get('confidence', 0)
-                        vtype = vehicle.get('label', 'unknown')
-                        lane = vehicle.get('lane', 'unknown')
-                        interval_data['vehicle_types'][vtype] = interval_data['vehicle_types'].get(vtype, 0) + 1
-                        interval_data['lane_counts'][lane] = interval_data['lane_counts'].get(lane, 0) + 1
-                    interval_data['density_sum'] += len(vehicles) / ROAD_LENGTH
-                else:
-                    # For other tables, data follows the expected structure
-                    interval_data['total_vehicles'] += data[1]
-                    interval_data['speed_sum'] += data[2] * data[1]
-                    interval_data['density_sum'] += data[3]
-                    interval_data['confidence_sum'] += data[4] * data[1]
-                    
-                    for vtype, count in parse_json_or_dict(data[5]).items():
-                        interval_data['vehicle_types'][vtype] = interval_data['vehicle_types'].get(vtype, 0) + count
-                    
-                    for lane, count in parse_json_or_dict(data[6]).items():
-                        interval_data['lane_counts'][lane] = interval_data['lane_counts'].get(lane, 0) + count
-                    
-                    for lane_type, count in parse_json_or_dict(data[7]).items():
-                        interval_data['lane_types'][lane_type] = interval_data['lane_types'].get(lane_type, 0) + count
-                
-                interval_data['count'] += 1
-    
-    return result
-
-def process_data(start_time, end_time, table_name, time_interval):
-    logging.debug(f"Processing {table_name} from {start_time} to {end_time}")
-    cache_key = get_cache_key(table_name.lower(), start_time, end_time)
-    cached_data = mc.get(cache_key)
-    
-    if cached_data:
-        logging.info(f"Retrieved {table_name} from cache")
-        return json.loads(cached_data)
-    
-    # Divide the time range into chunks for parallel processing
-    chunk_duration = 86400000  # 1 day in milliseconds
-    chunks = [(t, min(t + chunk_duration, end_time)) for t in range(start_time, end_time, chunk_duration)]
-    
-    # Use multiprocessing to process chunks in parallel
-    with multiprocessing.Pool(processes=max_processes) as pool:
-        chunk_results = pool.starmap(
-            partial(process_data_chunk, table_name=table_name, time_interval=time_interval),
-            chunks
-        )
-    
-    # Combine results from all chunks
-    combined_results = {}
-    for chunk_result in chunk_results:
-        for timestamp, data in chunk_result.items():
-            if timestamp not in combined_results:
-                combined_results[timestamp] = data
-            else:
-                combined_results[timestamp]['total_vehicles'] += data['total_vehicles']
-                combined_results[timestamp]['speed_sum'] += data['speed_sum']
-                combined_results[timestamp]['density_sum'] += data['density_sum']
-                combined_results[timestamp]['confidence_sum'] += data['confidence_sum']
-                combined_results[timestamp]['count'] += data['count']
-                for vtype, count in data['vehicle_types'].items():
-                    combined_results[timestamp]['vehicle_types'][vtype] = combined_results[timestamp]['vehicle_types'].get(vtype, 0) + count
-                for lane, count in data['lane_counts'].items():
-                    combined_results[timestamp]['lane_counts'][lane] = combined_results[timestamp]['lane_counts'].get(lane, 0) + count
-                for lane_type, count in data['lane_types'].items():
-                    combined_results[timestamp]['lane_types'][lane_type] = combined_results[timestamp]['lane_types'].get(lane_type, 0) + count
-    
-    aggregated_data = aggregate_data(combined_results)
-    
-    logging.info(f"Processed {len(aggregated_data)} {time_interval}-second intervals for {table_name}")
-    
-    if aggregated_data:
-        insert_data(table_name, aggregated_data)
-        
-        mc.set(cache_key, json.dumps(aggregated_data), time=3600)  # Cache for 1 hour
-    else:
-        logging.warning(f"No data to aggregate for {table_name}")
-    
-    return aggregated_data
 
 def parse_json_or_dict(data):
     if isinstance(data, dict):
@@ -346,8 +218,7 @@ def main():
                 for interval, table_name in intervals:
                     create_table(table_name)
                     clear_table(table_name)
-                    processed_data = process_data(min_timestamp, max_timestamp, table_name, interval)
-                    logging.info(f"Processed {len(processed_data)} records for {table_name}")
+
                 
                 logging.info("All data processed and committed successfully.")
     except psycopg2.Error as e:
