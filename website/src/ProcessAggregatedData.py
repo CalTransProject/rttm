@@ -80,63 +80,6 @@ def calculate_vehicle_speed(x1, y1, x2, y2, delta_t):
     distance = ((x2 - x1)**2 + (y2 - y1)**2)**0.5
     return distance / delta_t
 
-def preprocess_frame_data(start_time, end_time, chunk_size=CHUNK_SIZE):
-    with psycopg2.connect(**db_credentials) as conn:
-        with conn.cursor() as cur:
-            query = """
-            WITH consecutive_frames AS (
-                SELECT 
-                    "UnixTimestamp" AS timestamp,
-                    "VehicleObjects"::jsonb AS vehicle_objects,
-                    LAG("UnixTimestamp") OVER (ORDER BY "UnixTimestamp") AS prev_timestamp,
-                    LAG("VehicleObjects"::jsonb) OVER (ORDER BY "UnixTimestamp") AS prev_vehicle_objects
-                FROM "FramePrediction"
-                WHERE "UnixTimestamp" BETWEEN %s AND %s
-                ORDER BY "UnixTimestamp"
-                LIMIT %s OFFSET %s
-            )
-            SELECT * FROM consecutive_frames WHERE prev_timestamp IS NOT NULL
-            """
-            
-            offset = 0
-            total_processed = 0
-            
-            while True:
-                cur.execute(query, (start_time, end_time, chunk_size, offset))
-                chunk = cur.fetchall()
-                
-                if not chunk:
-                    break
-                
-                for row in chunk:
-                    current_timestamp, current_vehicles, prev_timestamp, prev_vehicles = row
-                    delta_t = (current_timestamp - prev_timestamp) / 1000 / FRAMES_PER_SECOND  # Adjust for 24 FPS
-                    
-                    processed_vehicles = []
-                    for current_vehicle in current_vehicles:
-                        vehicle_id = current_vehicle.get('id', current_vehicle.get('object_id', str(hash(json.dumps(current_vehicle)))))
-                        
-                        prev_vehicle = next((v for v in prev_vehicles if v.get('id', v.get('object_id', str(hash(json.dumps(v))))) == vehicle_id), None)
-                        
-                        if prev_vehicle:
-                            try:
-                                speed = calculate_vehicle_speed(
-                                    prev_vehicle['x'], prev_vehicle['y'],
-                                    current_vehicle['x'], current_vehicle['y'],
-                                    delta_t
-                                )
-                                current_vehicle['speed'] = speed
-                            except KeyError as e:
-                                logging.warning(f"Missing key for speed calculation: {e}. Vehicle data: {current_vehicle}")
-                                current_vehicle['speed'] = 0  # Set a default speed
-                        
-                        processed_vehicles.append(current_vehicle)
-                    
-                    yield (current_timestamp, processed_vehicles)
-                
-                total_processed += len(chunk)
-                logging.debug(f"Processed {total_processed} records so far")
-                offset += chunk_size
 
 def aggregate_data(results):
     aggregated_data = []
