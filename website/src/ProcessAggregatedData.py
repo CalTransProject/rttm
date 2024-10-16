@@ -11,6 +11,7 @@ import hashlib
 from tqdm import tqdm
 import multiprocessing
 from functools import partial
+import subprocess
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -130,6 +131,23 @@ def insert_data(table_name, data):
             """
             execute_values(cur, insert_query, data)
     logging.info(f"Inserted/Updated {len(data)} rows in {table_name}")
+def runScripts():
+        # List of Python scripts to run
+    scripts = [
+        "ProcessPerSecondData.py",
+        "ProcessPerMinuteData.py",
+        "ProcessPerHourData.py",
+        "ProcessPerDayData.py",
+        "ProcessPerWeekData.py",
+        "ProcessPerMonthData.py",
+        "ProcessPerYearData.py"
+    ]
+
+    # Loop through each script and run it
+    for script in scripts:
+        print(f"Running {script}...")
+        subprocess.run(["python", script])
+        print(f"Finished running {script}\n")
 
 def main():
     try:
@@ -169,6 +187,7 @@ def main():
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         logging.exception("Exception details:")
+    runScripts()
 
 if __name__ == "__main__":
     # Set up multiprocessing logging
