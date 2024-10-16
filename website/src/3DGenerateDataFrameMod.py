@@ -26,7 +26,7 @@ load_dotenv(dotenv_path='website/scriptsServer/database/db.env')
 
 # Database credentials
 db_credentials = {
-    "dbname": os.getenv("DB_NAME"),
+    "dbname": 'RTTM',
     "user": os.getenv("DB_USER"),
     "password": os.getenv("DB_PASSWORD"),
     "host": os.getenv("DB_HOST"),

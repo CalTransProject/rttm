@@ -12,6 +12,8 @@
 /build
 
 # misc
+website/src/venv/
+.venv
 .DS_Store
 .env.local
 .env.development.local
