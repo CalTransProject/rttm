@@ -132,7 +132,7 @@ Remember to keep your database credentials secure and never commit them to versi
 1. Navigate to the website directory:
 
 ```bash
-cd website
+cd website/src
 ```
 
 2. Execute scripts to set up the environment:
@@ -149,13 +149,7 @@ Run the following scripts in sequence:
 
 ```bash
 python ProcessAggregatedData.py
-python ProcessPerSecondData.py
-python ProcessPerMinuteData.py
-python ProcessPerHourData.py
-python ProcessPerDayData.py
-python ProcessPerWeekData.py
-python ProcessPerMonthData.py
-python ProcessPerYearData.py
+
 ```
 
 After running these scripts, proceed with the server setup.
