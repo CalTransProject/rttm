@@ -9,6 +9,8 @@
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.11.10",
     "@popperjs/core": "^2.11.8",
+    "@react-three/drei": "^9.115.0",
+    "@react-three/fiber": "^8.17.10",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -25,7 +27,7 @@
     "express-validator": "^7.0.1",
     "file-saver": "^2.0.5",
     "firebase": "^10.11.0",
-    "framer-motion": "^11.9.0",
+    "framer-motion": "^11.11.10",
     "fs": "^0.0.1-security",
     "json-server": "^1.0.0-alpha.23",
     "jsonwebtoken": "^9.0.2",
@@ -45,6 +47,7 @@
     "react-scripts": "^5.0.1",
     "save": "^2.9.0",
     "socket.io-client": "^4.7.5",
+    "three": "^0.169.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -74,6 +77,7 @@
     ]
   },
   "devDependencies": {
+    "@shadcn/ui": "^0.0.4",
     "gh-pages": "^5.0.0"
   },
   "overrides": {
