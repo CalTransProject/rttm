@@ -64,6 +64,7 @@ class LidarProcessor:
                 logger.warning(f"Unexpected packet size: {len(data)} bytes")
                 return points
 
+            # Process multiple packets to accumulate more points
             for block_idx in range(NUM_DATA_BLOCKS):
                 offset = block_idx * DATA_BLOCK_SIZE
                 block = data[offset:offset + DATA_BLOCK_SIZE]
@@ -79,7 +80,8 @@ class LidarProcessor:
                         try:
                             distance = struct.unpack_from('<H', block, 4 + channel * 3)[0] * DISTANCE_RESOLUTION
                             
-                            if distance == 0 or distance > 200:  # Ignore points beyond 200m
+                            # Adjust filtering thresholds for more points
+                            if distance == 0 or distance > 250:  # Increased range to 250m
                                 continue
                                 
                             omega = np.radians(VERTICAL_ANGLES[channel])
@@ -89,8 +91,8 @@ class LidarProcessor:
                             y = distance * np.cos(omega) * np.cos(azimuth)
                             z = distance * np.sin(omega)
                             
-                            # Basic point filtering
-                            if abs(x) < 100 and abs(y) < 100 and abs(z) < 100:  # 100m range limit
+                            # Relaxed point filtering thresholds
+                            if abs(x) < 150 and abs(y) < 150 and abs(z) < 150:  # Increased to 150m
                                 points.extend([float(x), float(y), float(z)])
                                 
                         except struct.error as e:
@@ -121,9 +123,13 @@ class LidarProcessor:
                 return [], False
 
         try:
-            data, addr = self.socket.recvfrom(PACKET_SIZE)
-            points = self.process_packet(data)
-            return points, True
+            # Accumulate points from multiple packets
+            all_points = []
+            for _ in range(3):  # Process 3 packets per frame
+                data, addr = self.socket.recvfrom(PACKET_SIZE)
+                points = self.process_packet(data)
+                all_points.extend(points)
+            return all_points, True
             
         except socket.timeout:
             logger.warning("Socket timeout while receiving data")

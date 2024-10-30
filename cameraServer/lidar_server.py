@@ -25,6 +25,7 @@ DEFAULT_LIDAR_IP: Final[str] = '192.168.1.201'
 DEFAULT_LIDAR_PORT: Final[int] = 2368
 RATE_LIMIT: Final[float] = 0.1  # 100ms between frames
 PACKET_SIZE: Final[int] = 1248  # VLP-32C packet size
+MIN_POINTS: Final[int] = 120 # Minimum number of points to send
 
 class LidarServer:
     def __init__(
@@ -42,6 +43,8 @@ class LidarServer:
         self.active_connections: Set[WebSocketServerProtocol] = set()
         self.running: bool = False
         self._setup_complete: bool = False
+        self._consecutive_low_points: int = 0
+        self._max_consecutive_low_points: int = 5
 
     async def setup(self) -> None:
         """Initialize LiDAR processor and setup server."""
@@ -75,12 +78,22 @@ class LidarServer:
                     await asyncio.sleep(RATE_LIMIT)
                     continue
 
+                num_points = len(points) // 3
+                if num_points < MIN_POINTS:
+                    self._consecutive_low_points += 1
+                    if self._consecutive_low_points >= self._max_consecutive_low_points:
+                        logger.warning(f"Consistently low point count: {num_points} points")
+                        await asyncio.sleep(RATE_LIMIT)
+                        continue
+                else:
+                    self._consecutive_low_points = 0
+
                 if points:
                     message = {
                         "type": "lidar_data",
                         "data": points,
                         "timestamp": int(asyncio.get_event_loop().time() * 1000),
-                        "frame_count": len(points) // 3  # Number of points
+                        "frame_count": num_points
                     }
                     
                     try:
