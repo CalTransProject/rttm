@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect, useRef, useCallback } from "react";
 import { MemoizedStackedArea, MemoizedBar, MemoizedPieChart, MemoizedStackedBar, MemoizedDensity } from "./MemoizedChartComponents";
 import ErrorBoundary from "./ErrorBoundary";
+import { io } from "socket.io-client";
 import { debounce } from 'lodash';
 import "./subcomponents/sub-graph/charts.css";
 import "./subcomponents/sub-s3-components/videoPlayer.css";
@@ -13,7 +14,8 @@ const initialState = {
   currentCounts: {},
   frameUrl: null,
   lidarPoints: [],
-  connectionStatus: 'disconnected', // Add connection status
+  lidarConnectionStatus: 'disconnected',
+  socketioConnectionStatus: 'disconnected',
 };
 
 function reducer(state, action) {
@@ -25,6 +27,9 @@ function reducer(state, action) {
         currentCounts: action.payload.counts,
       };
     case 'UPDATE_FRAME':
+      if (state.frameUrl) {
+        URL.revokeObjectURL(state.frameUrl);
+      }
       return {
         ...state,
         frameUrl: action.payload,
@@ -34,10 +39,15 @@ function reducer(state, action) {
         ...state,
         lidarPoints: action.payload.data || [],
       };
-    case 'SET_CONNECTION_STATUS':
+    case 'SET_SOCKETIO_STATUS':
       return {
         ...state,
-        connectionStatus: action.payload,
+        socketioConnectionStatus: action.payload,
+      };
+    case 'SET_LIDAR_STATUS':
+      return {
+        ...state,
+        lidarConnectionStatus: action.payload,
       };
     default:
       return state;
@@ -53,6 +63,7 @@ const transformData = (rawData) => {
 
 const Mainpage = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const socketioRef = useRef(null);
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
 
@@ -61,87 +72,108 @@ const Mainpage = () => {
     []
   );
 
-  const setupWebSocket = useCallback(() => {
-    try {
+  // Socket.IO setup for 2D camera and vehicle data
+  useEffect(() => {
+    socketioRef.current = io('http://localhost:5001', {
+      transports: ['websocket'],
+      cors: {
+        origin: "*"
+      }
+    });
+
+    socketioRef.current.on('connect', () => {
+      console.log('Connected to Socket.IO server');
+      dispatch({ type: 'SET_SOCKETIO_STATUS', payload: 'connected' });
+    });
+
+    socketioRef.current.on('disconnect', () => {
+      console.log('Disconnected from Socket.IO server');
+      dispatch({ type: 'SET_SOCKETIO_STATUS', payload: 'disconnected' });
+    });
+
+    socketioRef.current.on('connect_error', (error) => {
+      console.error('Socket.IO connection error:', error);
+      dispatch({ type: 'SET_SOCKETIO_STATUS', payload: 'error' });
+    });
+
+    socketioRef.current.on('update', (data) => {
+      try {
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+        debouncedDispatch({ 
+          type: 'UPDATE_DATA', 
+          payload: parsedData 
+        });
+      } catch (error) {
+        console.error('Error processing update data:', error);
+      }
+    });
+
+    socketioRef.current.on('frame', (frameData) => {
+      try {
+        const blob = new Blob([frameData], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        dispatch({ type: 'UPDATE_FRAME', payload: url });
+      } catch (error) {
+        console.error('Error processing frame data:', error);
+      }
+    });
+
+    return () => {
+      if (socketioRef.current) {
+        socketioRef.current.disconnect();
+      }
+      if (state.frameUrl) {
+        URL.revokeObjectURL(state.frameUrl);
+      }
+    };
+  }, [debouncedDispatch]);
+
+  // WebSocket setup for LiDAR data
+  useEffect(() => {
+    const connectWebSocket = () => {
       wsRef.current = new WebSocket('ws://localhost:8765');
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket Connected');
-        dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'connected' });
-        // Clear any reconnection timeout
+        console.log('Connected to LiDAR WebSocket');
+        dispatch({ type: 'SET_LIDAR_STATUS', payload: 'connected' });
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
           reconnectTimeoutRef.current = null;
         }
       };
+      wsRef.current.onclose = () => {
+        console.log('LiDAR WebSocket connection closed');
+        dispatch({ type: 'SET_LIDAR_STATUS', payload: 'disconnected' });
+        
+        // Attempt to reconnect after 5 seconds
+        reconnectTimeoutRef.current = setTimeout(() => {
+          console.log('Attempting to reconnect to LiDAR...');
+          connectWebSocket();
+        }, 5000);
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error('LiDAR WebSocket error:', error);
+        dispatch({ type: 'SET_LIDAR_STATUS', payload: 'error' });
+      };
 
       wsRef.current.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log('Received message type:', message.type);
-
-          switch (message.type) {
-            case 'lidar_data':
-              if (message.data && Array.isArray(message.data)) {
-                dispatch({ 
-                  type: 'UPDATE_LIDAR', 
-                  payload: message 
-                });
-                console.log(`Processed ${message.data.length / 3} LiDAR points`);
-              }
-              break;
-
-            case 'frame':
-              if (message.data) {
-                const blob = new Blob([message.data], { type: 'image/jpeg' });
-                const url = URL.createObjectURL(blob);
-                dispatch({ type: 'UPDATE_FRAME', payload: url });
-              }
-              break;
-
-            case 'update':
-              if (message.data) {
-                debouncedDispatch({ 
-                  type: 'UPDATE_DATA', 
-                  payload: message.data 
-                });
-              }
-              break;
-
-            default:
-              console.log('Unknown message type:', message.type);
+          if (message.type === 'lidar_data' && Array.isArray(message.data)) {
+            dispatch({ 
+              type: 'UPDATE_LIDAR',
+              payload: message
+            });
           }
         } catch (error) {
-          console.error('Error processing message:', error);
+          console.error('Error processing LiDAR data:', error);
         }
       };
+    };
 
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'error' });
-      };
+    connectWebSocket();
 
-      wsRef.current.onclose = () => {
-        console.log('WebSocket connection closed');
-        dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'disconnected' });
-        
-        // Attempt to reconnect after 5 seconds
-        reconnectTimeoutRef.current = setTimeout(() => {
-          console.log('Attempting to reconnect...');
-          setupWebSocket();
-        }, 5000);
-      };
-
-    } catch (error) {
-      console.error('Error setting up WebSocket:', error);
-      dispatch({ type: 'SET_CONNECTION_STATUS', payload: 'error' });
-    }
-  }, [debouncedDispatch]);
-
-  useEffect(() => {
-    setupWebSocket();
-
-    // Cleanup function
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
@@ -150,13 +182,12 @@ const Mainpage = () => {
         wsRef.current.close();
       }
     };
-  }, [setupWebSocket]);
+  }, []);
 
   const transformedData = transformData(state.vehicleData);
 
-  // Connection status indicator styles
-  const getConnectionStatusColor = () => {
-    switch (state.connectionStatus) {
+  const getConnectionStatusColor = (status) => {
+    switch (status) {
       case 'connected': return 'text-green-500';
       case 'disconnected': return 'text-red-500';
       case 'error': return 'text-yellow-500';
@@ -167,9 +198,13 @@ const Mainpage = () => {
   return (
     <section>
       <div className="container-fluid">
-        {/* Connection Status */}
-        <div className={`text-sm mb-2 ${getConnectionStatusColor()}`}>
-          Status: {state.connectionStatus}
+        <div className="flex gap-4 mb-2">
+          <div className={`text-sm ${getConnectionStatusColor(state.socketioConnectionStatus)}`}>
+            2D Camera Status: {state.socketioConnectionStatus}
+          </div>
+          <div className={`text-sm ${getConnectionStatusColor(state.lidarConnectionStatus)}`}>
+            LiDAR Status: {state.lidarConnectionStatus}
+          </div>
         </div>
 
         <div className="row row-cols-1 row-cols-md-2 gy-2 gx-2">
@@ -179,12 +214,7 @@ const Mainpage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <motion.h4
-                className="camText gradient-label"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
+              <motion.h4 className="camText gradient-label">
                 Camera 1 (LiDAR)
               </motion.h4>
               <ErrorBoundary>
@@ -199,20 +229,16 @@ const Mainpage = () => {
           </div>
 
           <div className="col">
-            <motion.h4
-              className="camText gradient-label"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+            <motion.h4 className="camText gradient-label">
               Camera 2 (2D)
             </motion.h4>
             <motion.div
               className="video-box"
-              style={{ position: 'relative', overflow: 'hidden' }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              style={{ 
+                position: 'relative', 
+                overflow: 'hidden',
+                height: '400px'
+              }}
             >
               {state.frameUrl && (
                 <motion.img
@@ -230,7 +256,7 @@ const Mainpage = () => {
                   }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.3 }}
                 />
               )}
             </motion.div>
