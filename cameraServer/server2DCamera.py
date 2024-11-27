@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-camera = cv2.VideoCapture(1)
+camera = cv2.VideoCapture(0)
 PATH_TO_MODEL = "../model/2dModel.pt"
 model = YOLO(PATH_TO_MODEL)
 classNames = ['car', 'pickup', 'SUV', 'van', 'truck', 'bus', 'motorcycle', 'pedestrian']

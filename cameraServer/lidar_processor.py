@@ -4,6 +4,7 @@ import struct
 import numpy as np
 from typing import List, Tuple, Final
 import logging
+import time
 
 # Setup logging
 logging.basicConfig(
@@ -35,13 +36,38 @@ class LidarProcessor:
         """Set up UDP socket with error handling."""
         try:
             if self.socket:
-                self.socket.close()
+                try:
+                    self.socket.shutdown(socket.SHUT_RDWR)
+                except:
+                    pass
+                try:
+                    self.socket.close()
+                except:
+                    pass
+                self.socket = None
             
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.socket.bind(('', self.port))
-            self.socket.settimeout(1.0)  # 1 second timeout
+            # Wait for port to be available
+            max_retries = 5
+            retry_delay = 0.5
+            for attempt in range(max_retries):
+                try:
+                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                    self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  # Add REUSEPORT
+                    self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 4096 * 1024)
+                    self.socket.bind(('', self.port))
+                    self.socket.settimeout(0.1)
+                    break
+                except socket.error as e:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"Port {self.port} busy, retrying in {retry_delay}s...")
+                        time.sleep(retry_delay)
+                        continue
+                    raise
+
             self.connected = True
-            logger.info(f"Successfully connected to LiDAR at {self.host}:{self.port}")
+            logger.info(f"Socket setup complete. Buffer size: {self.socket.getsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF)}")
+            logger.info(f"Listening for LiDAR data on port {self.port}")
         except socket.error as e:
             self.connected = False
             logger.error(f"Failed to setup socket: {e}")
@@ -125,11 +151,30 @@ class LidarProcessor:
         try:
             # Accumulate points from multiple packets
             all_points = []
-            for _ in range(3):  # Process 3 packets per frame
-                data, addr = self.socket.recvfrom(PACKET_SIZE)
-                points = self.process_packet(data)
-                all_points.extend(points)
-            return all_points, True
+            packets_received = 0
+            for _ in range(5):  # Try to get 5 packets
+                try:
+                    data, addr = self.socket.recvfrom(PACKET_SIZE)
+                    logger.info(f"Received packet from {addr[0]}, size: {len(data)} bytes")
+                    
+                    # Don't filter by host address since some LiDAR units might use different IPs
+                    points = self.process_packet(data)
+                    if points:
+                        packets_received += 1
+                        all_points.extend(points)
+                        logger.info(f"Processed packet {packets_received} with {len(points)//3} points")
+                    else:
+                        logger.warning(f"Packet processing yielded no points, size: {len(data)}")
+                except socket.timeout:
+                    logger.warning("Timeout while receiving packet")
+                    continue
+
+            if packets_received > 0:
+                logger.info(f"Frame complete: {packets_received} packets, {len(all_points)//3} total points")
+                return all_points, True
+            else:
+                logger.warning("No valid packets received in frame")
+                return [], False
             
         except socket.timeout:
             logger.warning("Socket timeout while receiving data")

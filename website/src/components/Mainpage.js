@@ -141,11 +141,10 @@ const Mainpage = () => {
           reconnectTimeoutRef.current = null;
         }
       };
+
       wsRef.current.onclose = () => {
         console.log('LiDAR WebSocket connection closed');
         dispatch({ type: 'SET_LIDAR_STATUS', payload: 'disconnected' });
-        
-        // Attempt to reconnect after 5 seconds
         reconnectTimeoutRef.current = setTimeout(() => {
           console.log('Attempting to reconnect to LiDAR...');
           connectWebSocket();
@@ -198,6 +197,7 @@ const Mainpage = () => {
   return (
     <section>
       <div className="container-fluid">
+        {/* Connection Status */}
         <div className="flex gap-4 mb-2">
           <div className={`text-sm ${getConnectionStatusColor(state.socketioConnectionStatus)}`}>
             2D Camera Status: {state.socketioConnectionStatus}
@@ -207,63 +207,88 @@ const Mainpage = () => {
           </div>
         </div>
 
+        {/* Camera Views */}
         <div className="row row-cols-1 row-cols-md-2 gy-2 gx-2">
+          {/* LiDAR Camera */}
           <div className="col">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="h-full"
             >
-              <motion.h4 className="camText gradient-label">
+              <motion.h4 className="camText gradient-label mb-2">
                 Camera 1 (LiDAR)
               </motion.h4>
-              <ErrorBoundary>
-                <LidarViewer 
-                  points={state.lidarPoints}
-                  title=""
-                  height="400px"
-                  showControls={true}
-                />
-              </ErrorBoundary>
+              <motion.div
+                className="video-box"
+                style={{ 
+                  position: 'relative', 
+                  overflow: 'hidden',
+                  height: '400px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                  borderRadius: '8px'
+                }}
+              >
+                <ErrorBoundary>
+                  <LidarViewer 
+                    points={state.lidarPoints}
+                    title=""
+                    height="100%"
+                    showControls={true}
+                  />
+                </ErrorBoundary>
+              </motion.div>
             </motion.div>
           </div>
 
+          {/* 2D Camera */}
           <div className="col">
-            <motion.h4 className="camText gradient-label">
-              Camera 2 (2D)
-            </motion.h4>
             <motion.div
-              className="video-box"
-              style={{ 
-                position: 'relative', 
-                overflow: 'hidden',
-                height: '400px'
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="h-full"
             >
-              {state.frameUrl && (
-                <motion.img
-                  src={state.frameUrl}
-                  alt="webcam"
-                  className="webcam-image"
-                  style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              )}
+              <motion.h4 className="camText gradient-label mb-2">
+                Camera 2 (2D)
+              </motion.h4>
+              <motion.div
+                className="video-box"
+                style={{ 
+                  position: 'relative', 
+                  overflow: 'hidden',
+                  height: '400px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                  borderRadius: '8px'
+                }}
+              >
+                {state.frameUrl && (
+                  <motion.img
+                    src={state.frameUrl}
+                    alt="webcam"
+                    className="webcam-image"
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      left: '50%',
+                      top: '50%',
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
+              </motion.div>
             </motion.div>
           </div>
         </div>
 
-        <div className="row row-cols-1 row-cols-md-3 gy-2 gx-2">
+        {/* Charts Section */}
+        <div className="row row-cols-1 row-cols-md-3 gy-2 gx-2 mt-4">
           <div className="col">
             <motion.div
               className="box gradient-background"

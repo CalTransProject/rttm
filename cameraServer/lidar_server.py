@@ -7,6 +7,8 @@ import logging
 from typing import Set
 import signal
 import sys
+import os
+import time
 from websockets.server import WebSocketServerProtocol
 from typing import Final
 
@@ -24,8 +26,20 @@ DEFAULT_PORT: Final[int] = 8765
 DEFAULT_LIDAR_IP: Final[str] = '192.168.1.201'
 DEFAULT_LIDAR_PORT: Final[int] = 2368
 RATE_LIMIT: Final[float] = 0.1  # 100ms between frames
-PACKET_SIZE: Final[int] = 1248  # VLP-32C packet size
-MIN_POINTS: Final[int] = 120 # Minimum number of points to send
+PACKET_SIZE: Final[int] = 1206  # Updated to match LidarProcessor
+MIN_POINTS: Final[int] = 60  # Reduced minimum point threshold
+
+# Handle SIGTSTP (Ctrl+Z)
+def handle_suspend(signum, frame):
+    logger.info("Received suspend signal, cleaning up...")
+    if 'server' in globals():
+        # Force close the socket immediately
+        if server.lidar_processor and server.lidar_processor.socket:
+            server.lidar_processor.socket.close()
+        # Exit immediately
+        os._exit(0)  # Use os._exit() instead of sys.exit() for immediate termination
+
+signal.signal(signal.SIGTSTP, handle_suspend)
 
 class LidarServer:
     def __init__(
@@ -137,10 +151,29 @@ class LidarServer:
         self._setup_complete = False
         logger.info("Server shutdown complete")
 
+    async def restart(self) -> None:
+        """Restart the server by performing a clean shutdown and setup."""
+        await self.shutdown()
+        await self.setup()
+        await self.run()
+
     async def run(self) -> None:
         """Run the WebSocket server."""
         if not self._setup_complete:
             await self.setup()
+
+        # Check if port is already in use
+        try:
+            import socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.bind((self.host, self.port))
+            sock.close()
+        except OSError as e:
+            if e.errno == 48 or e.errno == 98:  # Address already in use
+                logger.error(f"Port {self.port} is already in use. Please ensure no other instance is running.")
+                await self.shutdown()
+                return
+            raise
 
         self.running = True
         
@@ -167,6 +200,7 @@ class LidarServer:
             await self.shutdown()
 
 async def main() -> None:
+    global server
     server = LidarServer()
     try:
         await server.run()
@@ -175,10 +209,18 @@ async def main() -> None:
         await server.shutdown()
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        logger.info("Server stopped by user")
-    except Exception as e:
-        logger.error(f"Server error: {e}")
-        sys.exit(1)
+    while True:
+        try:
+            asyncio.run(main())
+        except KeyboardInterrupt:
+            logger.info("Server stopped. Press Ctrl+C again to exit completely, or wait to restart...")
+            try:
+                # Wait for 2 seconds to either restart or exit
+                asyncio.run(asyncio.sleep(2))
+            except KeyboardInterrupt:
+                logger.info("Exiting...")
+                sys.exit(0)
+            logger.info("Restarting server...")
+        except Exception as e:
+            logger.error(f"Server error: {e}")
+            sys.exit(1)

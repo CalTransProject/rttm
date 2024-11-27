@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mui/icons-material": "^6.1.9",
     "@react-three/drei": "^9.115.0",
     "@react-three/fiber": "^8.17.7",
     "bcrypt": "^5.1.1",
