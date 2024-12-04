@@ -5,6 +5,7 @@ import numpy as np
 from typing import List, Tuple, Final
 import logging
 import time
+from lidar_core import PacketDecoder, Config
 
 # Setup logging
 logging.basicConfig(
@@ -14,15 +15,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# VLP-32C Constants
-PACKET_SIZE: Final[int] = 1206  # Updated from 1248 to match actual packet size
-DATA_BLOCK_SIZE: Final[int] = 100
-NUM_CHANNELS: Final[int] = 32
-DISTANCE_RESOLUTION: Final[float] = 0.004  # 4mm
-AZIMUTH_RESOLUTION: Final[float] = 2 * np.pi / 36000.0
-VERTICAL_ANGLES: Final[np.ndarray] = np.array([-30.67 + i * 1.33 for i in range(32)])
-NUM_DATA_BLOCKS: Final[int] = 12
-
 class LidarProcessor:
     def __init__(self, host: str = '192.168.1.201', port: int = 2368) -> None:
         """Initialize LiDAR processor with specified host and port."""
@@ -30,6 +22,8 @@ class LidarProcessor:
         self.port = port
         self.socket: socket.socket | None = None
         self.connected: bool = False
+        self.config = Config()
+        self.decoder = PacketDecoder(self.config)
         self._setup_socket()
 
     def _setup_socket(self) -> None:
@@ -53,7 +47,7 @@ class LidarProcessor:
                 try:
                     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                     self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  # Add REUSEPORT
+                    self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
                     self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 4096 * 1024)
                     self.socket.bind(('', self.port))
                     self.socket.settimeout(0.1)
@@ -74,118 +68,74 @@ class LidarProcessor:
             raise
 
     def process_packet(self, data: bytes) -> List[float]:
-        """
-        Process a single LiDAR packet and return point cloud data.
-        
-        Args:
-            data: Raw packet data from the LiDAR
-            
-        Returns:
-            List of [x, y, z] coordinates as floats
-        """
-        points: List[float] = []
-        
+        """Process a single LiDAR packet using the PacketDecoder."""
         try:
-            if len(data) != PACKET_SIZE:
-                logger.warning(f"Unexpected packet size: {len(data)} bytes")
-                return points
+            if len(data) != self.config.packet_size:
+                logger.warning(f"Invalid packet size: got {len(data)}, expected {self.config.packet_size}")
+                return []
 
-            # Process multiple packets to accumulate more points
-            for block_idx in range(NUM_DATA_BLOCKS):
-                offset = block_idx * DATA_BLOCK_SIZE
-                block = data[offset:offset + DATA_BLOCK_SIZE]
-                
-                if len(block) < DATA_BLOCK_SIZE:
-                    logger.warning(f"Incomplete data block at index {block_idx}")
-                    continue
-                
-                try:
-                    azimuth = struct.unpack_from('<H', block, 2)[0] * AZIMUTH_RESOLUTION
-                    
-                    for channel in range(NUM_CHANNELS):
-                        try:
-                            distance = struct.unpack_from('<H', block, 4 + channel * 3)[0] * DISTANCE_RESOLUTION
-                            
-                            # Adjust filtering thresholds for more points
-                            if distance == 0 or distance > 250:  # Increased range to 250m
-                                continue
-                                
-                            omega = np.radians(VERTICAL_ANGLES[channel])
-                            
-                            # Calculate coordinates
-                            x = distance * np.cos(omega) * np.sin(azimuth)
-                            y = distance * np.cos(omega) * np.cos(azimuth)
-                            z = distance * np.sin(omega)
-                            
-                            # Relaxed point filtering thresholds
-                            if abs(x) < 150 and abs(y) < 150 and abs(z) < 150:  # Increased to 150m
-                                points.extend([float(x), float(y), float(z)])
-                                
-                        except struct.error as e:
-                            logger.warning(f"Error unpacking channel {channel} data: {e}")
-                            continue
-                            
-                except struct.error as e:
-                    logger.warning(f"Error unpacking azimuth at block {block_idx}: {e}")
-                    continue
-
+            points = self.decoder.decode_packet(data)
+            if points:
+                logger.debug(f"Processed packet with {len(points)//3} points")
+            return points
         except Exception as e:
             logger.error(f"Error processing packet: {e}")
             return []
 
-        return points
-
-    def get_frame(self) -> Tuple[List[float], bool]:
+    def get_frame(self) -> Tuple[dict, bool]:
         """
         Get a single frame of point cloud data.
         
         Returns:
-            Tuple of (points_list, success_flag)
+            Tuple of (frame_data, success_flag)
         """
         if not self.connected or not self.socket:
             try:
+                logger.info("Socket not connected, attempting to reconnect...")
                 self._setup_socket()
-            except socket.error:
-                return [], False
+            except socket.error as e:
+                logger.error(f"Failed to reconnect: {e}")
+                return None, False
 
         try:
             # Accumulate points from multiple packets
             all_points = []
+            all_intensities = []
             packets_received = 0
-            for _ in range(5):  # Try to get 5 packets
+            start_time = time.time()
+            
+            while time.time() - start_time < 0.1:  # Collect data for 100ms
                 try:
-                    data, addr = self.socket.recvfrom(PACKET_SIZE)
-                    logger.info(f"Received packet from {addr[0]}, size: {len(data)} bytes")
+                    data, addr = self.socket.recvfrom(self.config.packet_size)
+                    logger.debug(f"Received packet from {addr[0]}, size: {len(data)} bytes")
                     
-                    # Don't filter by host address since some LiDAR units might use different IPs
-                    points = self.process_packet(data)
+                    points, intensities = self.decoder.decode_packet(data)
                     if points:
                         packets_received += 1
                         all_points.extend(points)
-                        logger.info(f"Processed packet {packets_received} with {len(points)//3} points")
-                    else:
-                        logger.warning(f"Packet processing yielded no points, size: {len(data)}")
+                        all_intensities.extend(intensities)
+                        logger.debug(f"Processed packet {packets_received} with {len(points)//3} points")
                 except socket.timeout:
-                    logger.warning("Timeout while receiving packet")
                     continue
 
             if packets_received > 0:
-                logger.info(f"Frame complete: {packets_received} packets, {len(all_points)//3} total points")
-                return all_points, True
+                logger.debug(f"Frame complete: {packets_received} packets, {len(all_points)//3} total points")
+                return {
+                    "points": all_points,
+                    "intensities": all_intensities,
+                    "timestamp": time.time()
+                }, True
             else:
                 logger.warning("No valid packets received in frame")
-                return [], False
+                return None, False
             
-        except socket.timeout:
-            logger.warning("Socket timeout while receiving data")
-            return [], False
         except socket.error as e:
-            logger.error(f"Socket error: {e}")
+            logger.error(f"Socket error while receiving data: {e}")
             self.connected = False
-            return [], False
+            return None, False
         except Exception as e:
             logger.error(f"Unexpected error in get_frame: {e}")
-            return [], False
+            return None, False
 
     def close(self) -> None:
         """Clean up resources."""
@@ -202,9 +152,9 @@ if __name__ == "__main__":
     processor = LidarProcessor()
     try:
         while True:
-            points, success = processor.get_frame()
+            frame_data, success = processor.get_frame()
             if success:
-                print(f"Received {len(points)//3} points")
+                print(f"Received {len(frame_data['points'])//3} points")
             else:
                 print("Failed to get frame, retrying...")
     except KeyboardInterrupt:
