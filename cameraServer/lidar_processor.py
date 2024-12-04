@@ -82,12 +82,12 @@ class LidarProcessor:
             logger.error(f"Error processing packet: {e}")
             return []
 
-    def get_frame(self) -> Tuple[dict, bool]:
+    def get_frame(self) -> Tuple[List[float], bool]:
         """
         Get a single frame of point cloud data.
         
         Returns:
-            Tuple of (frame_data, success_flag)
+            Tuple of (points_list, success_flag)
         """
         if not self.connected or not self.socket:
             try:
@@ -95,12 +95,11 @@ class LidarProcessor:
                 self._setup_socket()
             except socket.error as e:
                 logger.error(f"Failed to reconnect: {e}")
-                return None, False
+                return [], False
 
         try:
             # Accumulate points from multiple packets
             all_points = []
-            all_intensities = []
             packets_received = 0
             start_time = time.time()
             
@@ -109,33 +108,28 @@ class LidarProcessor:
                     data, addr = self.socket.recvfrom(self.config.packet_size)
                     logger.debug(f"Received packet from {addr[0]}, size: {len(data)} bytes")
                     
-                    points, intensities = self.decoder.decode_packet(data)
+                    points = self.process_packet(data)
                     if points:
                         packets_received += 1
                         all_points.extend(points)
-                        all_intensities.extend(intensities)
                         logger.debug(f"Processed packet {packets_received} with {len(points)//3} points")
                 except socket.timeout:
                     continue
 
             if packets_received > 0:
                 logger.debug(f"Frame complete: {packets_received} packets, {len(all_points)//3} total points")
-                return {
-                    "points": all_points,
-                    "intensities": all_intensities,
-                    "timestamp": time.time()
-                }, True
+                return all_points, True
             else:
                 logger.warning("No valid packets received in frame")
-                return None, False
+                return [], False
             
         except socket.error as e:
             logger.error(f"Socket error while receiving data: {e}")
             self.connected = False
-            return None, False
+            return [], False
         except Exception as e:
             logger.error(f"Unexpected error in get_frame: {e}")
-            return None, False
+            return [], False
 
     def close(self) -> None:
         """Clean up resources."""
@@ -152,9 +146,9 @@ if __name__ == "__main__":
     processor = LidarProcessor()
     try:
         while True:
-            frame_data, success = processor.get_frame()
+            points, success = processor.get_frame()
             if success:
-                print(f"Received {len(frame_data['points'])//3} points")
+                print(f"Received {len(points)//3} points")
             else:
                 print("Failed to get frame, retrying...")
     except KeyboardInterrupt:

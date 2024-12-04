@@ -25,27 +25,9 @@
 }
 
 .lidar-controls {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px;
-  border-radius: 5px;
-  color: #fff;
-  font-family: monospace;
-  z-index: 1000;
-}
-
-.lidar-controls-help {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 0.9em;
-  color: #aaa;
-}
-
-.lidar-controls-help p {
-  margin: 2px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .point-count {
@@ -55,22 +37,18 @@
 }
 
 .settings-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 5px 10px;
-  margin: 0 5px;
-  border-radius: 3px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
   cursor: pointer;
-  transition: background 0.2s;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
 .settings-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.settings-button:active {
-  background: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .settings-button:focus {

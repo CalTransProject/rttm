@@ -8,6 +8,7 @@ import os
 import signal
 from contextlib import asynccontextmanager
 from lidar_processor import LidarProcessor
+import subprocess
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -16,41 +17,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def is_port_in_use(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.bind(('localhost', port))
-            return False
-        except socket.error:
-            return True
-
-async def cleanup_port(port):
+def cleanup_port(port: int) -> None:
+    """Clean up any processes using the specified port."""
     try:
-        # Kill processes using both IPv4 and IPv6
-        cmds = [
-            f"lsof -ti4:{port}",  # IPv4
-            f"lsof -ti6:{port}"   # IPv6
-        ]
-        for cmd in cmds:
-            pids = os.popen(cmd).read().strip().split('\n')
-            for pid in pids:
-                try:
-                    if pid:
-                        pid = int(pid)
-                        logger.info(f"Killing process {pid} using port {port}")
-                        os.kill(pid, signal.SIGKILL)  # Use SIGKILL instead of SIGTERM
-                        await asyncio.sleep(1)  # Give more time for cleanup
-                except ValueError:
-                    continue
-                except ProcessLookupError:
-                    continue
-                except Exception as e:
-                    logger.warning(f"Error killing process {pid}: {e}")
+        # Get list of processes using the port
+        result = subprocess.run(['lsof', '-i', f':{port}'], 
+                              capture_output=True, text=True)
         
-        # Additional sleep to ensure port is fully released
-        await asyncio.sleep(2)
+        if result.returncode == 0:
+            # Parse output to get PIDs
+            for line in result.stdout.splitlines()[1:]:  # Skip header
+                try:
+                    pid = int(line.split()[1])
+                    logger.info(f"Killing process {pid} using port {port}")
+                    subprocess.run(['kill', '-9', str(pid)], 
+                                 capture_output=True, check=False)
+                except (IndexError, ValueError) as e:
+                    logger.warning(f"Failed to parse process info: {e}")
+        
+        # Wait for ports to be fully released
+        time.sleep(2)
+        
+    except subprocess.CalledProcessError as e:
+        logger.warning(f"Failed to check port usage: {e}")
     except Exception as e:
-        logger.warning(f"Port cleanup failed: {e}")
+        logger.error(f"Unexpected error during port cleanup: {e}")
 
 class LidarServer:
     def __init__(self, host="localhost", port=8765, max_retries=3):
@@ -94,16 +85,15 @@ class LidarServer:
             
             while self.running:
                 try:
+                    # Check if we should shutdown
                     if self._shutdown_event.is_set():
                         break
                         
-                    frame_data, success = self.processor.get_frame()
-                    if success and frame_data:
-                        # Send points, intensities, and timestamp
+                    points, success = self.processor.get_frame()
+                    if success and points:
                         await websocket.send(json.dumps({
-                            "points": frame_data["points"],
-                            "intensities": frame_data["intensities"],
-                            "timestamp": frame_data["timestamp"]
+                            "points": points,
+                            "timestamp": time.time()
                         }))
                         await asyncio.sleep(0.01)  # Rate limiting
                     else:
@@ -126,7 +116,7 @@ class LidarServer:
         try:
             if is_port_in_use(self.port):
                 logger.info(f"Port {self.port} is in use, cleaning up...")
-                await cleanup_port(self.port)
+                cleanup_port(self.port)
                 await asyncio.sleep(1)
             
             self.server = await websockets.serve(
@@ -148,22 +138,42 @@ class LidarServer:
 
     async def start(self):
         """Start the LiDAR server with retry logic"""
-        retries = 0
-        while retries < self.max_retries and not self._shutdown_event.is_set():
+        max_retries = 3
+        retry_delay = 2
+        
+        for attempt in range(max_retries):
             try:
                 logger.info(f"Starting LiDAR server on ws://{self.host}:{self.port}")
-                async with self.server_context() as server:
-                    await self._shutdown_event.wait()
-                break
                 
-            except Exception as e:
-                retries += 1
-                logger.error(f"Server error (attempt {retries}/{self.max_retries}): {e}")
-                if retries < self.max_retries:
-                    await asyncio.sleep(2 ** retries)  # Exponential backoff
+                # Clean up port before binding
+                cleanup_port(self.port)
+                
+                # Create server with reuse_address
+                self.server = await websockets.serve(
+                    self.handle_client,
+                    self.host,
+                    self.port,
+                    reuse_address=True
+                )
+                
+                await self.server.wait_closed()
+                return
+                
+            except OSError as e:
+                if "address already in use" in str(e).lower():
+                    logger.error(f"Server error (attempt {attempt + 1}/{max_retries}): {e}")
+                    if attempt < max_retries - 1:
+                        await asyncio.sleep(retry_delay)
+                        continue
                 else:
-                    logger.error("Max retries reached, shutting down")
+                    logger.error(f"Failed to start server: {e}")
                     break
+            except Exception as e:
+                logger.error(f"Unexpected error: {e}")
+                break
+        
+        logger.error("Max retries reached, shutting down")
+        await self.cleanup()
 
     def signal_handler(self, signum, frame):
         """Handle system signals for graceful shutdown"""
