@@ -1,39 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "./styling/Modal.css";
-import camerasData from "../../camera-management-subpages/Data/MOCK_DATA.json"; 
+import camerasData from "../../camera-management-subpages/Data/MOCK_DATA.json";
 
+const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon, onAddCamera }) => {
+  const [cameraName, setCameraName] = useState("");
+  const [camIndex, setCamIndex] = useState(null);
+  const [cameraType, setCameraType] = useState("");
+  const [address, setAddress] = useState("");
+  const [defaultStatus, setDefaultStatus] = useState("");
+  const [cameraModel, setCameraModel] = useState("");
+  const [description, setDescription] = useState("");
 
-const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
-  
-  //Fields are only editable(not disabled) if in edit mode
+  useEffect(() => {
+    if (modalInfo) {
+      setCameraName(modalInfo.Name);
+      setCamIndex(modalInfo.Index - 1);
+      setCameraType(modalInfo.Type);
+      setAddress(modalInfo.Address);
+      setDefaultStatus(modalInfo.Default);
+      setCameraModel(modalInfo.Camera_Model);
+      setDescription(modalInfo.Camera_Description);
+    } else if (icon === "add") {
+      setCameraName("");
+      setCamIndex(camerasData.length);
+      setCameraType("3D");
+      setAddress("");
+      setDefaultStatus("No");
+      setCameraModel("");
+      setDescription("");
+    }
+  }, [modalInfo, icon]);
+
   const isEditable = () => {
-    return (icon === "edit") ? false: true;
-  }
+    return icon === "edit" ? false : true;
+  };
 
   const isDefault = () => {
-    return defaultStatus == "Yes" ? true : false;
-  }
+    return defaultStatus === "Yes" ? true : false;
+  };
 
   const buttonStatus = () => {
-    switch(icon) {
+    switch (icon) {
       case "edit":
-        return <button type="submit">Confirm Changes</button>
-        break;
+        return <button type="submit" className="styled-button">Confirm Changes</button>;
       case "del":
-        return <button type="submit">Delete</button>
-        break;
-      default:    
-    } 
-  }
-
-  const [cameraName, setCameraName] = useState(modalInfo.Name);
-  const [camIndex, setCamIndex] = useState(modalInfo.Index-1);
-  const [cameraType, setCameraType] = useState(modalInfo.Type);
-  const [address, setAddress] = useState(modalInfo.Address);
-  const [defaultStatus, setDefaultStatus] = useState(modalInfo.Default);
-  const [cameraModel, setCameraModel] = useState(modalInfo.Camera_Model);
-  const [description, setDescription] = useState(modalInfo.Camera_Description);
+        return <button type="submit" className="styled-button">Delete</button>;
+      case "add":
+        return <button type="submit" className="styled-button">Add Camera</button>;
+      default:
+        return null;
+    }
+  };
 
   const handleCameraNameChange = (event) => {
     setCameraName(event.target.value);
@@ -48,7 +66,7 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
   };
 
   const handleDefaultStatusChange = (event) => {
-    event.target.checked === true ? setDefaultStatus("Yes") : setDefaultStatus("No");
+    setDefaultStatus(event.target.checked ? "Yes" : "No");
   };
 
   const handleCameraModelChange = (event) => {
@@ -59,17 +77,25 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
     setDescription(event.target.value);
   };
 
-  //function for updating camera's data
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(icon === "del"){
+    if (icon === "del") {
       camerasData.splice(camIndex, 1);
-      for(let i = camIndex; i < camerasData.length; i++){ //updating subsequent camera's indexes
+      for (let i = camIndex; i < camerasData.length; i++) {
         camerasData[i].Index -= 1;
       }
-    }
-
-    else{
+    } else if (icon === "add") {
+      const newCamera = {
+        Index: camerasData.length + 1,
+        Name: cameraName,
+        Type: cameraType,
+        Address: address,
+        Default: defaultStatus,
+        Camera_Model: cameraModel,
+        Camera_Description: description,
+      };
+      onAddCamera(newCamera);
+    } else {
       camerasData[camIndex].Address = address;
       camerasData[camIndex].Name = cameraName;
       camerasData[camIndex].Type = cameraType;
@@ -77,25 +103,27 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
       camerasData[camIndex].Camera_Model = cameraModel;
       camerasData[camIndex].Camera_Description = description;
     }
-    handleCloseModal()
-  };  
+    handleCloseModal();
+  };
 
   return (
     <Modal show={showModal} onHide={handleCloseModal} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Index: Camera {modalInfo.Index} </Modal.Title>
+        <Modal.Title>
+          {icon === "add" ? "Add New Camera" : `Index: Camera ${modalInfo?.Index}`}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {modalInfo && (
+        {modalInfo || icon === "add" ? (
           <div>
-            <form onSubmit={handleSubmit} className="modal-form" >
+            <form onSubmit={handleSubmit} className="modal-form">
               <div>
                 <label htmlFor="cameraName">Camera Name:</label>
                 <input
                   type="text"
                   id="cameraName"
                   value={cameraName}
-                  disabled = {isEditable()}
+                  disabled={isEditable() && icon !== "add"}
                   onChange={handleCameraNameChange}
                 />
               </div>
@@ -105,7 +133,7 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
                   type="text"
                   id="cameraModel"
                   value={cameraModel}
-                  disabled = {isEditable()}
+                  disabled={isEditable() && icon !== "add"}
                   onChange={handleCameraModelChange}
                 />
               </div>
@@ -117,7 +145,7 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
                   type="text"
                   autoComplete="address-line1"
                   value={address}
-                  disabled = {isEditable()}
+                  disabled={isEditable() && icon !== "add"}
                   onChange={handleAddressChange}
                 />
               </div>
@@ -127,19 +155,19 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
                   id="cameraType"
                   value={cameraType}
                   onChange={handleCameraTypeChange}
-                  disabled = {isEditable()}
+                  disabled={isEditable() && icon !== "add"}
                 >
                   <option value="3D">3D</option>
                   <option value="2D">2D</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="defaulttatus">Default Status:</label>
+                <label htmlFor="defaultStatus">Default Status:</label>
                 <input
                   type="checkbox"
                   id="defaultStatus"
-                  checked = {isDefault()}
-                  disabled = {isEditable()}
+                  checked={isDefault()}
+                  disabled={isEditable() && icon !== "add"}
                   onChange={handleDefaultStatusChange}
                 />
               </div>
@@ -148,14 +176,14 @@ const ModalComponent = ({ modalInfo, showModal, handleCloseModal, icon }) => {
                 <textarea
                   id="description"
                   value={description}
-                  disabled = {isEditable()}
+                  disabled={isEditable() && icon !== "add"}
                   onChange={handleDescriptionChange}
                 />
               </div>
               {buttonStatus()}
             </form>
           </div>
-        )}
+        ) : null}
       </Modal.Body>
       <Modal.Footer>
         <Button

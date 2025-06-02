@@ -1,0 +1,243 @@
+.lidar-viewer {
+  position: relative;
+  background-color: #000033;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lidar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 51, 0.8);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 60px;
+}
+
+.lidar-title {
+  margin: 0;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.lidar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.point-count {
+  color: #fff;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.settings-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.settings-button:focus {
+  outline: 2px solid #4a9eff;
+  outline-offset: 2px;
+}
+
+.controls-menu {
+  background-color: rgba(0, 0, 51, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls-menu button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.controls-menu button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.controls-menu button[aria-pressed="true"] {
+  background-color: #4a9eff;
+  border-color: #4a9eff;
+}
+
+.slider-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-control label {
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+.slider-control input[type="range"] {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  -webkit-appearance: none;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background-color: #4a9eff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.slider-control input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.slider-control input[type="range"]:focus {
+  outline: none;
+}
+
+.slider-control input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.4);
+}
+
+.lidar-viewer-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #1a1a1a;
+}
+
+.point-cloud-view {
+    width: 100%;
+    height: 100%;
+}
+
+.connection-status {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.connection-status.connected {
+    background: #4CAF50;
+    color: white;
+}
+
+.connection-status.disconnected {
+    background: #f44336;
+    color: white;
+}
+
+.traffic-metrics {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Arial', sans-serif;
+    min-width: 250px;
+}
+
+.traffic-metrics h3 {
+    margin: 0 0 15px 0;
+    color: #4CAF50;
+}
+
+.traffic-metrics div {
+    margin: 8px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.vehicle-type-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 3px;
+}
+
+.heatmap-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.heatmap-toggle {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.heatmap-toggle:hover {
+    background: #45a049;
+}
+
+.speed-vector-toggle {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.speed-vector-toggle:hover {
+    background: #1e88e5;
+}

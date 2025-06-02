@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// HistoricalGeneral.js
+import React, { useState, useEffect } from 'react';
 import './styling/general.css';
 import ReactEcharts from "echarts-for-react";
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import { motion } from 'framer-motion'; // Import Framer Motion
 
+// DataTypeSelector component
 const DataTypeSelector = ({ dataType, onDataTypeClick, onTableClick, showTable }) => {
   const getButtonColor = (type) => {
     switch (type) {
@@ -63,14 +66,15 @@ const DataTypeSelector = ({ dataType, onDataTypeClick, onTableClick, showTable }
   );
 };
 
+// Helper functions
 const getStackedAreaData = (data, key, dataType) => {
   console.log(`Processing ${key} data for ${dataType}:`, data);
   let labels;
   let processedData;
 
-  switch(dataType) {
+  switch (dataType) {
     case 'per-day':
-      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       processedData = data.slice(0, 24).map(item => parseFloat(item[key]) || 0);
       break;
     case 'per-week':
@@ -119,9 +123,9 @@ const getStackedBarData = (data, dataType) => {
   const processedData = {};
   let labels;
 
-  switch(dataType) {
+  switch (dataType) {
     case 'per-day':
-      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       break;
     case 'per-week':
       labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -135,10 +139,10 @@ const getStackedBarData = (data, dataType) => {
     default:
       labels = data.map((_, index) => `Data ${index + 1}`);
   }
-  
+
   data.forEach((item, index) => {
     if (index >= labels.length) return;
-    
+
     Object.entries(item.LaneVehicleCounts || {}).forEach(([lane, count]) => {
       if (!processedData[lane]) {
         processedData[lane] = {};
@@ -146,7 +150,7 @@ const getStackedBarData = (data, dataType) => {
       processedData[lane][labels[index]] = parseFloat(count) || 0;
     });
   });
-  
+
   return processedData;
 };
 
@@ -154,9 +158,9 @@ const getDensityData = (data, dataType) => {
   console.log('Processing density data:', data);
   let labels;
 
-  switch(dataType) {
+  switch (dataType) {
     case 'per-day':
-      labels = Array.from({length: 24}, (_, i) => `${i}:00`);
+      labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       break;
     case 'per-week':
       labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -178,18 +182,26 @@ const getDensityData = (data, dataType) => {
   }));
 };
 
+// ChartBox component with animation
 const ChartBox = ({ title, description, Component, data, dataType, key }) => (
   <div className="col" key={key || title}>
-    <div className="box" style={{ height: '450px', display: 'flex', flexDirection: 'column', padding: '15px' }}>
+    <motion.div
+      className="box"
+      style={{ height: '450px', display: 'flex', flexDirection: 'column', padding: '15px' }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <h2 style={{ marginTop: 0, marginBottom: '10px', fontSize: '18px' }}>{title}</h2>
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         <Component data={data} dataType={dataType} />
       </div>
-      <p className="small-text" style={{ marginTop: '10px', fontSize: '12px' }}>{description}</p> 
-    </div>
+      <p className="small-text" style={{ marginTop: '10px', fontSize: '12px' }}>{description}</p>
+    </motion.div>
   </div>
 );
 
+// TableDisplay component
 const TableDisplay = ({ data, dataType }) => {
   const downloadData = (format) => {
     const filename = `historical_data_${dataType}.${format}`;
@@ -220,7 +232,7 @@ const TableDisplay = ({ data, dataType }) => {
   };
 
   const getTimeLabel = (index, dataType) => {
-    switch(dataType) {
+    switch (dataType) {
       case 'per-day':
         return `${index}:00`;
       case 'per-week':
@@ -236,13 +248,13 @@ const TableDisplay = ({ data, dataType }) => {
 
   return (
     <div>
-      <div style={{ 
+      <div style={{
         textAlign: 'center',
-        color: 'white', 
+        color: 'white',
         fontSize: '18px',
         backgroundColor: '#888',
         padding: '5px',
-        borderRadius: '5px', 
+        borderRadius: '5px',
         margin: '10px 0',
       }}>
         Showing data for {dataType.split('-')[1]}
@@ -265,17 +277,18 @@ const TableDisplay = ({ data, dataType }) => {
           {data.map((item, index) => (
             <tr key={index}>
               <td style={{ fontSize: '12px', padding: '8px' }}>{getTimeLabel(index, dataType)}</td>
-              <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.TotalVehicles).toFixed(2)}</td>  
+              <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.TotalVehicles).toFixed(2)}</td>
               <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.AverageSpeed).toFixed(2)}</td>
               <td style={{ fontSize: '12px', padding: '8px' }}>{parseFloat(item.Density).toFixed(2)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-    </div>  
+    </div>
   );
 };
 
+// useHistoricalData hook
 const useHistoricalData = (dataType) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
@@ -285,7 +298,7 @@ const useHistoricalData = (dataType) => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
         let url;
         let limit;
@@ -318,11 +331,11 @@ const useHistoricalData = (dataType) => {
 
         let fetchedData = await response.json();
         console.log('Fetched data:', fetchedData);
-        
+
         if (!Array.isArray(fetchedData) || fetchedData.length === 0) {
           throw new Error('No data available for the selected period');
         }
-        
+
         setData(fetchedData);
       } catch (err) {
         console.error('Fetch error:', err);
@@ -339,6 +352,7 @@ const useHistoricalData = (dataType) => {
   return { data, error, loading };
 };
 
+// Chart components
 const StackedAreaHist = ({ data, dataType }) => {
   console.log('StackedAreaHist received data:', data);
 
@@ -347,7 +361,7 @@ const StackedAreaHist = ({ data, dataType }) => {
       text: data.datasets[0].label,
       textStyle: {
         color: 'white',
-        fontSize: 18,fontWeight: 'bold',
+        fontSize: 18, fontWeight: 'bold',
       },
       left: 'center',
       top: 20,
@@ -510,7 +524,7 @@ const StackedBarHist = ({ data, dataType }) => {
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      formatter: function(params) {
+      formatter: function (params) {
         let tooltip = `<strong>${params[0].axisValue}</strong><br/>`;
         let total = 0;
         params.forEach(param => {
@@ -567,7 +581,7 @@ const HeatMapHist = ({ data, dataType }) => {
   const xAxisData = data.map(item => item.time);
   const yAxisData = ['Density'];
   const processedData = data.map((item, index) => [index, 0, item.value]);
-  
+
   const densityValues = data.map(item => item.value);
   const minDensity = Math.min(...densityValues);
   const maxDensity = Math.max(...densityValues);
@@ -597,8 +611,8 @@ const HeatMapHist = ({ data, dataType }) => {
       type: 'category',
       data: xAxisData,
       splitArea: { show: true },
-      axisLabel: { 
-        color: 'white', 
+      axisLabel: {
+        color: 'white',
         fontSize: 12,
         margin: 8,
         rotate: dataType === 'per-day' ? 45 : 0,
@@ -650,70 +664,7 @@ const HeatMapHist = ({ data, dataType }) => {
   );
 };
 
-const MemoryUsageChart = ({ data }) => {
-  const option = {
-    title: {
-      text: 'ML Model Memory Usage',
-      textStyle: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
-      },
-      left: 'center',
-      top: 20,
-    },
-    tooltip: {
-      trigger: 'axis',
-      formatter: function(params) {
-        let tooltip = `Time: ${params[0].axisValue}<br/>`;
-        params.forEach(param => {
-          tooltip += `${param.seriesName}: ${param.value.toFixed(2)} MB<br/>`;
-        });
-        return tooltip;
-      }
-    },
-    legend: {
-      data: ['Peak Memory', 'Average Memory', 'Current Memory'],
-      textStyle: { color: 'white' },
-      bottom: 0,
-    },
-    xAxis: {
-      type: 'category',
-      data: data.map(item => item.time),
-      axisLabel: { color: 'white', rotate: 45, fontSize: 10 },
-    },
-    yAxis: {
-      type: 'value',
-      name: 'Memory (MB)',
-      nameTextStyle: { color: 'white' },
-      axisLabel: { color: 'white' },
-    },
-    series: [
-      {
-        name: 'Peak Memory',
-        data: data.map(item => item.peakMemory),
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'Average Memory',
-        data: data.map(item => item.averageMemory),
-        type: 'line',
-        smooth: true,
-      },
-      {
-        name: 'Current Memory',
-        data: data.map(item => item.currentMemory),
-        type: 'line',
-        smooth: true,
-      }
-    ],
-    color: ['#FF6384', '#36A2EB', '#FFCE56'],
-  };
-
-  return <ReactEcharts option={option} style={{ height: '100%', width: '100%' }} />;
-};
-
+// PerformanceMetricsDisplay component
 const PerformanceMetricsDisplay = ({ performanceMetrics }) => (
   <div style={{ color: 'white', fontSize: '14px', marginTop: '10px' }}>
     <p>Real-time Performance Metrics:</p>
@@ -726,11 +677,11 @@ const PerformanceMetricsDisplay = ({ performanceMetrics }) => (
   </div>
 );
 
+// HistoricalGeneral component
 const HistoricalGeneral = () => {
   const [dataType, setDataType] = useState('per-day');
   const [showTable, setShowTable] = useState(false);
   const { data, error, loading } = useHistoricalData(dataType);
-  const [mlMemoryUsage, setMlMemoryUsage] = useState([]);
   const [performanceMetrics, setPerformanceMetrics] = useState({
     processingTimePerFrame: 0,
     latency: 0,
@@ -738,42 +689,31 @@ const HistoricalGeneral = () => {
     modelInferenceTime: 0
   });
 
-  const updateMlMemoryUsage = useCallback(() => {
-    // This is a placeholder. In a real scenario, you would get this data from your ML model.
-    const newMemoryData = {
-      time: new Date().toLocaleTimeString(),
-      peakMemory: Math.random() * 1000,
-      averageMemory: Math.random() * 800,
-      currentMemory: Math.random() * 600
-    };
-
-    setMlMemoryUsage(prevData => [...prevData, newMemoryData].slice(-60)); // Keep last 60 data points
-  }, []);
-
-  useEffect(() => {
-    const memoryUpdateInterval = setInterval(updateMlMemoryUsage, 1000);
-    return () => clearInterval(memoryUpdateInterval);
-  }, [updateMlMemoryUsage]);
-
   const handleDataTypeClick = (type) => {
     setDataType(type);
     setShowTable(false);
   };
 
   const handleTableClick = () => {
-    setShowTable(!showTable);  
+    setShowTable(!showTable);
   };
 
   return (
     <div className="GeneralSection">
-      <h1>Historical Data</h1>
-      <DataTypeSelector 
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        Historical Data
+      </motion.h1>
+      <DataTypeSelector
         dataType={dataType}
         onDataTypeClick={handleDataTypeClick}
-        onTableClick={handleTableClick} 
+        onTableClick={handleTableClick}
         showTable={showTable}
       />
-{error && <p className="error">{error}</p>}
+      {error && <p className="error">{error}</p>}
       {loading && <p>Loading...</p>}
       {!loading && data.length > 0 && !error && (
         showTable ? (
@@ -782,13 +722,13 @@ const HistoricalGeneral = () => {
           <div className="container-fluid d-flex flex-column align-items-center">
             <div className="row row-cols-1 row-cols-md-2 g-3 w-100">
               <ChartBox
-                title="Vehicle Count vs. Time"  
+                title="Vehicle Count vs. Time"
                 description="Depicts vehicle counts over time, highlighting temporal trends."
                 Component={StackedAreaHist}
                 data={getStackedAreaData(data, 'TotalVehicles', dataType)}
                 dataType={dataType}
               />
-              <ChartBox 
+              <ChartBox
                 title="Average Speed vs. Time"
                 description="Shows average speed over time, useful for identifying traffic flow patterns."
                 Component={StackedAreaHist}
@@ -796,36 +736,30 @@ const HistoricalGeneral = () => {
                 dataType={dataType}
               />
               <ChartBox
-                title="Vehicle Type Distribution"  
+                title="Vehicle Type Distribution"
                 description="Breaks down vehicle counts by type, useful for spotting trends in vehicle composition."
-                Component={PieChartHist} 
+                Component={PieChartHist}
                 data={getPieChartData(data)}
                 dataType={dataType}
               />
               <ChartBox
                 title="Vehicle Count Per Lane"
-                description="Breaks down vehicle counts by lane, useful for spotting congestion patterns." 
+                description="Breaks down vehicle counts by lane, useful for spotting congestion patterns."
                 Component={StackedBarHist}
                 data={getStackedBarData(data, dataType)}
                 dataType={dataType}
               />
-              <ChartBox 
+              <ChartBox
                 title="Traffic Density Heatmap"
                 description="Visualizes vehicle density over time and space, with color intensity reflecting density levels."
-                Component={HeatMapHist} 
-                data={getDensityData(data, dataType)}  
+                Component={HeatMapHist}
+                data={getDensityData(data, dataType)}
                 dataType={dataType}
-              />
-              <ChartBox
-                title="ML Model Memory Usage"
-                description="Shows the memory usage of the ML model over time."
-                Component={MemoryUsageChart}
-                data={mlMemoryUsage}
               />
             </div>
             <PerformanceMetricsDisplay performanceMetrics={performanceMetrics} />
           </div>
-        )  
+        )
       )}
     </div>
   );

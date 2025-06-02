@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
-import './styling/trafficstream.css'; // We'll create this CSS file
+import ReactEcharts from "echarts-for-react";
+import './styling/trafficstream.css';
 
 const API_BASE_URL = 'http://localhost:5001';
 const socket = io(API_BASE_URL);
@@ -16,35 +17,26 @@ function UploadTrafficStream() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState(null);
   const [videoLoading, setVideoLoading] = useState(false);
-  const [memoryUsage, setMemoryUsage] = useState(null);
+  const [trafficData, setTrafficData] = useState([]);
 
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
   const processedVideoRef = useRef(null);
-
-  const updateMemoryUsage = useCallback(() => {
-    if (window.performance && window.performance.memory) {
-      const { usedJSHeapSize, jsHeapSizeLimit } = window.performance.memory;
-      setMemoryUsage({
-        used: formatBytes(usedJSHeapSize),
-        total: formatBytes(jsHeapSizeLimit),
-        percentage: ((usedJSHeapSize / jsHeapSizeLimit) * 100).toFixed(2)
-      });
-    }
-  }, []);
 
   useEffect(() => {
     socket.on('processing_progress', (data) => {
       setProcessingProgress(data.progress);
     });
 
-    const memoryUpdateInterval = setInterval(updateMemoryUsage, 1000);
+    socket.on('traffic_data', (data) => {
+      setTrafficData(prevData => [...prevData, data].slice(-100));  // Keep last 100 data points
+    });
 
     return () => {
       socket.off('processing_progress');
-      clearInterval(memoryUpdateInterval);
+      socket.off('traffic_data');
     };
-  }, [updateMemoryUsage]);
+  }, []);
 
   useEffect(() => {
     if (previewUrl && videoRef.current) {
@@ -147,6 +139,7 @@ function UploadTrafficStream() {
     setProcessedVideoUrl(null);
     setUploadProgress(0);
     setProcessingProgress(0);
+    setTrafficData([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -157,32 +150,54 @@ function UploadTrafficStream() {
     setError(`Error playing processed video: ${e.target.error?.message || 'Unknown error'}. Please try again.`);
   };
 
-  const formatBytes = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  const getChartOption = (title, data) => ({
+    title: {
+      text: title,
+      left: 'center',
+      textStyle: { color: 'white', fontSize: 16 }
+    },
+    xAxis: {
+      type: 'category',
+      data: data.map(item => item.time),
+      axisLabel: { color: 'white', rotate: 45, fontSize: 10 }
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: 'white' }
+    },
+    series: [{
+      data: data.map(item => item.value),
+      type: 'line',
+      smooth: true
+    }],
+    tooltip: {
+      trigger: 'axis'
+    },
+    backgroundColor: 'transparent'  // To match the dark theme
+  });
 
   return (
     <div className="upload-container">
       <h2>Upload Traffic Stream</h2>
       <form onSubmit={handleSubmit} className="upload-form">
-        <input 
-          type="file" 
-          onChange={handleStreamFileUpload} 
-          accept="video/*"
-          disabled={processing}
-          ref={fileInputRef}
-        />
-        <input 
-          type="text" 
-          placeholder="Or enter stream URL" 
-          value={streamUrl} 
-          onChange={handleStreamUrlChange}
-          disabled={processing}
-        />
+        <div className="file-input-container">
+          <input 
+            type="file" 
+            onChange={handleStreamFileUpload} 
+            accept="video/*"
+            disabled={processing}
+            ref={fileInputRef}
+          />
+        </div>
+        <div className="url-input-container">
+          <input 
+            type="text" 
+            placeholder="Or enter stream URL" 
+            value={streamUrl} 
+            onChange={handleStreamUrlChange}
+            disabled={processing}
+          />
+        </div>
         <div className="button-container">
           <button type="submit" disabled={processing || (!streamFile && !streamUrl)}>
             {processing ? 'Processing...' : 'Upload and Process Stream'}
@@ -246,14 +261,20 @@ function UploadTrafficStream() {
         </div>
       )}
 
-      {memoryUsage && (
-        <div className="memory-usage">
-          <h3>Memory Usage</h3>
-          <p>Used: {memoryUsage.used}</p>
-          <p>Total: {memoryUsage.total}</p>
-          <p>Percentage: {memoryUsage.percentage}%</p>
-          <div className="progress-bar">
-            <div className="progress" style={{width: `${memoryUsage.percentage}%`}}></div>
+      {trafficData.length > 0 && (
+        <div className="traffic-data-charts">
+          <h3>Traffic Data Analysis</h3>
+          <div className="chart">
+            <ReactEcharts 
+              option={getChartOption('Vehicle Count', trafficData.map(item => ({ time: item.time, value: item.vehicleCount })))} 
+              style={{ height: '300px', width: '100%' }}
+            />
+          </div>
+          <div className="chart">
+            <ReactEcharts 
+              option={getChartOption('Average Speed', trafficData.map(item => ({ time: item.time, value: item.averageSpeed })))} 
+              style={{ height: '300px', width: '100%' }}
+            />
           </div>
         </div>
       )}
